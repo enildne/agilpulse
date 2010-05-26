@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "PulseDisplay.h"
 #include "PulseDisplayDlg.h"
+#include "BaseSheet.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -50,7 +51,8 @@ BOOL CPulseDisplayApp::InitInstance()
 	// 적절한 내용으로 수정해야 합니다.
 	SetRegistryKey(_T("로컬 응용 프로그램 마법사에서 생성한 응용 프로그램"));
 
-	CPulseDisplayDlg dlg;
+	//CPulseDisplayDlg dlg;
+	CBaseSheet	dlg(IDS_STRING_MAIN);
 	m_pMainWnd = &dlg;
 	INT_PTR nResponse = dlg.DoModal();
 	if (nResponse == IDOK)
