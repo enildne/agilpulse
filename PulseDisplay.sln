@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PulseDisplay", "PulseDisplay\PulseDisplay.vcproj", "{89A19BD0-FD7C-4BD6-A4A7-7AF56069FBE4}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{89A19BD0-FD7C-4BD6-A4A7-7AF56069FBE4}.Debug.ActiveCfg = Debug|Win32
+		{89A19BD0-FD7C-4BD6-A4A7-7AF56069FBE4}.Debug.Build.0 = Debug|Win32
+		{89A19BD0-FD7C-4BD6-A4A7-7AF56069FBE4}.Release.ActiveCfg = Release|Win32
+		{89A19BD0-FD7C-4BD6-A4A7-7AF56069FBE4}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
