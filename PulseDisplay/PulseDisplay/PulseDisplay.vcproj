@@ -131,10 +131,16 @@
 				RelativePath=".\First.cpp">
 			</File>
 			<File
+				RelativePath=".\Fourth.cpp">
+			</File>
+			<File
 				RelativePath=".\PulseDisplay.cpp">
 			</File>
 			<File
 				RelativePath=".\PulseDisplayDlg.cpp">
+			</File>
+			<File
+				RelativePath=".\Second.cpp">
 			</File>
 			<File
 				RelativePath=".\stdafx.cpp">
@@ -151,6 +157,9 @@
 						UsePrecompiledHeader="1"/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\Third.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="헤더 파일"
@@ -163,6 +172,9 @@
 				RelativePath=".\First.h">
 			</File>
 			<File
+				RelativePath=".\Fourth.h">
+			</File>
+			<File
 				RelativePath=".\PulseDisplay.h">
 			</File>
 			<File
@@ -172,7 +184,13 @@
 				RelativePath=".\Resource.h">
 			</File>
 			<File
+				RelativePath=".\Second.h">
+			</File>
+			<File
 				RelativePath=".\stdafx.h">
+			</File>
+			<File
+				RelativePath=".\Third.h">
 			</File>
 		</Filter>
 		<Filter

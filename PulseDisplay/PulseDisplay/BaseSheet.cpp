@@ -13,6 +13,9 @@ CBaseSheet::CBaseSheet(UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
 	:CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
 {
 	AddPage(&m_firstPage);
+	AddPage(&m_secondPage);
+	AddPage(&m_thirdPage);
+	AddPage(&m_fourthPage);
 }
 
 CBaseSheet::CBaseSheet(LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)

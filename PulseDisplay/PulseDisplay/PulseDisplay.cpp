@@ -53,7 +53,9 @@ BOOL CPulseDisplayApp::InitInstance()
 
 	//CPulseDisplayDlg dlg;
 	CBaseSheet	dlg(IDS_STRING_MAIN);
+	
 	m_pMainWnd = &dlg;
+	
 	INT_PTR nResponse = dlg.DoModal();
 	if (nResponse == IDOK)
 	{
