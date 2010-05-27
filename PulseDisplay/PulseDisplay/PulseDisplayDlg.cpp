@@ -25,6 +25,11 @@ void CPulseDisplayDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_TAB_MAIN, m_ctlTabMain);
+	DDX_Control(pDX, IDC_TAB1_BTN1, m_btnTab1_1);
+	DDX_Control(pDX, IDC_TAB1_BTN2, m_btnTab1_2);
+	DDX_Control(pDX, IDC_TAB1_BTN3, m_btnTab1_3);
+	DDX_Control(pDX, IDC_TAB1_BTN4, m_btnTab1_4);
+	DDX_Control(pDX, IDC_TAB1_DRAW, m_stDraw1);
 }
 
 BEGIN_MESSAGE_MAP(CPulseDisplayDlg, CDialog)
@@ -97,4 +102,40 @@ void CPulseDisplayDlg::OnTcnSelchangeTabMain(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = 0;
 	
 	RTrace(_T("[zest] Select = %d\n"), m_ctlTabMain.GetCurSel());
+	
+	switch(m_ctlTabMain.GetCurSel())
+	{
+	case 0:						// √÷¡¬√¯ ≈«
+	default:
+		m_btnTab1_1.ShowWindow(SW_SHOW);
+		m_btnTab1_2.ShowWindow(SW_SHOW);
+		m_btnTab1_3.ShowWindow(SW_SHOW);
+		m_btnTab1_4.ShowWindow(SW_SHOW);
+		m_stDraw1.ShowWindow(SW_SHOW);
+		break;
+	
+	case 1:
+		m_btnTab1_1.ShowWindow(SW_HIDE);
+		m_btnTab1_2.ShowWindow(SW_HIDE);
+		m_btnTab1_3.ShowWindow(SW_HIDE);
+		m_btnTab1_4.ShowWindow(SW_HIDE);
+		m_stDraw1.ShowWindow(SW_HIDE);
+		break;
+	case 2:
+		m_btnTab1_1.ShowWindow(SW_HIDE);
+		m_btnTab1_2.ShowWindow(SW_HIDE);
+		m_btnTab1_3.ShowWindow(SW_HIDE);
+		m_btnTab1_4.ShowWindow(SW_HIDE);
+		m_stDraw1.ShowWindow(SW_HIDE);
+		break;
+	case 3:
+		m_btnTab1_1.ShowWindow(SW_HIDE);
+		m_btnTab1_2.ShowWindow(SW_HIDE);
+		m_btnTab1_3.ShowWindow(SW_HIDE);
+		m_btnTab1_4.ShowWindow(SW_HIDE);
+		m_stDraw1.ShowWindow(SW_HIDE);
+		break;
+
+	}
+
 }
