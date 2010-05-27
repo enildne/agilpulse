@@ -1,6 +1,9 @@
 #pragma once
 
 #include "First.h"
+#include "Second.h"
+#include "Third.h"
+#include "Fourth.h"
 
 // CBaseSheet
 
@@ -14,6 +17,9 @@ public:
 	virtual ~CBaseSheet();
 
 	CFirst	m_firstPage;
+	CSecond	m_secondPage;
+	CThird	m_thirdPage;
+	CFourth	m_fourthPage;
 
 protected:
 	DECLARE_MESSAGE_MAP()
