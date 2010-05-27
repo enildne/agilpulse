@@ -37,4 +37,8 @@ public:
 	CButton m_btnTab1_3;
 	CButton m_btnTab1_4;
 	CStatic m_stDraw1;
+	afx_msg void OnBnClickedTab1Btn1();
+	afx_msg void OnBnClickedTab1Btn2();
+	afx_msg void OnBnClickedTab1Btn3();
+	afx_msg void OnBnClickedTab1Btn4();
 };

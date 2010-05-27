@@ -37,6 +37,10 @@ BEGIN_MESSAGE_MAP(CPulseDisplayDlg, CDialog)
 	ON_WM_QUERYDRAGICON()
 	//}}AFX_MSG_MAP
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB_MAIN, OnTcnSelchangeTabMain)
+	ON_BN_CLICKED(IDC_TAB1_BTN1, OnBnClickedTab1Btn1)
+	ON_BN_CLICKED(IDC_TAB1_BTN2, OnBnClickedTab1Btn2)
+	ON_BN_CLICKED(IDC_TAB1_BTN3, OnBnClickedTab1Btn3)
+	ON_BN_CLICKED(IDC_TAB1_BTN4, OnBnClickedTab1Btn4)
 END_MESSAGE_MAP()
 
 
@@ -138,4 +142,24 @@ void CPulseDisplayDlg::OnTcnSelchangeTabMain(NMHDR *pNMHDR, LRESULT *pResult)
 
 	}
 
+}
+
+void CPulseDisplayDlg::OnBnClickedTab1Btn1()
+{
+	RTrace(_T("[zest] Tab1 Button1 Clicked\n"));
+}
+
+void CPulseDisplayDlg::OnBnClickedTab1Btn2()
+{
+	RTrace(_T("[zest] Tab1 Button2 Clicked\n"));
+}
+
+void CPulseDisplayDlg::OnBnClickedTab1Btn3()
+{
+	RTrace(_T("[zest] Tab1 Button3 Clicked\n"));
+}
+
+void CPulseDisplayDlg::OnBnClickedTab1Btn4()
+{
+	RTrace(_T("[zest] Tab1 Button4 Clicked\n"));
 }
