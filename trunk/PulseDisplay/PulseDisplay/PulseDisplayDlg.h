@@ -2,6 +2,7 @@
 //
 
 #pragma once
+#include "afxcmn.h"
 
 
 // CPulseDisplayDlg 대화 상자
@@ -27,4 +28,7 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnTcnSelchangeTabMain(NMHDR *pNMHDR, LRESULT *pResult);
+	CTabCtrl m_ctlTabMain;
 };

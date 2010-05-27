@@ -16,7 +16,7 @@
 			IntermediateDirectory="Debug"
 			ConfigurationType="1"
 			UseOfMFC="1"
-			CharacterSet="2">
+			CharacterSet="1">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
@@ -125,22 +125,10 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath=".\BaseSheet.cpp">
-			</File>
-			<File
-				RelativePath=".\First.cpp">
-			</File>
-			<File
-				RelativePath=".\Fourth.cpp">
-			</File>
-			<File
 				RelativePath=".\PulseDisplay.cpp">
 			</File>
 			<File
 				RelativePath=".\PulseDisplayDlg.cpp">
-			</File>
-			<File
-				RelativePath=".\Second.cpp">
 			</File>
 			<File
 				RelativePath=".\stdafx.cpp">
@@ -157,23 +145,11 @@
 						UsePrecompiledHeader="1"/>
 				</FileConfiguration>
 			</File>
-			<File
-				RelativePath=".\Third.cpp">
-			</File>
 		</Filter>
 		<Filter
 			Name="헤더 파일"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
-			<File
-				RelativePath=".\BaseSheet.h">
-			</File>
-			<File
-				RelativePath=".\First.h">
-			</File>
-			<File
-				RelativePath=".\Fourth.h">
-			</File>
 			<File
 				RelativePath=".\PulseDisplay.h">
 			</File>
@@ -184,13 +160,7 @@
 				RelativePath=".\Resource.h">
 			</File>
 			<File
-				RelativePath=".\Second.h">
-			</File>
-			<File
 				RelativePath=".\stdafx.h">
-			</File>
-			<File
-				RelativePath=".\Third.h">
 			</File>
 		</Filter>
 		<Filter

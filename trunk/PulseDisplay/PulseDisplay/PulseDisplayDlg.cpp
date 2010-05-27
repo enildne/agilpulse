@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "PulseDisplay.h"
 #include "PulseDisplayDlg.h"
+#include ".\pulsedisplaydlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -23,12 +24,14 @@ CPulseDisplayDlg::CPulseDisplayDlg(CWnd* pParent /*=NULL*/)
 void CPulseDisplayDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_TAB_MAIN, m_ctlTabMain);
 }
 
 BEGIN_MESSAGE_MAP(CPulseDisplayDlg, CDialog)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	//}}AFX_MSG_MAP
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB_MAIN, OnTcnSelchangeTabMain)
 END_MESSAGE_MAP()
 
 
@@ -44,7 +47,11 @@ BOOL CPulseDisplayDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
-	
+	m_ctlTabMain.InsertItem(1, _T("RT"));
+	m_ctlTabMain.InsertItem(2, _T("주파수"));
+	m_ctlTabMain.InsertItem(3, _T("Reserved"));
+	m_ctlTabMain.InsertItem(4, _T("Reserved"));
+
 	return TRUE;  // 컨트롤에 대한 포커스를 설정하지 않을 경우 TRUE를 반환합니다.
 }
 
@@ -82,4 +89,12 @@ void CPulseDisplayDlg::OnPaint()
 HCURSOR CPulseDisplayDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
+}
+
+void CPulseDisplayDlg::OnTcnSelchangeTabMain(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	*pResult = 0;
+	
+	RTrace(_T("[zest] Select = %d\n"), m_ctlTabMain.GetCurSel());
 }

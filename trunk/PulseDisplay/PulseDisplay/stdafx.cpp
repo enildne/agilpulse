@@ -3,5 +3,16 @@
 // stdafx.obj는 미리 컴파일된 형식 정보를 포함합니다.
 
 #include "stdafx.h"
+#include "strsafe.h"
 
+void RTrace(TCHAR* szFormat, ...)
+{
+	TCHAR szTempBuf[2048] ;
+	va_list vlMarker ;
 
+	va_start(vlMarker,szFormat) ;
+	StringCchVPrintf(szTempBuf, 2048, szFormat, vlMarker) ;
+	va_end(vlMarker) ;
+
+	OutputDebugString(szTempBuf) ;
+}
