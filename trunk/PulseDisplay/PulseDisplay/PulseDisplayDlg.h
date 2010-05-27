@@ -3,6 +3,7 @@
 
 #pragma once
 #include "afxcmn.h"
+#include "afxwin.h"
 
 
 // CPulseDisplayDlg 대화 상자
@@ -31,4 +32,9 @@ protected:
 public:
 	afx_msg void OnTcnSelchangeTabMain(NMHDR *pNMHDR, LRESULT *pResult);
 	CTabCtrl m_ctlTabMain;
+	CButton m_btnTab1_1;
+	CButton m_btnTab1_2;
+	CButton m_btnTab1_3;
+	CButton m_btnTab1_4;
+	CStatic m_stDraw1;
 };
