@@ -11,6 +11,7 @@
 #define IDC_TAB1_BTN3                   1003
 #define IDC_TAB1_BTN4                   1004
 #define IDC_TAB1_DRAW                   1005
+#define IDC_TAB1_DRAW_MAIN              1006
 
 // Next default values for new objects
 // 

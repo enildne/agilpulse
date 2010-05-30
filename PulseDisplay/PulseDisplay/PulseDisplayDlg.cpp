@@ -29,7 +29,7 @@ void CPulseDisplayDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TAB1_BTN2, m_btnTab1_2);
 	DDX_Control(pDX, IDC_TAB1_BTN3, m_btnTab1_3);
 	DDX_Control(pDX, IDC_TAB1_BTN4, m_btnTab1_4);
-	DDX_Control(pDX, IDC_TAB1_DRAW, m_stDraw1);
+	//DDX_Control(pDX, IDC_TAB1_DRAW, m_stDraw1);
 }
 
 BEGIN_MESSAGE_MAP(CPulseDisplayDlg, CDialog)
@@ -41,6 +41,7 @@ BEGIN_MESSAGE_MAP(CPulseDisplayDlg, CDialog)
 	ON_BN_CLICKED(IDC_TAB1_BTN2, OnBnClickedTab1Btn2)
 	ON_BN_CLICKED(IDC_TAB1_BTN3, OnBnClickedTab1Btn3)
 	ON_BN_CLICKED(IDC_TAB1_BTN4, OnBnClickedTab1Btn4)
+	ON_WM_CREATE()
 END_MESSAGE_MAP()
 
 
@@ -91,6 +92,10 @@ void CPulseDisplayDlg::OnPaint()
 	{
 		CDialog::OnPaint();
 	}
+	m_btnTab1_1.MoveWindow(&CRect(10, 10, 100, 100), TRUE);
+	m_btnTab1_2.MoveWindow(&CRect(10, 110, 100, 200), TRUE);
+	m_btnTab1_3.MoveWindow(&CRect(10, 210, 100, 300), TRUE);
+	m_btnTab1_4.MoveWindow(&CRect(10, 310, 100, 400), TRUE);
 }
 
 // 사용자가 최소화된 창을 끄는 동안에 커서가 표시되도록 시스템에서
@@ -115,7 +120,7 @@ void CPulseDisplayDlg::OnTcnSelchangeTabMain(NMHDR *pNMHDR, LRESULT *pResult)
 		m_btnTab1_2.ShowWindow(SW_SHOW);
 		m_btnTab1_3.ShowWindow(SW_SHOW);
 		m_btnTab1_4.ShowWindow(SW_SHOW);
-		m_stDraw1.ShowWindow(SW_SHOW);
+		//m_stDraw1.ShowWindow(SW_SHOW);
 		break;
 	
 	case 1:
@@ -123,21 +128,21 @@ void CPulseDisplayDlg::OnTcnSelchangeTabMain(NMHDR *pNMHDR, LRESULT *pResult)
 		m_btnTab1_2.ShowWindow(SW_HIDE);
 		m_btnTab1_3.ShowWindow(SW_HIDE);
 		m_btnTab1_4.ShowWindow(SW_HIDE);
-		m_stDraw1.ShowWindow(SW_HIDE);
+		//m_stDraw1.ShowWindow(SW_HIDE);
 		break;
 	case 2:
 		m_btnTab1_1.ShowWindow(SW_HIDE);
 		m_btnTab1_2.ShowWindow(SW_HIDE);
 		m_btnTab1_3.ShowWindow(SW_HIDE);
 		m_btnTab1_4.ShowWindow(SW_HIDE);
-		m_stDraw1.ShowWindow(SW_HIDE);
+		//m_stDraw1.ShowWindow(SW_HIDE);
 		break;
 	case 3:
 		m_btnTab1_1.ShowWindow(SW_HIDE);
 		m_btnTab1_2.ShowWindow(SW_HIDE);
 		m_btnTab1_3.ShowWindow(SW_HIDE);
 		m_btnTab1_4.ShowWindow(SW_HIDE);
-		m_stDraw1.ShowWindow(SW_HIDE);
+		//m_stDraw1.ShowWindow(SW_HIDE);
 		break;
 
 	}
@@ -162,4 +167,17 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 void CPulseDisplayDlg::OnBnClickedTab1Btn4()
 {
 	RTrace(_T("[zest] Tab1 Button4 Clicked\n"));
+}
+
+int CPulseDisplayDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CDialog::OnCreate(lpCreateStruct) == -1)
+		return -1;
+
+	// TODO:  여기에 특수화된 작성 코드를 추가합니다.
+	m_stDraw.Create(_T("Test"), WS_CHILD, CRect(100, 100, 200, 200), this, IDC_TAB1_DRAW_MAIN);
+	m_stDraw.MoveWindow(&CRect(110, 10, 800, 800));
+	m_stDraw.ShowWindow(SW_SHOW);
+
+	return 0;
 }
