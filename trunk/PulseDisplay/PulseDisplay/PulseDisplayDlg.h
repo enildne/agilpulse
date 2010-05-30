@@ -4,6 +4,7 @@
 #pragma once
 #include "afxcmn.h"
 #include "afxwin.h"
+#include "DrawRect.h"
 
 
 // CPulseDisplayDlg 대화 상자
@@ -31,14 +32,16 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnTcnSelchangeTabMain(NMHDR *pNMHDR, LRESULT *pResult);
-	CTabCtrl m_ctlTabMain;
-	CButton m_btnTab1_1;
-	CButton m_btnTab1_2;
-	CButton m_btnTab1_3;
-	CButton m_btnTab1_4;
-	CStatic m_stDraw1;
+	CTabCtrl	m_ctlTabMain;
+	CButton		m_btnTab1_1;
+	CButton		m_btnTab1_2;
+	CButton		m_btnTab1_3;
+	CButton		m_btnTab1_4;
+	CDrawRect	m_stDraw;
+
 	afx_msg void OnBnClickedTab1Btn1();
 	afx_msg void OnBnClickedTab1Btn2();
 	afx_msg void OnBnClickedTab1Btn3();
 	afx_msg void OnBnClickedTab1Btn4();
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 };
