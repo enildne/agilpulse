@@ -57,6 +57,8 @@ BOOL CPulseDisplayDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
+	this->SetWindowPos(&CWnd::wndTopMost, 0, 0, 800, 600, SWP_NOMOVE);
+
 	m_ctlTabMain.InsertItem(1, _T("RT"));
 	m_ctlTabMain.InsertItem(2, _T("주파수"));
 	m_ctlTabMain.InsertItem(3, _T("Reserved"));
