@@ -21,9 +21,10 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
-				MinimalRebuild="TRUE"
+				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
+				EnableFunctionLevelLinking="TRUE"
 				TreatWChar_tAsBuiltInType="TRUE"
 				UsePrecompiledHeader="3"
 				WarningLevel="3"
@@ -33,6 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="visa32.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
@@ -168,6 +170,9 @@
 			</File>
 			<File
 				RelativePath=".\stdafx.h">
+			</File>
+			<File
+				RelativePath=".\StringRc.h">
 			</File>
 		</Filter>
 		<Filter

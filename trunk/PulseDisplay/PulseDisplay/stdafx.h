@@ -41,3 +41,4 @@
 #include <afxdlgs.h>
 
 void RTrace(TCHAR* szFormat, ...);
+
