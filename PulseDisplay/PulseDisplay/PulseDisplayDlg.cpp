@@ -57,12 +57,14 @@ BOOL CPulseDisplayDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
-	this->SetWindowPos(&CWnd::wndTopMost, 0, 0, 800, 600, SWP_NOMOVE);
+	this->SetWindowPos(&CWnd::wndNoTopMost, 0, 0, MAIN_DLG_WIDTH, MAIN_DLG_HEIGHT, SWP_NOMOVE);
 
-	m_ctlTabMain.InsertItem(1, _T("RT"));
-	m_ctlTabMain.InsertItem(2, _T("주파수"));
-	m_ctlTabMain.InsertItem(3, _T("Reserved"));
-	m_ctlTabMain.InsertItem(4, _T("Reserved"));
+	m_ctlTabMain.InsertItem(0, _T(TAB1_DSP_NAME));
+	m_ctlTabMain.InsertItem(1, _T(TAB2_DSP_NAME));
+	m_ctlTabMain.InsertItem(2, _T(TAB3_DSP_NAME));
+	m_ctlTabMain.InsertItem(3, _T(TAB4_DSP_NAME));
+
+	SetTAB1Disp();
 
 	return TRUE;  // 컨트롤에 대한 포커스를 설정하지 않을 경우 TRUE를 반환합니다.
 }
@@ -94,10 +96,6 @@ void CPulseDisplayDlg::OnPaint()
 	{
 		CDialog::OnPaint();
 	}
-	m_btnTab1_1.MoveWindow(&CRect(10, 10, 100, 100), TRUE);
-	m_btnTab1_2.MoveWindow(&CRect(10, 110, 100, 200), TRUE);
-	m_btnTab1_3.MoveWindow(&CRect(10, 210, 100, 300), TRUE);
-	m_btnTab1_4.MoveWindow(&CRect(10, 310, 100, 400), TRUE);
 }
 
 // 사용자가 최소화된 창을 끄는 동안에 커서가 표시되도록 시스템에서
@@ -112,8 +110,6 @@ void CPulseDisplayDlg::OnTcnSelchangeTabMain(NMHDR *pNMHDR, LRESULT *pResult)
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	*pResult = 0;
 	
-	RTrace(_T("[zest] Select = %d\n"), m_ctlTabMain.GetCurSel());
-	
 	switch(m_ctlTabMain.GetCurSel())
 	{
 	case 0:						// 최좌측 탭
@@ -122,7 +118,7 @@ void CPulseDisplayDlg::OnTcnSelchangeTabMain(NMHDR *pNMHDR, LRESULT *pResult)
 		m_btnTab1_2.ShowWindow(SW_SHOW);
 		m_btnTab1_3.ShowWindow(SW_SHOW);
 		m_btnTab1_4.ShowWindow(SW_SHOW);
-		//m_stDraw1.ShowWindow(SW_SHOW);
+		m_stDraw.ShowWindow(SW_SHOW);
 		break;
 	
 	case 1:
@@ -130,21 +126,21 @@ void CPulseDisplayDlg::OnTcnSelchangeTabMain(NMHDR *pNMHDR, LRESULT *pResult)
 		m_btnTab1_2.ShowWindow(SW_HIDE);
 		m_btnTab1_3.ShowWindow(SW_HIDE);
 		m_btnTab1_4.ShowWindow(SW_HIDE);
-		//m_stDraw1.ShowWindow(SW_HIDE);
+		m_stDraw.ShowWindow(SW_HIDE);
 		break;
 	case 2:
 		m_btnTab1_1.ShowWindow(SW_HIDE);
 		m_btnTab1_2.ShowWindow(SW_HIDE);
 		m_btnTab1_3.ShowWindow(SW_HIDE);
 		m_btnTab1_4.ShowWindow(SW_HIDE);
-		//m_stDraw1.ShowWindow(SW_HIDE);
+		m_stDraw.ShowWindow(SW_HIDE);
 		break;
 	case 3:
 		m_btnTab1_1.ShowWindow(SW_HIDE);
 		m_btnTab1_2.ShowWindow(SW_HIDE);
 		m_btnTab1_3.ShowWindow(SW_HIDE);
 		m_btnTab1_4.ShowWindow(SW_HIDE);
-		//m_stDraw1.ShowWindow(SW_HIDE);
+		m_stDraw.ShowWindow(SW_HIDE);
 		break;
 
 	}
@@ -154,6 +150,7 @@ void CPulseDisplayDlg::OnTcnSelchangeTabMain(NMHDR *pNMHDR, LRESULT *pResult)
 void CPulseDisplayDlg::OnBnClickedTab1Btn1()
 {
 	RTrace(_T("[zest] Tab1 Button1 Clicked\n"));
+	viOpenDefaultRM(&defaultRM);
 }
 
 void CPulseDisplayDlg::OnBnClickedTab1Btn2()
@@ -177,9 +174,36 @@ int CPulseDisplayDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// TODO:  여기에 특수화된 작성 코드를 추가합니다.
-	m_stDraw.Create(_T("Test"), WS_CHILD, CRect(100, 100, 200, 200), this, IDC_TAB1_DRAW_MAIN);
-	m_stDraw.MoveWindow(&CRect(110, 10, 800, 800));
+	m_stDraw.Create(_T("DrawPlace"), WS_CHILD | WS_THICKFRAME, CRect(0, 0, 0, 0), this, IDC_TAB1_DRAW_MAIN);
 	m_stDraw.ShowWindow(SW_SHOW);
 
 	return 0;
+}
+
+void CPulseDisplayDlg::SetTAB1Disp(void)
+{
+	CRect	winRect, tabRect;
+	::GetClientRect(this->GetSafeHwnd(), &winRect);		
+	m_ctlTabMain.MoveWindow(0, 0, winRect.right, winRect.bottom - 100);
+	m_ctlTabMain.GetClientRect(&tabRect);
+
+	if(m_btnTab1_1) {
+		m_btnTab1_1.SetWindowText(_T(TAB1_BTN1_NAME));
+		m_btnTab1_1.MoveWindow(&CRect(INTAB_BTN_START_X, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 0, BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 0 + BUTTON_HEIGHT), TRUE);
+	}
+	if(m_btnTab1_2) {
+		m_btnTab1_2.SetWindowText(_T(TAB1_BTN2_NAME));
+		m_btnTab1_2.MoveWindow(&CRect(INTAB_BTN_START_X, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 1, BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 1 + BUTTON_HEIGHT), TRUE);
+	}
+	if(m_btnTab1_3) {
+		m_btnTab1_3.SetWindowText(_T(TAB1_BTN3_NAME));
+		m_btnTab1_3.MoveWindow(&CRect(INTAB_BTN_START_X, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 2, BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 2 + BUTTON_HEIGHT), TRUE);
+	}
+	if(m_btnTab1_4)	{
+		m_btnTab1_4.SetWindowText(_T(TAB1_BTN4_NAME));
+		m_btnTab1_4.MoveWindow(&CRect(INTAB_BTN_START_X, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 3, BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 3 + BUTTON_HEIGHT), TRUE);
+	}
+
+	if(m_stDraw)
+		m_stDraw.MoveWindow(&CRect(INTAB_BTN_START_X + BUTTON_WIDTH, INTAB_BTN_START_Y, tabRect.right - 5, tabRect.bottom - 5));
 }

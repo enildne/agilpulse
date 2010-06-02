@@ -22,6 +22,7 @@ CDrawRect::~CDrawRect()
 BEGIN_MESSAGE_MAP(CDrawRect, CStatic)
 	ON_WM_CREATE()
 	ON_WM_PAINT()
+	ON_WM_SHOWWINDOW()
 END_MESSAGE_MAP()
 
 
@@ -37,7 +38,8 @@ int CDrawRect::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// TODO:  여기에 특수화된 작성 코드를 추가합니다.
 
 	CRect	drawRect;
-	CDC*	pDC;
+
+	//CDC*	pDC;
 
 	//pDC = GetParent()->GetDC();	
 	//GetClientRect(&drawRect);
@@ -57,4 +59,13 @@ void CDrawRect::OnPaint()
 	GetClientRect(&drawRect);
 
 	dc.FillRect(&drawRect, &CBrush(RGB(255,255,255)));
+	dc.MoveTo(0, 0);
+	dc.LineTo(drawRect.right, drawRect.bottom);
+}
+
+void CDrawRect::OnShowWindow(BOOL bShow, UINT nStatus)
+{
+	CStatic::OnShowWindow(bShow, nStatus);
+
+	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
 }

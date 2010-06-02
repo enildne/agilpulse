@@ -5,7 +5,8 @@
 #include "afxcmn.h"
 #include "afxwin.h"
 #include "DrawRect.h"
-
+#include "StringRc.h"
+#include "visa.h"
 
 // CPulseDisplayDlg 대화 상자
 class CPulseDisplayDlg : public CDialog
@@ -39,9 +40,23 @@ public:
 	CButton		m_btnTab1_4;
 	CDrawRect	m_stDraw;
 
+	ViSession	defaultRM;
+
 	afx_msg void OnBnClickedTab1Btn1();
 	afx_msg void OnBnClickedTab1Btn2();
 	afx_msg void OnBnClickedTab1Btn3();
 	afx_msg void OnBnClickedTab1Btn4();
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+private:
+	void SetTAB1Disp(void);
 };
+
+#define INTAB_BTN_START_X		10
+#define INTAB_BTN_START_Y		40
+
+#define BUTTON_WIDTH			80
+#define BUTTON_HEIGHT			30
+#define BUTTON_GAP				10
+
+#define MAIN_DLG_WIDTH			800
+#define MAIN_DLG_HEIGHT			600
