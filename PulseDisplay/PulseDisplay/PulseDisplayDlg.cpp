@@ -150,12 +150,28 @@ void CPulseDisplayDlg::OnTcnSelchangeTabMain(NMHDR *pNMHDR, LRESULT *pResult)
 void CPulseDisplayDlg::OnBnClickedTab1Btn1()
 {
 	RTrace(_T("[zest] Tab1 Button1 Clicked\n"));
+
+	/* Open session to GPIB device at address 22 */
 	viOpenDefaultRM(&defaultRM);
+	viOpen(defaultRM, /*Query 결과물이 필요할듯.. "GPIB0::22:::INSTR"*/"GPIB0::22:::INSTR", VI_NULL, VI_NULL, &vi);
+	/* Initialize device */
+	viPrintf(vi, "*RST\n");
+	/* Send an *IDN? string to the device */
+	viPrintf(vi, "*IDN?\n");
+	/* Read results */
+	viScanf(vi, "%t", m_cBuf);
+	/* Print results */
+	printf("Instrument identification string:%s\n", m_cBuf);
+	/* Close session */
+	viClose(vi);
+	viClose(defaultRM);
 }
 
 void CPulseDisplayDlg::OnBnClickedTab1Btn2()
 {
 	RTrace(_T("[zest] Tab1 Button2 Clicked\n"));
+	CFileDialog* dlg = new CFileDialog(TRUE);
+	dlg->DoModal();
 }
 
 void CPulseDisplayDlg::OnBnClickedTab1Btn3()
