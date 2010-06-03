@@ -40,7 +40,8 @@ public:
 	CButton		m_btnTab1_4;
 	CDrawRect	m_stDraw;
 
-	ViSession	defaultRM;
+	ViSession	defaultRM, vi ;
+	char m_cBuf[256];
 
 	afx_msg void OnBnClickedTab1Btn1();
 	afx_msg void OnBnClickedTab1Btn2();
