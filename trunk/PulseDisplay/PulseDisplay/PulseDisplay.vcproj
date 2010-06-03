@@ -35,6 +35,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="visa32.lib"
+				OutputFile="../bin/$(ProjectName).exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
