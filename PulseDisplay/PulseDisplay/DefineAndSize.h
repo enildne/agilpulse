@@ -33,7 +33,7 @@
 #define		TAB1_BTN2_NAME		"모델선택"
 #define		TAB1_BTN3_NAME		"시작"
 #define		TAB1_BTN4_NAME		"반복"
-#define		TAB1_ST_DEVICE_NAME	"None"
+#define		TAB1_ST_DEVICE_NAME	"No device"
 
 #define		STR_DEVICE_LIST		"장비 리스트"
 #define		NOTSELECT_CFG		"설정 파일이 선택되지 않았습니다."
