@@ -10,3 +10,4 @@
 #define		TAB1_BTN3_NAME		"시작"
 #define		TAB1_BTN4_NAME		"반복"
 
+#define		STR_DEVICE_LIST		"장비 리스트"

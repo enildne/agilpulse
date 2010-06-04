@@ -4,9 +4,11 @@
 #pragma once
 #include "afxcmn.h"
 #include "afxwin.h"
+#include "visa.h"
+
 #include "DrawRect.h"
 #include "StringRc.h"
-#include "visa.h"
+#include "DevList.h"
 
 // CPulseDisplayDlg 대화 상자
 class CPulseDisplayDlg : public CDialog
@@ -61,3 +63,5 @@ private:
 
 #define MAIN_DLG_WIDTH			800
 #define MAIN_DLG_HEIGHT			600
+
+#define CONFIG_EXT				TEXT(".cfg")
