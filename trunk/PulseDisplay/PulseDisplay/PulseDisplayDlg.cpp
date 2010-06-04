@@ -151,9 +151,23 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn1()
 {
 	RTrace(_T("[zest] Tab1 Button1 Clicked\n"));
 
+	CFileDialog dlg(TRUE, CONFIG_EXT, NULL, OFN_EXPLORER | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, TEXT("cfg file(*.cfg)|*.cfg||"));
+	dlg.DoModal();
+}
+
+void CPulseDisplayDlg::OnBnClickedTab1Btn2()
+{
+	RTrace(_T("[zest] Tab1 Button2 Clicked\n"));
+	CDevList	devList;
+	devList.DoModal();
+}
+
+void CPulseDisplayDlg::OnBnClickedTab1Btn3()
+{
+	RTrace(_T("[zest] Tab1 Button3 Clicked\n"));
 	/* Open session to GPIB device at address 22 */
 	viOpenDefaultRM(&defaultRM);
-	viOpen(defaultRM, /*Query 결과물이 필요할듯.. "GPIB0::22:::INSTR"*/"GPIB0::22:::INSTR", VI_NULL, VI_NULL, &vi);
+	viOpen(defaultRM, /*Query 결과물이 필요할듯.. "GPIB0::22:::INSTR"*/"USB::22:::INSTR", VI_NULL, VI_NULL, &vi);
 	/* Initialize device */
 	viPrintf(vi, "*RST\n");
 	/* Send an *IDN? string to the device */
@@ -165,18 +179,6 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn1()
 	/* Close session */
 	viClose(vi);
 	viClose(defaultRM);
-}
-
-void CPulseDisplayDlg::OnBnClickedTab1Btn2()
-{
-	RTrace(_T("[zest] Tab1 Button2 Clicked\n"));
-	CFileDialog* dlg = new CFileDialog(TRUE);
-	dlg->DoModal();
-}
-
-void CPulseDisplayDlg::OnBnClickedTab1Btn3()
-{
-	RTrace(_T("[zest] Tab1 Button3 Clicked\n"));
 }
 
 void CPulseDisplayDlg::OnBnClickedTab1Btn4()
