@@ -65,6 +65,8 @@ BOOL CPulseDisplayDlg::OnInitDialog()
 	m_ctlTabMain.InsertItem(2, _T(TAB3_DSP_NAME));
 	m_ctlTabMain.InsertItem(3, _T(TAB4_DSP_NAME));
 
+	m_modelName.Empty();				// 모델이름 초기화
+
 	SetTAB1Disp();
 
 	return TRUE;  // 컨트롤에 대한 포커스를 설정하지 않을 경우 TRUE를 반환합니다.
@@ -159,7 +161,7 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn1()
 	CFileDialog dlg(TRUE, CONFIG_EXT, NULL, OFN_EXPLORER | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, TEXT("cfg file(*.cfg)|*.cfg||"));
 	if(dlg.DoModal() == IDOK)
 	{
-
+		
 	}
 	else
 	{
@@ -169,34 +171,21 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn1()
 
 void CPulseDisplayDlg::OnBnClickedTab1Btn2()
 {
-	RTrace(_T("[zest] Tab1 Button2 Clicked\n"));
-	CString		modelName;
 	CDevList	devList(this);
 	if(devList.DoModal() == IDOK)
 	{
-		modelName = devList.GetDevice();
-		RTrace(_T("[zest] %s"), modelName);
-		m_stDevName.SetWindowText(modelName);
+		m_modelName = devList.GetDevice();
+		m_stDevName.SetWindowText(m_modelName);
+	}
+	else
+	{
+		AfxMessageBox(NOTSELECT_DEVICE);
 	}
 }
 
 void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 {
 	RTrace(_T("[zest] Tab1 Button3 Clicked\n"));
-	/* Open session to GPIB device at address 22 */
-	viOpenDefaultRM(&defaultRM);
-	viOpen(defaultRM, /*Query 결과물이 필요할듯.. "GPIB0::22:::INSTR"*/"USB::22:::INSTR", VI_NULL, VI_NULL, &vi);
-	/* Initialize device */
-	viPrintf(vi, "*RST\n");
-	/* Send an *IDN? string to the device */
-	viPrintf(vi, "*IDN?\n");
-	/* Read results */
-	viScanf(vi, "%t", m_cBuf);
-	/* Print results */
-	printf("Instrument identification string:%s\n", m_cBuf);
-	/* Close session */
-	viClose(vi);
-	viClose(defaultRM);
 }
 
 void CPulseDisplayDlg::OnBnClickedTab1Btn4()
@@ -240,12 +229,13 @@ void CPulseDisplayDlg::SetTAB1Disp(void)
 		m_btnTab1_4.SetWindowText(_T(TAB1_BTN4_NAME));
 		m_btnTab1_4.MoveWindow(&CRect(INTAB_BTN_START_X, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 3, BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 3 + BUTTON_HEIGHT), TRUE);
 	}
+	
+	if(m_stDraw)
+		m_stDraw.MoveWindow(&CRect(INTAB_BTN_START_X + BUTTON_WIDTH, INTAB_BTN_START_Y, tabRect.right - 5, tabRect.bottom - DEVNAME_HEIGHT + 1));
+	
 	if(m_stDevName)	{
 		m_stDevName.SetWindowText(_T(TAB1_ST_DEVICE_NAME));
 		m_stDevName.ModifyStyle(NULL, SS_CENTERIMAGE, NULL);
-		m_stDevName.MoveWindow(&CRect(INTAB_BTN_START_X, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 4, BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 4 + BUTTON_HEIGHT), TRUE);
+		m_stDevName.MoveWindow(&CRect(INTAB_BTN_START_X + BUTTON_WIDTH, tabRect.bottom - DEVNAME_HEIGHT, tabRect.right - 5, tabRect.bottom), TRUE);
 	}
-
-	if(m_stDraw)
-		m_stDraw.MoveWindow(&CRect(INTAB_BTN_START_X + BUTTON_WIDTH, INTAB_BTN_START_Y, tabRect.right - 5, tabRect.bottom - 5));
 }

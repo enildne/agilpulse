@@ -1,6 +1,6 @@
 #pragma once
 #include "afxwin.h"
-
+#include "visa.h"
 
 // CDevList 대화 상자입니다.
 

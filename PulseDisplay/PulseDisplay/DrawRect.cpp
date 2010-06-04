@@ -61,6 +61,8 @@ void CDrawRect::OnPaint()
 	dc.FillRect(&drawRect, &CBrush(RGB(255,255,255)));
 	dc.MoveTo(0, 0);
 	dc.LineTo(drawRect.right, drawRect.bottom);
+	dc.MoveTo(drawRect.right, 0);
+	dc.LineTo(0, drawRect.bottom);
 }
 
 void CDrawRect::OnShowWindow(BOOL bShow, UINT nStatus)
