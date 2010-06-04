@@ -39,13 +39,6 @@ int CDrawRect::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CRect	drawRect;
 
-	//CDC*	pDC;
-
-	//pDC = GetParent()->GetDC();	
-	//GetClientRect(&drawRect);
-	//pDC->FillRect(&drawRect, &CBrush(RGB(255,255,255)));
-	//pDC->DeleteDC();
-
 	return 0;
 }
 

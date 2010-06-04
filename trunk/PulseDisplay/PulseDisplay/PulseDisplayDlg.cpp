@@ -158,7 +158,7 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn1()
 {
 	RTrace(_T("[zest] Tab1 Button1 Clicked\n"));
 
-	CFileDialog dlg(TRUE, CONFIG_EXT, NULL, OFN_EXPLORER | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, TEXT("cfg file(*.cfg)|*.cfg||"));
+	CFileDialog dlg(TRUE, CONFIG_EXT, NULL, OFN_EXPLORER | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, TEXT("set file(*.set)|*.set||"));
 	if(dlg.DoModal() == IDOK)
 	{
 		

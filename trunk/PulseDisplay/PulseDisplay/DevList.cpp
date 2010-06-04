@@ -51,7 +51,7 @@ BOOL CDevList::OnInitDialog()
 
 	ViSession rm, vi;
 	ViStatus status;
-	ViChar desc[256], id[256];
+	ViChar desc[256] = "", id[256] = "";
 	ViUInt32 retCnt, itemCnt;
 	ViFindList list;
 	ViUInt32 i;
@@ -76,7 +76,7 @@ BOOL CDevList::OnInitDialog()
 		//printf("id: %s: %s\n", desc, id);
 
 		m_lstDevice.AddString(id);
-
+		memset(id, NULL, sizeof(id));
 		// We¡¯re done with this device so close it
 		viClose(vi);
 		// Get the next item
@@ -107,7 +107,7 @@ GPIB:
 		//printf("id: %s: %s\n", desc, id);
 
 		m_lstDevice.AddString(id);
-
+		memset(id, NULL, sizeof(id));
 		// We¡¯re done with this device so close it
 		viClose(vi);
 		// Get the next item
@@ -139,7 +139,7 @@ ASRL:
 		//printf("id: %s: %s\n", desc, id);
 
 		m_lstDevice.AddString(id);
-
+		memset(id, NULL, sizeof(id));
 		// We¡¯re done with this device so close it
 		viClose(vi);
 		// Get the next item
