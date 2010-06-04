@@ -52,16 +52,6 @@ public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 private:
 	void SetTAB1Disp(void);
+public:
+	CStatic m_stDevName;
 };
-
-#define INTAB_BTN_START_X		10
-#define INTAB_BTN_START_Y		40
-
-#define BUTTON_WIDTH			80
-#define BUTTON_HEIGHT			30
-#define BUTTON_GAP				10
-
-#define MAIN_DLG_WIDTH			800
-#define MAIN_DLG_HEIGHT			600
-
-#define CONFIG_EXT				TEXT(".cfg")
