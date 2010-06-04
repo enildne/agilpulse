@@ -30,6 +30,7 @@ void CPulseDisplayDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TAB1_BTN3, m_btnTab1_3);
 	DDX_Control(pDX, IDC_TAB1_BTN4, m_btnTab1_4);
 	//DDX_Control(pDX, IDC_TAB1_DRAW, m_stDraw1);
+	DDX_Control(pDX, IDC_DEVICE_NAME, m_stDevName);
 }
 
 BEGIN_MESSAGE_MAP(CPulseDisplayDlg, CDialog)
@@ -118,6 +119,7 @@ void CPulseDisplayDlg::OnTcnSelchangeTabMain(NMHDR *pNMHDR, LRESULT *pResult)
 		m_btnTab1_2.ShowWindow(SW_SHOW);
 		m_btnTab1_3.ShowWindow(SW_SHOW);
 		m_btnTab1_4.ShowWindow(SW_SHOW);
+		m_stDevName.ShowWindow(SW_SHOW);
 		m_stDraw.ShowWindow(SW_SHOW);
 		break;
 	
@@ -126,6 +128,7 @@ void CPulseDisplayDlg::OnTcnSelchangeTabMain(NMHDR *pNMHDR, LRESULT *pResult)
 		m_btnTab1_2.ShowWindow(SW_HIDE);
 		m_btnTab1_3.ShowWindow(SW_HIDE);
 		m_btnTab1_4.ShowWindow(SW_HIDE);
+		m_stDevName.ShowWindow(SW_HIDE);
 		m_stDraw.ShowWindow(SW_HIDE);
 		break;
 	case 2:
@@ -133,6 +136,7 @@ void CPulseDisplayDlg::OnTcnSelchangeTabMain(NMHDR *pNMHDR, LRESULT *pResult)
 		m_btnTab1_2.ShowWindow(SW_HIDE);
 		m_btnTab1_3.ShowWindow(SW_HIDE);
 		m_btnTab1_4.ShowWindow(SW_HIDE);
+		m_stDevName.ShowWindow(SW_HIDE);
 		m_stDraw.ShowWindow(SW_HIDE);
 		break;
 	case 3:
@@ -140,6 +144,7 @@ void CPulseDisplayDlg::OnTcnSelchangeTabMain(NMHDR *pNMHDR, LRESULT *pResult)
 		m_btnTab1_2.ShowWindow(SW_HIDE);
 		m_btnTab1_3.ShowWindow(SW_HIDE);
 		m_btnTab1_4.ShowWindow(SW_HIDE);
+		m_stDevName.ShowWindow(SW_HIDE);
 		m_stDraw.ShowWindow(SW_HIDE);
 		break;
 
@@ -152,14 +157,27 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn1()
 	RTrace(_T("[zest] Tab1 Button1 Clicked\n"));
 
 	CFileDialog dlg(TRUE, CONFIG_EXT, NULL, OFN_EXPLORER | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, TEXT("cfg file(*.cfg)|*.cfg||"));
-	dlg.DoModal();
+	if(dlg.DoModal() == IDOK)
+	{
+
+	}
+	else
+	{
+		AfxMessageBox(NOTSELECT_CFG);
+	}
 }
 
 void CPulseDisplayDlg::OnBnClickedTab1Btn2()
 {
 	RTrace(_T("[zest] Tab1 Button2 Clicked\n"));
-	CDevList	devList;
-	devList.DoModal();
+	CString		modelName;
+	CDevList	devList(this);
+	if(devList.DoModal() == IDOK)
+	{
+		modelName = devList.GetDevice();
+		RTrace(_T("[zest] %s"), modelName);
+		m_stDevName.SetWindowText(modelName);
+	}
 }
 
 void CPulseDisplayDlg::OnBnClickedTab1Btn3()
@@ -205,6 +223,7 @@ void CPulseDisplayDlg::SetTAB1Disp(void)
 	m_ctlTabMain.MoveWindow(0, 0, winRect.right, winRect.bottom - 100);
 	m_ctlTabMain.GetClientRect(&tabRect);
 
+
 	if(m_btnTab1_1) {
 		m_btnTab1_1.SetWindowText(_T(TAB1_BTN1_NAME));
 		m_btnTab1_1.MoveWindow(&CRect(INTAB_BTN_START_X, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 0, BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 0 + BUTTON_HEIGHT), TRUE);
@@ -220,6 +239,11 @@ void CPulseDisplayDlg::SetTAB1Disp(void)
 	if(m_btnTab1_4)	{
 		m_btnTab1_4.SetWindowText(_T(TAB1_BTN4_NAME));
 		m_btnTab1_4.MoveWindow(&CRect(INTAB_BTN_START_X, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 3, BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 3 + BUTTON_HEIGHT), TRUE);
+	}
+	if(m_stDevName)	{
+		m_stDevName.SetWindowText(_T(TAB1_ST_DEVICE_NAME));
+		m_stDevName.ModifyStyle(NULL, SS_CENTERIMAGE, NULL);
+		m_stDevName.MoveWindow(&CRect(INTAB_BTN_START_X, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 4, BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 4 + BUTTON_HEIGHT), TRUE);
 	}
 
 	if(m_stDraw)

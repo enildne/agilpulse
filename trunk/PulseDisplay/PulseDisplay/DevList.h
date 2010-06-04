@@ -21,7 +21,10 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	CListBox m_lstDevice;
-//	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	virtual BOOL OnInitDialog();
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnLbnDblclkDevList();
+
+	CString	selDevice;
+	CString	GetDevice(void)	{return selDevice;}
 };

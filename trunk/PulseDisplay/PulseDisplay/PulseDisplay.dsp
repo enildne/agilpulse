@@ -67,8 +67,8 @@ LINK32=link.exe
 # PROP Output_Dir "Release"
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /MTd /W3 /GX /Zi /D "WIN32" /D "_WINDOWS" /D "NDEBUG" /D "_UNICODE" /Yu"stdafx.h" /c
-# ADD CPP /nologo /MTd /W3 /GX /Zi /D "WIN32" /D "_WINDOWS" /D "NDEBUG" /D "_UNICODE" /Yu"stdafx.h" /c
+# ADD BASE CPP /nologo /MTd /W3 /GX /Zi /D "WIN32" /D "_WINDOWS" /D "NDEBUG" /D "_MBCS" /Yu"stdafx.h" /c
+# ADD CPP /nologo /MTd /W3 /GX /Zi /D "WIN32" /D "_WINDOWS" /D "NDEBUG" /D "_MBCS" /Yu"stdafx.h" /c
 # ADD BASE MTL /nologo /D "NDEBUG" /win32
 # ADD MTL /nologo /D "NDEBUG" /win32
 # ADD BASE RSC /l 0x412 /i "$(IntDir)" /d "NDEBUG"
@@ -77,8 +77,8 @@ BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
 LINK32=link.exe
-# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib visa32.lib /nologo /subsystem:windows /debug /machine:IX86 /pdbtype:sept /opt:ref /opt:icf
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib visa32.lib /nologo /subsystem:windows /debug /machine:IX86 /pdbtype:sept /opt:ref /opt:icf
+# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib visa32.lib /nologo /subsystem:windows /debug /machine:IX86 /out:"..\bin\$(ProjectName).exe" /pdbtype:sept /opt:ref /opt:icf
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib visa32.lib /nologo /subsystem:windows /debug /machine:IX86 /out:"..\bin\$(ProjectName).exe" /pdbtype:sept /opt:ref /opt:icf
 
 !ENDIF 
 
@@ -89,6 +89,16 @@ LINK32=link.exe
 # Begin Group "소스 "
 
 # PROP Default_Filter "cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
+# Begin Source File
+
+SOURCE=.\DevList.cpp
+DEP_CPP_DEVLI=\
+	".\DevList.h"\
+	".\PulseDisplay.h"\
+	".\stdafx.h"\
+	".\StringRc.h"\
+	
+# End Source File
 # Begin Source File
 
 SOURCE=.\DrawRect.cpp
@@ -102,6 +112,7 @@ DEP_CPP_DRAWR=\
 
 SOURCE=.\PulseDisplay.cpp
 DEP_CPP_PULSE=\
+	".\DevList.h"\
 	".\DrawRect.h"\
 	".\PulseDisplay.h"\
 	".\PulseDisplayDlg.h"\
@@ -115,6 +126,7 @@ DEP_CPP_PULSE=\
 
 SOURCE=.\PulseDisplayDlg.cpp
 DEP_CPP_PULSED=\
+	".\DevList.h"\
 	".\DrawRect.h"\
 	".\PulseDisplay.h"\
 	".\PulseDisplayDlg.h"\
@@ -147,6 +159,10 @@ DEP_CPP_STDAF=\
 # Begin Group "헤더 "
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl;inc;xsd"
+# Begin Source File
+
+SOURCE=.\DevList.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\DrawRect.h
