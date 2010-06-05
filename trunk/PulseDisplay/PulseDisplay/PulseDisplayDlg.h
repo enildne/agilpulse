@@ -44,15 +44,28 @@ public:
 	CString		m_modelName;
 
 	ViSession	defaultRM, vi ;
-	char m_cBuf[256];
+	char		m_cBuf[256];
+	CStatic		m_stDevName;
+	double*		ReadWaveform(ViSession vi, long* elements);
+	ViChar		devDesc[256];
+
+	void SetDeviceDesc(ViChar* selDev)
+	{
+		memset(devDesc, NULL, sizeof(devDesc));
+		memcpy((void*)devDesc, (void*)selDev, strlen(selDev));
+	}
 
 	afx_msg void OnBnClickedTab1Btn1();
 	afx_msg void OnBnClickedTab1Btn2();
 	afx_msg void OnBnClickedTab1Btn3();
 	afx_msg void OnBnClickedTab1Btn4();
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnTimer(UINT nIDEvent);
+
+
 private:
 	void SetTAB1Disp(void);
-public:
-	CStatic m_stDevName;
+
 };
+
+#define TID_TIME	1

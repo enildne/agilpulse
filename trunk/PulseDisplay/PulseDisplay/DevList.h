@@ -27,4 +27,6 @@ public:
 
 	CString	selDevice;
 	CString	GetDevice(void)	{return selDevice;}
+	ViChar	m_arrayDesc[256][256];				// 256개까지 연결지원
+	int		descCount;
 };

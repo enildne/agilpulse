@@ -96,7 +96,9 @@ SOURCE=.\DevList.cpp
 DEP_CPP_DEVLI=\
 	".\DefineAndSize.h"\
 	".\DevList.h"\
+	".\DrawRect.h"\
 	".\PulseDisplay.h"\
+	".\PulseDisplayDlg.h"\
 	".\stdafx.h"\
 	{$(INCLUDE)}"visa.h"\
 	{$(INCLUDE)}"visatype.h"\
@@ -144,7 +146,6 @@ DEP_CPP_PULSED=\
 SOURCE=.\stdafx.cpp
 DEP_CPP_STDAF=\
 	".\stdafx.h"\
-	{$(INCLUDE)}"strsafe.h"\
 	
 
 !IF  "$(CFG)" == "PulseDisplay - Win32 Debug"
