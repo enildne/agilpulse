@@ -19,6 +19,8 @@ CPulseDisplayDlg::CPulseDisplayDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CPulseDisplayDlg::IDD, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+
+	memset(devDesc, NULL, sizeof(devDesc));
 }
 
 void CPulseDisplayDlg::DoDataExchange(CDataExchange* pDX)
@@ -43,6 +45,7 @@ BEGIN_MESSAGE_MAP(CPulseDisplayDlg, CDialog)
 	ON_BN_CLICKED(IDC_TAB1_BTN3, OnBnClickedTab1Btn3)
 	ON_BN_CLICKED(IDC_TAB1_BTN4, OnBnClickedTab1Btn4)
 	ON_WM_CREATE()
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 
@@ -57,13 +60,21 @@ BOOL CPulseDisplayDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// 큰 아이콘을 설정합니다.
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
-	// TODO: 여기에 추가 초기화 작업을 추가합니다.
+	// 로그인 화면 구성 필요.
+	// CLoginDialog	loginDlg;
+	//loginDlg.DoModal();...
+	//
+
 	this->SetWindowPos(&CWnd::wndNoTopMost, 0, 0, MAIN_DLG_WIDTH, MAIN_DLG_HEIGHT, SWP_NOMOVE);
+	this->SetWindowText(MAIN_WINDOW_NAME);
+
+	SetTimer(TID_TIME, 1000, NULL);
 
 	m_ctlTabMain.InsertItem(0, _T(TAB1_DSP_NAME));
 	m_ctlTabMain.InsertItem(1, _T(TAB2_DSP_NAME));
 	m_ctlTabMain.InsertItem(2, _T(TAB3_DSP_NAME));
 	m_ctlTabMain.InsertItem(3, _T(TAB4_DSP_NAME));
+	m_ctlTabMain.SetItemSize(CSize(MAIN_DLG_WIDTH / 4 - 5));
 
 	m_modelName.Empty();				// 모델이름 초기화
 
@@ -156,26 +167,11 @@ void CPulseDisplayDlg::OnTcnSelchangeTabMain(NMHDR *pNMHDR, LRESULT *pResult)
 
 void CPulseDisplayDlg::OnBnClickedTab1Btn1()
 {
-	RTrace(_T("[zest] Tab1 Button1 Clicked\n"));
-
-	CFileDialog dlg(TRUE, CONFIG_EXT, NULL, OFN_EXPLORER | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, TEXT("set file(*.set)|*.set||"));
-	if(dlg.DoModal() == IDOK)
-	{
-		
-	}
-	else
-	{
-		AfxMessageBox(NOTSELECT_CFG);
-	}
-}
-
-void CPulseDisplayDlg::OnBnClickedTab1Btn2()
-{
 	CDevList	devList(this);
 	if(devList.DoModal() == IDOK)
 	{
 		m_modelName = devList.GetDevice();
-		m_stDevName.SetWindowText(m_modelName);
+		m_stDevName.SetWindowText(CString(_T("Device : ")) + m_modelName);
 	}
 	else
 	{
@@ -183,9 +179,56 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn2()
 	}
 }
 
+void CPulseDisplayDlg::OnBnClickedTab1Btn2()
+{
+	CFileDialog dlg(TRUE, CONFIG_EXT, NULL, OFN_EXPLORER | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, TEXT("set file(*.set)|*.set||"));
+	if(dlg.DoModal() == IDOK)
+	{
+
+	}
+	else
+	{
+		AfxMessageBox(NOTSELECT_CFG);
+	}
+}
+
 void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 {
-	RTrace(_T("[zest] Tab1 Button3 Clicked\n"));
+	ViStatus status;
+	ViChar buffer[256];
+	double* wfm = NULL;
+	long elements, i;
+
+	// Open a default Session
+	status = viOpenDefaultRM(&defaultRM);
+	if (status < VI_SUCCESS) goto error;
+
+	status = viOpen(defaultRM, ((CPulseDisplayDlg*)GetParentOwner())->devDesc, VI_NULL, VI_NULL, &vi);
+	if (status < VI_SUCCESS) goto error;
+
+	// Read waveform and write it to stdout
+	wfm = ReadWaveform(vi, &elements);
+	if (wfm != NULL) {
+		for (i = 0; i < elements; i++) {
+			printf("%f\n", wfm[i]);
+		}
+	}
+
+	// Clean up
+	if (wfm != NULL) free(wfm);
+	viClose(vi); // Not needed, but makes things a bit more understandable
+	viClose(defaultRM);
+
+	return;
+
+error:
+	// Report error and clean up
+	viStatusDesc(vi, status, buffer);
+	fprintf(stderr, "failure: %s\n", buffer);
+	if (defaultRM != VI_NULL) viClose(defaultRM);
+	if (wfm != NULL) free(wfm);
+
+	return;
 }
 
 void CPulseDisplayDlg::OnBnClickedTab1Btn4()
@@ -238,4 +281,118 @@ void CPulseDisplayDlg::SetTAB1Disp(void)
 		m_stDevName.ModifyStyle(NULL, SS_CENTERIMAGE, NULL);
 		m_stDevName.MoveWindow(&CRect(INTAB_BTN_START_X + BUTTON_WIDTH, tabRect.bottom - DEVNAME_HEIGHT, tabRect.right - 5, tabRect.bottom), TRUE);
 	}
+}
+
+void CPulseDisplayDlg::OnTimer(UINT nIDEvent)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	if(nIDEvent == TID_TIME)
+	{
+		CString CurrentTimeText, devName;
+		CTime CurTime;
+
+		CurTime = CTime::GetCurrentTime(); // 현재 시스템 시각을 구한다.
+		CurrentTimeText.Format( " - %04d-%02d-%02d / %02d:%02d:%02d"
+			, CurTime.GetYear()
+			, CurTime.GetMonth()
+			, CurTime.GetDay()
+			, CurTime.GetHour()
+			, CurTime.GetMinute()
+			, CurTime.GetSecond()
+			);
+			
+		m_stDevName.GetWindowText(devName);
+		m_stDevName.SetWindowText(devName.Left(devName.GetLength() - CurrentTimeText.GetLength()) + CurrentTimeText);
+	}
+
+	CDialog::OnTimer(nIDEvent);
+}
+
+double* CPulseDisplayDlg::ReadWaveform(ViSession vi, long* elements)
+{
+	ViStatus status;
+	float yoffset, ymult;
+	ViChar buffer[256];
+	ViChar c;
+	long count, i;
+	double* ptr = NULL;
+	unsigned char szBuff[256] = { 0,};
+
+	ASSERT(elements != NULL);
+
+	status = viSetAttribute(vi,VI_ATTR_WR_BUF_OPER_MODE, VI_FLUSH_ON_ACCESS);
+	status = viSetAttribute(vi,VI_ATTR_RD_BUF_OPER_MODE, VI_FLUSH_ON_ACCESS);
+
+	// Turn headers off, this makes parsing easier
+	status = viPrintf(vi, "header off\n");
+	if (status < VI_SUCCESS) goto error;
+
+	// Get record length value
+	status = viQueryf(vi, "hor:reco?\n", "%ld", elements);
+	if (status < VI_SUCCESS) goto error;
+
+	// Make sure start, stop values for curve query match the full record length
+	status = viPrintf(vi, "data:start 1;data:stop %d\n", *elements);
+	if (status < VI_SUCCESS) goto error;
+
+	// Get the yoffset to help calculate the vertical values.
+
+	status = viQueryf(vi, "WFMOutpre:YOFF?\n", "%f", &yoffset);
+	if (status < VI_SUCCESS) goto error;
+
+	// Get the ymult to help calculate the vertical values.
+	status = viQueryf(vi, "WFMOutpre:YMULT?\n", "%f", &ymult);
+	if (status < VI_SUCCESS) goto error;
+
+	// Request 8bit binary data on the curve query
+	status = viPrintf(vi, "DATA:ENCDG RIBINARY;WIDTH 1\n");
+	if (status < VI_SUCCESS) goto error;
+
+	// Request the curve
+	status = viPrintf(vi, "CURVE?\n");
+	if (status < VI_SUCCESS) goto error;
+
+	// Always flush if a viScanf follows a viPrintf or viBufWrite.
+	status = viFlush(vi, VI_WRITE_BUF | VI_READ_BUF_DISCARD);
+	if (status < VI_SUCCESS) goto error;
+
+	// Get first char and validate
+	status = viSetAttribute(vi,VI_ATTR_RD_BUF_OPER_MODE, VI_FLUSH_DISABLE);
+	status = viScanf(vi, "%c", &c);
+	if (status < VI_SUCCESS) goto error;
+	ASSERT(c == '#');
+
+	// Get width of element field.
+	status = viScanf(vi, "%c", &c);
+	if (status < VI_SUCCESS) goto error;
+	ASSERT(c >= '0' && c <= '9');
+
+	// Read element characters
+	count = c - '0';
+	for (i = 0; i < count; i++) {
+		status = viScanf(vi, "%c", &c);
+		if (status < VI_SUCCESS) goto error;
+		ASSERT(c >= '0' && c <= '9');
+	}
+
+	// Read waveform into allocated storage
+	ptr = (double*) malloc(*elements*sizeof(double));
+
+	for (i = 0; i < *elements; i++) {
+		status = viScanf(vi, "%c", &c);
+		if (status < VI_SUCCESS) goto error;
+		ptr[i] = (((double) c) - yoffset) * ymult;
+	}
+
+	status = viFlush(vi, VI_WRITE_BUF | VI_READ_BUF_DISCARD);
+	if (status < VI_SUCCESS) goto error;
+
+	return ptr;
+
+error:
+	// Report error and clean up
+	viStatusDesc(vi, status, buffer);
+	fprintf(stderr, "failure: %s\n", buffer);
+	if (ptr != NULL) free(ptr);
+	return NULL;
 }
