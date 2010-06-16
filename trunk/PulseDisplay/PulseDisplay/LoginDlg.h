@@ -34,4 +34,6 @@ public:
 	CButton m_btnLogin;
 	CButton m_rdUser;
 	CButton m_rdAdmin;
+protected:
+	virtual void OnCancel();
 };
