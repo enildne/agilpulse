@@ -87,14 +87,40 @@ void CLoginDlg::OnBnClickedRadioAdmin()
 void CLoginDlg::OnBnClickedLoginBtn()
 {
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
+
+	CString	inputName, inputPwd, inputData;
+	m_edtLoginName.GetWindowText(inputName);
+	m_edtLoginPwd.GetWindowText(inputPwd);
+	inputData.Format(_T("%s:%s"), inputName, inputPwd);
+
+	if(inputName.IsEmpty() || inputPwd.IsEmpty())
+	{
+		CDialog::OnCancel();
+		return;
+	}
+
 	if(m_rdAdmin.GetCheck() == TRUE)
 	{
 		RTrace(_T("[zest] Admin\n"));		// Admin Check 루틴
+		//CFile	AdminFile;
+		//CString	AdminBuf;
+		//AdminFile.Open(_T("admin"), CFile::modeRead);
+		//AdminFile.Close();
 	}
 	else if(m_rdUser.GetCheck() == TRUE)
 	{
 		RTrace(_T("[zest] User\n"));		// User Check 루틴
+		//CFile	UserFile;
+		//CString	UserBuf;
+		//UserFile.Open(_T("user"), CFile::modeRead);
+		//UserFile.Close();
 	}
 
 	CDialog::OnOK();
+}
+
+void CLoginDlg::OnCancel()
+{
+	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
+	GetParent()->DestroyWindow();
 }

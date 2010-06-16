@@ -40,20 +40,19 @@ RSC=rc.exe
 # PROP Use_Debug_Libraries 1
 # PROP Output_Dir "Debug"
 # PROP Intermediate_Dir "Debug"
-# PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /MTd /W3 /GX /ZI /Od /D "WIN32" /D "_WINDOWS" /D "_DEBUG" /D "_MBCS" /Yu"stdafx.h" /GZ /c
-# ADD CPP /nologo /MTd /W3 /GX /ZI /Od /D "WIN32" /D "_WINDOWS" /D "_DEBUG" /D "_MBCS" /Yu"stdafx.h" /GZ /c
-# ADD BASE MTL /nologo /D "_DEBUG" /win32
-# ADD MTL /nologo /D "_DEBUG" /win32
-# ADD BASE RSC /l 0x412 /i "$(IntDir)" /d "_DEBUG"
-# ADD RSC /l 0x412 /i "$(IntDir)" /d "_DEBUG"
+# ADD BASE CPP /nologo /MTd /ZI /W3 /Od /D "WIN32" /D "_WINDOWS" /D "_DEBUG" /D "_MBCS" /Gy /Yu"stdafx.h" /GZ /c /GX 
+# ADD CPP /nologo /MTd /ZI /W3 /Od /D "WIN32" /D "_WINDOWS" /D "_DEBUG" /D "_MBCS" /Gy /Yu"stdafx.h" /GZ /c /GX 
+# ADD BASE MTL /nologo /D"_DEBUG" /win32 
+# ADD MTL /nologo /D"_DEBUG" /win32 
+# ADD BASE RSC /l 1042 /d "_DEBUG" /i "$(IntDir)" 
+# ADD RSC /l 1042 /d "_DEBUG" /i "$(IntDir)" 
 BSC32=bscmake.exe
-# ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
+# ADD BASE BSC32 /nologo 
+# ADD BSC32 /nologo 
 LINK32=link.exe
-# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib visa32.lib /nologo /subsystem:windows /debug /machine:IX86 /out:"..\bin\$(ProjectName).exe" /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib visa32.lib /nologo /subsystem:windows /debug /machine:IX86 /out:"..\bin\PulseDisplay.exe" /pdbtype:sept
+# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib visa32.lib /nologo /out:"..\bin\PulseDisplay.exe" /incremental:yes /debug /pdbtype:sept /subsystem:windows /machine:ix86 
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib visa32.lib /nologo /out:"..\bin\PulseDisplay.exe" /incremental:yes /debug /pdbtype:sept /subsystem:windows /machine:ix86 
 
 !ELSEIF  "$(CFG)" == "PulseDisplay - Win32 Release"
 
@@ -66,22 +65,21 @@ LINK32=link.exe
 # PROP Use_Debug_Libraries 0
 # PROP Output_Dir "Release"
 # PROP Intermediate_Dir "Release"
-# PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /MTd /W3 /GX /Zi /D "WIN32" /D "_WINDOWS" /D "NDEBUG" /D "_MBCS" /Yu"stdafx.h" /c
-# ADD CPP /nologo /MTd /W3 /GX /Zi /D "WIN32" /D "_WINDOWS" /D "NDEBUG" /D "_MBCS" /Yu"stdafx.h" /c
-# ADD BASE MTL /nologo /D "NDEBUG" /win32
-# ADD MTL /nologo /D "NDEBUG" /win32
-# ADD BASE RSC /l 0x412 /i "$(IntDir)" /d "NDEBUG"
-# ADD RSC /l 0x412 /i "$(IntDir)" /d "NDEBUG"
+# ADD BASE CPP /nologo /MTd /Zi /W3 /D "WIN32" /D "_WINDOWS" /D "NDEBUG" /D "_MBCS" /Yu"stdafx.h" /c /GX 
+# ADD CPP /nologo /MTd /Zi /W3 /D "WIN32" /D "_WINDOWS" /D "NDEBUG" /D "_MBCS" /Yu"stdafx.h" /c /GX 
+# ADD BASE MTL /nologo /D"NDEBUG" /win32 
+# ADD MTL /nologo /D"NDEBUG" /win32 
+# ADD BASE RSC /l 1042 /d "NDEBUG" /i "$(IntDir)" 
+# ADD RSC /l 1042 /d "NDEBUG" /i "$(IntDir)" 
 BSC32=bscmake.exe
-# ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
+# ADD BASE BSC32 /nologo 
+# ADD BSC32 /nologo 
 LINK32=link.exe
-# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib visa32.lib /nologo /subsystem:windows /debug /machine:IX86 /out:"..\bin\$(ProjectName).exe" /pdbtype:sept /opt:ref /opt:icf
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib visa32.lib /nologo /subsystem:windows /debug /machine:IX86 /out:"..\bin\PulseDisplay.exe" /pdbtype:sept /opt:ref /opt:icf
+# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib visa32.lib /nologo /out:"..\bin\PulseDisplay.exe" /incremental:no /debug /pdbtype:sept /subsystem:windows /opt:ref /opt:icf /machine:ix86 
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib visa32.lib /nologo /out:"..\bin\PulseDisplay.exe" /incremental:no /debug /pdbtype:sept /subsystem:windows /opt:ref /opt:icf /machine:ix86 
 
-!ENDIF 
+!ENDIF
 
 # Begin Target
 
@@ -93,70 +91,34 @@ LINK32=link.exe
 # Begin Source File
 
 SOURCE=.\DevList.cpp
-DEP_CPP_DEVLI=\
-	".\DefineAndSize.h"\
-	".\DevList.h"\
-	".\DrawRect.h"\
-	".\PulseDisplay.h"\
-	".\PulseDisplayDlg.h"\
-	".\stdafx.h"\
-	{$(INCLUDE)}"visa.h"\
-	{$(INCLUDE)}"visatype.h"\
-	
 # End Source File
 # Begin Source File
 
 SOURCE=.\DrawRect.cpp
-DEP_CPP_DRAWR=\
-	".\DrawRect.h"\
-	".\PulseDisplay.h"\
-	".\stdafx.h"\
-	
+# End Source File
+# Begin Source File
+
+SOURCE=.\LoginDlg.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\PulseDisplay.cpp
-DEP_CPP_PULSE=\
-	".\DefineAndSize.h"\
-	".\DevList.h"\
-	".\DrawRect.h"\
-	".\PulseDisplay.h"\
-	".\PulseDisplayDlg.h"\
-	".\stdafx.h"\
-	{$(INCLUDE)}"visa.h"\
-	{$(INCLUDE)}"visatype.h"\
-	
 # End Source File
 # Begin Source File
 
 SOURCE=.\PulseDisplayDlg.cpp
-DEP_CPP_PULSED=\
-	".\DefineAndSize.h"\
-	".\DevList.h"\
-	".\DrawRect.h"\
-	".\PulseDisplay.h"\
-	".\PulseDisplayDlg.h"\
-	".\stdafx.h"\
-	{$(INCLUDE)}"visa.h"\
-	{$(INCLUDE)}"visatype.h"\
-	
 # End Source File
 # Begin Source File
 
 SOURCE=.\stdafx.cpp
-DEP_CPP_STDAF=\
-	".\stdafx.h"\
-	
 
 !IF  "$(CFG)" == "PulseDisplay - Win32 Debug"
 
-# ADD CPP /nologo /GX /Yc"stdafx.h" /GZ
-
+# ADD CPP /nologo /Yc"stdafx.h" /GZ /GX 
 !ELSEIF  "$(CFG)" == "PulseDisplay - Win32 Release"
 
-# ADD CPP /nologo /GX /Yc"stdafx.h"
-
-!ENDIF 
+# ADD CPP /nologo /Yc"stdafx.h" /GX 
+!ENDIF
 
 # End Source File
 # End Group
@@ -174,6 +136,10 @@ SOURCE=.\DevList.h
 # Begin Source File
 
 SOURCE=.\DrawRect.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\LoginDlg.h
 # End Source File
 # Begin Source File
 
@@ -218,3 +184,4 @@ SOURCE=.\ReadMe.txt
 # End Source File
 # End Target
 # End Project
+

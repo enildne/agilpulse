@@ -35,7 +35,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="visa32.lib"
-				OutputFile="..\bin\$(ProjectName).exe"
+				OutputFile="..\bin\PulseDisplay.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
@@ -88,7 +88,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="visa32.lib"
-				OutputFile="..\bin\$(ProjectName).exe"
+				OutputFile="..\bin\PulseDisplay.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
@@ -136,6 +136,9 @@
 				RelativePath=".\DrawRect.cpp">
 			</File>
 			<File
+				RelativePath=".\LoginDlg.cpp">
+			</File>
+			<File
 				RelativePath=".\PulseDisplay.cpp">
 			</File>
 			<File
@@ -169,6 +172,9 @@
 			</File>
 			<File
 				RelativePath=".\DrawRect.h">
+			</File>
+			<File
+				RelativePath=".\LoginDlg.h">
 			</File>
 			<File
 				RelativePath=".\PulseDisplay.h">

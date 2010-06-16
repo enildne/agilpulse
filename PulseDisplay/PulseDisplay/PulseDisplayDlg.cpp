@@ -64,9 +64,7 @@ BOOL CPulseDisplayDlg::OnInitDialog()
 	{
 		AfxMessageBox(INVALID_USER);
 	}
-
-
-	// 로그인 화면
+	// 로그인 화면 종료
 
 	this->SetWindowPos(&CWnd::wndNoTopMost, 0, 0, MAIN_DLG_WIDTH, MAIN_DLG_HEIGHT, SWP_NOMOVE);
 	this->SetWindowText(MAIN_WINDOW_NAME);
