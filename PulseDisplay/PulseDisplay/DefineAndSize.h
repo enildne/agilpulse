@@ -25,6 +25,7 @@
 /* 사용되는 스트링 */
 
 #define		MAIN_WINDOW_NAME	"PULSE DISPLAY"
+#define		LOGIN_DLG_NAME		"Login"
 
 #define		TAB1_DSP_NAME		"RT"
 #define		TAB2_DSP_NAME		"주파수"
@@ -41,3 +42,10 @@
 #define		NOTSELECT_CFG		"설정 파일이 선택되지 않았습니다."
 #define		NOTSELECT_DEVICE	"장비가 선택되지 않았습니다."
 #define		DEVICE_CON_ERROE	"장비 연결이 실패했습니다."
+
+#define		LOGIN_STRING_NAME	"이름"
+#define		LOGIN_STRING_PWD	"비밀번호"
+#define		LOGIN_BTN			"로그인"
+#define		INVALID_USER		"로그인 후 사용이 가능합니다."
+#define		LOGIN_RD_USER		"사용자"
+#define		LOGIN_RD_ADMIN		"관리자"

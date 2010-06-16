@@ -180,6 +180,6 @@ void CDevList::OnLbnDblclkDevList()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	m_lstDevice.GetText(m_lstDevice.GetCurSel(), selDevice);
-	((CPulseDisplayDlg*)GetParentOwner())->SetDeviceDesc(m_arrayDesc[m_lstDevice.GetCurSel()]);
+	((CPulseDisplayDlg*)GetParent())->SetDeviceDesc(m_arrayDesc[m_lstDevice.GetCurSel()]);
 	OnOK();
 }

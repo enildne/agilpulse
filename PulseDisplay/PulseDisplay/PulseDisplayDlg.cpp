@@ -19,8 +19,6 @@ CPulseDisplayDlg::CPulseDisplayDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CPulseDisplayDlg::IDD, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-
-	memset(devDesc, NULL, sizeof(devDesc));
 }
 
 void CPulseDisplayDlg::DoDataExchange(CDataExchange* pDX)
@@ -61,9 +59,14 @@ BOOL CPulseDisplayDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
 	// 로그인 화면 구성 필요.
-	// CLoginDialog	loginDlg;
-	//loginDlg.DoModal();...
-	//
+	CLoginDlg	loginDlg;
+	while(loginDlg.DoModal() != IDOK)
+	{
+		AfxMessageBox(INVALID_USER);
+	}
+
+
+	// 로그인 화면
 
 	this->SetWindowPos(&CWnd::wndNoTopMost, 0, 0, MAIN_DLG_WIDTH, MAIN_DLG_HEIGHT, SWP_NOMOVE);
 	this->SetWindowText(MAIN_WINDOW_NAME);
@@ -171,7 +174,7 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn1()
 	if(devList.DoModal() == IDOK)
 	{
 		m_modelName = devList.GetDevice();
-		m_stDevName.SetWindowText(CString(_T("Device : ")) + m_modelName);
+		m_stDevName.SetWindowText(CString(_T(" Device : ")) + m_modelName);
 	}
 	else
 	{
@@ -197,25 +200,31 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 	ViStatus status;
 	ViChar buffer[256];
 	double* wfm = NULL;
-	long elements, i;
+	//long elements, i;
 
 	// Open a default Session
 	status = viOpenDefaultRM(&defaultRM);
 	if (status < VI_SUCCESS) goto error;
 
-	status = viOpen(defaultRM, ((CPulseDisplayDlg*)GetParentOwner())->devDesc, VI_NULL, VI_NULL, &vi);
+	status = viOpen(defaultRM, GetDeviceDesc(), VI_NULL, VI_NULL, &vi);
 	if (status < VI_SUCCESS) goto error;
 
-	// Read waveform and write it to stdout
-	wfm = ReadWaveform(vi, &elements);
-	if (wfm != NULL) {
-		for (i = 0; i < elements; i++) {
-			printf("%f\n", wfm[i]);
-		}
-	}
+	unsigned long actual;
+	char strres [2400];
 
-	// Clean up
-	if (wfm != NULL) free(wfm);
+	status = viWrite(vi, (ViBuf)"CURVe?", 6, &actual);
+	if (status < VI_SUCCESS) goto error;
+	/* Read results */
+
+	status = /*viRead*/viBufRead(vi, (ViBuf)strres, 6, &actual);
+	if (status < VI_SUCCESS) goto error;
+
+	/* NULL terminate the string */
+	strres[actual]=0;
+	/* Print results */
+	printf("Measurement Results: %s\n", strres);
+	/* Close session */
+
 	viClose(vi); // Not needed, but makes things a bit more understandable
 	viClose(defaultRM);
 
@@ -311,7 +320,7 @@ void CPulseDisplayDlg::OnTimer(UINT nIDEvent)
 double* CPulseDisplayDlg::ReadWaveform(ViSession vi, long* elements)
 {
 	ViStatus status;
-	float yoffset, ymult;
+	//float yoffset, ymult;
 	ViChar buffer[256];
 	ViChar c;
 	long count, i;
@@ -320,29 +329,29 @@ double* CPulseDisplayDlg::ReadWaveform(ViSession vi, long* elements)
 
 	ASSERT(elements != NULL);
 
-	status = viSetAttribute(vi,VI_ATTR_WR_BUF_OPER_MODE, VI_FLUSH_ON_ACCESS);
-	status = viSetAttribute(vi,VI_ATTR_RD_BUF_OPER_MODE, VI_FLUSH_ON_ACCESS);
+	//status = viSetAttribute(vi,VI_ATTR_WR_BUF_OPER_MODE, VI_FLUSH_ON_ACCESS);
+	//status = viSetAttribute(vi,VI_ATTR_RD_BUF_OPER_MODE, VI_FLUSH_ON_ACCESS);
 
 	// Turn headers off, this makes parsing easier
-	status = viPrintf(vi, "header off\n");
-	if (status < VI_SUCCESS) goto error;
+	//status = viPrintf(vi, "header off\n");
+	//if (status < VI_SUCCESS) goto error;
 
 	// Get record length value
-	status = viQueryf(vi, "hor:reco?\n", "%ld", elements);
-	if (status < VI_SUCCESS) goto error;
+	//status = viQueryf(vi, "hor:reco?\n", "%ld", elements);
+	//if (status < VI_SUCCESS) goto error;
 
-	// Make sure start, stop values for curve query match the full record length
-	status = viPrintf(vi, "data:start 1;data:stop %d\n", *elements);
-	if (status < VI_SUCCESS) goto error;
+	//// Make sure start, stop values for curve query match the full record length
+	//status = viPrintf(vi, "data:start 1;data:stop %d\n", *elements);
+	//if (status < VI_SUCCESS) goto error;
 
 	// Get the yoffset to help calculate the vertical values.
 
-	status = viQueryf(vi, "WFMOutpre:YOFF?\n", "%f", &yoffset);
-	if (status < VI_SUCCESS) goto error;
+	//status = viQueryf(vi, "WFMOutpre:YOFF?\n", "%f", &yoffset);
+	//if (status < VI_SUCCESS) goto error;
 
-	// Get the ymult to help calculate the vertical values.
-	status = viQueryf(vi, "WFMOutpre:YMULT?\n", "%f", &ymult);
-	if (status < VI_SUCCESS) goto error;
+	//// Get the ymult to help calculate the vertical values.
+	//status = viQueryf(vi, "WFMOutpre:YMULT?\n", "%f", &ymult);
+	//if (status < VI_SUCCESS) goto error;
 
 	// Request 8bit binary data on the curve query
 	status = viPrintf(vi, "DATA:ENCDG RIBINARY;WIDTH 1\n");
@@ -353,11 +362,11 @@ double* CPulseDisplayDlg::ReadWaveform(ViSession vi, long* elements)
 	if (status < VI_SUCCESS) goto error;
 
 	// Always flush if a viScanf follows a viPrintf or viBufWrite.
-	status = viFlush(vi, VI_WRITE_BUF | VI_READ_BUF_DISCARD);
-	if (status < VI_SUCCESS) goto error;
+	//status = viFlush(vi, VI_WRITE_BUF | VI_READ_BUF_DISCARD);
+	//if (status < VI_SUCCESS) goto error;
 
 	// Get first char and validate
-	status = viSetAttribute(vi,VI_ATTR_RD_BUF_OPER_MODE, VI_FLUSH_DISABLE);
+	//status = viSetAttribute(vi,VI_ATTR_RD_BUF_OPER_MODE, VI_FLUSH_DISABLE);
 	status = viScanf(vi, "%c", &c);
 	if (status < VI_SUCCESS) goto error;
 	ASSERT(c == '#');
@@ -376,16 +385,16 @@ double* CPulseDisplayDlg::ReadWaveform(ViSession vi, long* elements)
 	}
 
 	// Read waveform into allocated storage
-	ptr = (double*) malloc(*elements*sizeof(double));
+	//ptr = (double*) malloc(*elements*sizeof(double));
 
-	for (i = 0; i < *elements; i++) {
-		status = viScanf(vi, "%c", &c);
-		if (status < VI_SUCCESS) goto error;
-		ptr[i] = (((double) c) - yoffset) * ymult;
-	}
+	//for (i = 0; i < *elements; i++) {
+	//	status = viScanf(vi, "%c", &c);
+	//	if (status < VI_SUCCESS) goto error;
+	//	ptr[i] = (((double) c) - yoffset) * ymult;
+	//}
 
-	status = viFlush(vi, VI_WRITE_BUF | VI_READ_BUF_DISCARD);
-	if (status < VI_SUCCESS) goto error;
+	//status = viFlush(vi, VI_WRITE_BUF | VI_READ_BUF_DISCARD);
+	//if (status < VI_SUCCESS) goto error;
 
 	return ptr;
 
