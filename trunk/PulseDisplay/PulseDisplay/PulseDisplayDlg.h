@@ -9,6 +9,7 @@
 #include "DrawRect.h"
 #include "DefineAndSize.h"
 #include "DevList.h"
+#include "LoginDlg.h"
 
 // CPulseDisplayDlg 대화 상자
 class CPulseDisplayDlg : public CDialog
@@ -47,12 +48,14 @@ public:
 	char		m_cBuf[256];
 	CStatic		m_stDevName;
 	double*		ReadWaveform(ViSession vi, long* elements);
-	ViChar		devDesc[256];
-
-	void SetDeviceDesc(ViChar* selDev)
-	{
-		memset(devDesc, NULL, sizeof(devDesc));
-		memcpy((void*)devDesc, (void*)selDev, strlen(selDev));
+	
+	ViChar		m_devDesc[256];
+	void SetDeviceDesc(ViChar* selDev)	{
+		memset(m_devDesc, NULL, sizeof(m_devDesc));
+		memcpy((void*)m_devDesc, (void*)selDev, strlen(selDev));
+	}
+	ViChar* GetDeviceDesc(void) {
+		return m_devDesc;
 	}
 
 	afx_msg void OnBnClickedTab1Btn1();
