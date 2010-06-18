@@ -1,6 +1,6 @@
 #pragma once
 
-
+#include "DefineAndSize.h"
 // CDrawRect
 
 class CDrawRect : public CStatic

@@ -51,11 +51,60 @@ void CDrawRect::OnPaint()
 	CRect	drawRect;
 	GetClientRect(&drawRect);
 
-	dc.FillRect(&drawRect, &CBrush(RGB(255,255,255)));
-	dc.MoveTo(0, 0);
-	dc.LineTo(drawRect.right, drawRect.bottom);
-	dc.MoveTo(drawRect.right, 0);
-	dc.LineTo(0, drawRect.bottom);
+	//VALUE_COUNT
+	/*----------------- Reading Value -----------------*/
+	CStdioFile		dataFile;
+	CString			data[VALUE_COUNT + 1];
+	double			convData[VALUE_COUNT + 1][2];
+	CString			time, val;
+	char			*timeLine, *valueLine;
+	int				i = 0;
+
+	dataFile.Open(_T("SampleData.csv"), CFile::modeRead | CFile::typeText);
+
+	while(1)
+	{
+		if(!dataFile.ReadString(data[i]))
+		{
+			RTrace(_T("Read Finish. %d\n"), i);
+			dataFile.Close();
+			break;
+		}
+		else
+		{
+			time = data[i].Left(data[i].Find(','));
+			val = data[i].Mid(data[i].Find(',') + 1, data[i].GetLength() - data[i].Find(',') - 2);
+
+			timeLine = time.GetBuffer();
+			valueLine = val.GetBuffer();
+
+			convData[i][0] = atof(timeLine);
+			convData[i][1] = atof(valueLine);
+			//RTrace(_T("data = %s\n"), data[i]);
+			i++;
+		}
+	}
+	/*----------------- Reading Value -----------------*/
+
+	/*----------------- Check Min/Max -----------------*/
+	double MinVal = 0, MaxVal = 0;
+	for(i = 0; i < VALUE_COUNT; i++)
+	{
+		if(convData[i][1] != 0 && convData[i][1] < MinVal)
+		{
+			MinVal = convData[i][1];
+		}
+		if(convData[i][1] != 0 && convData[i][1] > MaxVal)
+		{
+			MaxVal = convData[i][1];
+		}
+	}
+	RTrace(_T("Min = %f, Max = %f"), MinVal, MaxVal);
+	/*----------------- Check Min/Max -----------------*/
+	/*----------------- Graph Draw -----------------*/
+
+
+	/*----------------- Graph Draw -----------------*/
 }
 
 void CDrawRect::OnShowWindow(BOOL bShow, UINT nStatus)
