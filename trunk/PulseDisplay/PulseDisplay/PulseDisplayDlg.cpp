@@ -59,12 +59,14 @@ BOOL CPulseDisplayDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
 	// 로그인 화면 구성 필요.
+#ifdef LOGIN
 	CLoginDlg	loginDlg;
 	while(loginDlg.DoModal() != IDOK)
 	{
 		AfxMessageBox(INVALID_USER);
 	}
 	// 로그인 화면 종료
+#endif
 
 	this->SetWindowPos(&CWnd::wndNoTopMost, 0, 0, MAIN_DLG_WIDTH, MAIN_DLG_HEIGHT, SWP_NOMOVE);
 	this->SetWindowText(MAIN_WINDOW_NAME);
