@@ -2,6 +2,7 @@
 /* 제어용 정의 */
 //#define USE_ASRL_DEVICE						// ASRL Device Listing 여부
 #define		USE_GPIB_DEVICE
+//#define		LOGIN_DLG							// Login Dlg 를 보일지 말지 결정(개발중에는 안보이도록)
 
 /* 창 및 버튼, 다이얼로그 사이즈 및 각각의 간격 */
 #define		MAIN_DLG_WIDTH				640				// MAIN WINDOW 크기
@@ -21,6 +22,11 @@
 #define		DEVICE_LIST_HEIGHT			300
 
 #define		VALUE_COUNT					2500			// 한번의 트랜잭션에 나오는 Data의 양
+
+#define		DRAW_TOP_PAD				5				// Grpah 화면의 상단 Padding
+#define		DRAW_BOTTOM_PAD				5
+#define		DRAW_LEFT_PAD				5
+#define		DRAW_RIGHT_PAD				5
 
 #define		CONFIG_EXT					TEXT(".set")
 
