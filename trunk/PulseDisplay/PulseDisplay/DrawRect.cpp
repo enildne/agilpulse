@@ -80,8 +80,8 @@ void CDrawRect::OnPaint()
 				time = data[i].Left(data[i].Find(','));
 				val = data[i].Mid(data[i].Find(',') + 1, data[i].GetLength() - data[i].Find(',') - 2);
 
-				timeLine = time.GetBuffer();
-				valueLine = val.GetBuffer();
+				timeLine = time.GetBuffer(time.GetLength());
+				valueLine = val.GetBuffer(val.GetLength());
 
 				m_dconvData[i][0] = atof(timeLine);
 				m_dconvData[i][1] = atof(valueLine);
@@ -127,6 +127,7 @@ void CDrawRect::OnPaint()
 	{
 		if(x_pos >= rectWidth) 
 		{
+			m_bLoading = TRUE;
 			break;
 		}
 		dc.LineTo(x_pos++, zeroHeight - (int)((double)rectHeight * (m_dconvData[i][1] / height)));
