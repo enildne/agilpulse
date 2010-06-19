@@ -10,7 +10,10 @@
 // CDrawRect
 
 IMPLEMENT_DYNAMIC(CDrawRect, CStatic)
-CDrawRect::CDrawRect()
+CDrawRect::CDrawRect() :
+m_bLoading(FALSE),
+m_dMinVal(0),
+m_dMaxVal(0)
 {
 }
 
@@ -55,78 +58,78 @@ void CDrawRect::OnPaint()
 	/*----------------- Reading Value -----------------*/
 	CStdioFile		dataFile;
 	CString			data[VALUE_COUNT + 1];
-	double			convData[VALUE_COUNT + 1][2];
 	CString			time, val;
 	char			*timeLine, *valueLine;
-	int				i = 0;
+	int				i = 0, rectHeight = 0, rectWidth = 0, zeroHeight = 0, interval = 0, x_pos = 0;
+	double			height = 0;
 
-	dataFile.Open(_T("SampleData.csv"), CFile::modeRead | CFile::typeText);
-
-	while(1)
+	if(m_bLoading == FALSE)				// 매번 Loading 하지 않도록..
 	{
-		if(!dataFile.ReadString(data[i]))
-		{
-			RTrace(_T("Read Finish. %d\n"), i);
-			dataFile.Close();
-			break;
-		}
-		else
-		{
-			time = data[i].Left(data[i].Find(','));
-			val = data[i].Mid(data[i].Find(',') + 1, data[i].GetLength() - data[i].Find(',') - 2);
+		dataFile.Open(_T("SampleData.csv"), CFile::modeRead | CFile::typeText);
 
-			timeLine = time.GetBuffer();
-			valueLine = val.GetBuffer();
-
-			convData[i][0] = atof(timeLine);
-			convData[i][1] = atof(valueLine);
-			//RTrace(_T("data = %s\n"), data[i]);
-			i++;
-		}
-	}
-	/*----------------- Reading Value -----------------*/
-
-	/*----------------- Check Min/Max -----------------*/
-	double MinVal = 0, MaxVal = 0;
-	for(i = 0; i < VALUE_COUNT; i++)
-	{
-		if(convData[i][1] != 0 && convData[i][1] < MinVal)
+		while(1)
 		{
-			MinVal = convData[i][1];
-		}
-		if(convData[i][1] != 0 && convData[i][1] > MaxVal)
-		{
-			MaxVal = convData[i][1];
-		}
-	}
-	
-	double height = MaxVal - MinVal; 
+			if(!dataFile.ReadString(data[i]))
+			{
+				RTrace(_T("Read Finish. %d\n"), i);
+				dataFile.Close();
+				break;
+			}
+			else
+			{
+				time = data[i].Left(data[i].Find(','));
+				val = data[i].Mid(data[i].Find(',') + 1, data[i].GetLength() - data[i].Find(',') - 2);
 
-	RTrace(_T("Min = %f, Max = %f, height = %f\n"), MinVal, MaxVal, height);
+				timeLine = time.GetBuffer();
+				valueLine = val.GetBuffer();
+
+				m_dconvData[i][0] = atof(timeLine);
+				m_dconvData[i][1] = atof(valueLine);
+				//RTrace(_T("data = %s\n"), data[i]);
+				i++;
+			}
+		}
+		/*----------------- Reading Value -----------------*/
+
+		/*----------------- Check Min/Max -----------------*/
+		for(i = 0; i < VALUE_COUNT; i++)
+		{
+			if(m_dconvData[i][1] != 0 && m_dconvData[i][1] < m_dMinVal)
+			{
+				m_dMinVal = m_dconvData[i][1];
+			}
+			if(m_dconvData[i][1] != 0 && m_dconvData[i][1] > m_dMaxVal)
+			{
+
+				m_dMaxVal = m_dconvData[i][1];
+			}
+		}
+	}	
+
+	height = m_dMaxVal - m_dMinVal; 
+
 	/*----------------- Check Min/Max -----------------*/
 	/*----------------- Graph Draw -----------------*/
-	int rectHeight = drawRect.Height() - (DRAW_TOP_PAD + DRAW_BOTTOM_PAD);
-	int rectWidth = drawRect.Width() - (DRAW_LEFT_PAD + DRAW_RIGHT_PAD);
+	rectHeight = drawRect.Height() - (DRAW_TOP_PAD + DRAW_BOTTOM_PAD);
+	rectWidth = drawRect.Width() - (DRAW_LEFT_PAD + DRAW_RIGHT_PAD);
 	
-	int zeroHeight;
+	dc.MoveTo(DRAW_LEFT_PAD, (int)((double)rectHeight * (m_dMaxVal / height) + DRAW_TOP_PAD));
+	dc.LineTo(rectWidth, (int)((double)rectHeight * (m_dMaxVal / height) + DRAW_TOP_PAD));
 	
-	RTrace(_T("rectHeight = %d, rectWidth = %d\n"), rectHeight, rectWidth);
+	zeroHeight = (int)((double)rectHeight * (m_dMaxVal / height) + DRAW_TOP_PAD);
 
-	dc.MoveTo(DRAW_LEFT_PAD, rectHeight * (MaxVal / height) + DRAW_TOP_PAD);
-	dc.LineTo(rectWidth, rectHeight * (MaxVal / height) + DRAW_TOP_PAD);
-	
-	zeroHeight = rectHeight * (MaxVal / height) + DRAW_TOP_PAD;
+	dc.MoveTo(DRAW_LEFT_PAD, zeroHeight - (int)((double)rectHeight * (m_dconvData[0][1] / height)));
 
-	dc.MoveTo(DRAW_LEFT_PAD, zeroHeight - (rectHeight * (convData[0][1] / height)));
-
-	int interval = VALUE_COUNT / rectWidth;
-	int j = DRAW_LEFT_PAD;
+	interval = VALUE_COUNT / rectWidth;
+	x_pos = DRAW_LEFT_PAD;
 
 	for(i = interval; i < VALUE_COUNT; i = i + interval)
 	{
-		if(j > rectWidth - DRAW_RIGHT_PAD)
+		if(x_pos >= rectWidth) 
+		{
 			break;
-		dc.LineTo(j++, zeroHeight - (rectHeight * (convData[i][1] / height)));
+		}
+		dc.LineTo(x_pos++, zeroHeight - (int)((double)rectHeight * (m_dconvData[i][1] / height)));
 	}
 
 	/*----------------- Graph Draw -----------------*/
