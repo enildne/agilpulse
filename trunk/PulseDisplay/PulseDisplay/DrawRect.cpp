@@ -99,10 +99,35 @@ void CDrawRect::OnPaint()
 			MaxVal = convData[i][1];
 		}
 	}
-	RTrace(_T("Min = %f, Max = %f"), MinVal, MaxVal);
+	
+	double height = MaxVal - MinVal; 
+
+	RTrace(_T("Min = %f, Max = %f, height = %f\n"), MinVal, MaxVal, height);
 	/*----------------- Check Min/Max -----------------*/
 	/*----------------- Graph Draw -----------------*/
+	int rectHeight = drawRect.Height() - (DRAW_TOP_PAD + DRAW_BOTTOM_PAD);
+	int rectWidth = drawRect.Width() - (DRAW_LEFT_PAD + DRAW_RIGHT_PAD);
+	
+	int zeroHeight;
+	
+	RTrace(_T("rectHeight = %d, rectWidth = %d\n"), rectHeight, rectWidth);
 
+	dc.MoveTo(DRAW_LEFT_PAD, rectHeight * (MaxVal / height) + DRAW_TOP_PAD);
+	dc.LineTo(rectWidth, rectHeight * (MaxVal / height) + DRAW_TOP_PAD);
+	
+	zeroHeight = rectHeight * (MaxVal / height) + DRAW_TOP_PAD;
+
+	dc.MoveTo(DRAW_LEFT_PAD, zeroHeight - (rectHeight * (convData[0][1] / height)));
+
+	int interval = VALUE_COUNT / rectWidth;
+	int j = DRAW_LEFT_PAD;
+
+	for(i = interval; i < VALUE_COUNT; i = i + interval)
+	{
+		if(j > rectWidth - DRAW_RIGHT_PAD)
+			break;
+		dc.LineTo(j++, zeroHeight - (rectHeight * (convData[i][1] / height)));
+	}
 
 	/*----------------- Graph Draw -----------------*/
 }

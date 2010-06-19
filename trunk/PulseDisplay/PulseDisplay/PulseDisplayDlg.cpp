@@ -59,7 +59,7 @@ BOOL CPulseDisplayDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
 	// 로그인 화면 구성 필요.
-#ifdef LOGIN
+#ifdef LOGIN_DLG
 	CLoginDlg	loginDlg;
 	while(loginDlg.DoModal() != IDOK)
 	{
