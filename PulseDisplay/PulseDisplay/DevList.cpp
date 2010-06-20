@@ -2,11 +2,8 @@
 //
 
 #include "stdafx.h"
-#include "PulseDisplay.h"
-#include "PulseDisplayDlg.h"
 #include "DevList.h"
 #include ".\devlist.h"
-#include "DefineAndSize.h"
 
 // CDevList 대화 상자입니다.
 
@@ -72,7 +69,7 @@ BOOL CDevList::OnInitDialog()
 		status = viOpen(rm, desc, VI_NULL, VI_NULL, &vi);
 		if (status < VI_SUCCESS) goto GPIB;
 		// Send an ID query.
-		status = viWrite(vi, (ViBuf) "*idn?", 5, &retCnt);
+		status = viWrite(vi, (ViBuf) "*IDN?", 5, &retCnt);
 		if (status < VI_SUCCESS) goto GPIB;
 		// Clear the buffer and read the response
 		status = viRead(vi, (ViBuf) id, sizeof(id), &retCnt);

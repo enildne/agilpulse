@@ -7,6 +7,7 @@
 #define IDD_DEVLIST                     103
 #define IDR_MAINFRAME                   128
 #define IDD_DLG_LOGIN                   134
+#define IDD_SETLIST                     135
 #define IDC_TAB_MAIN                    1000
 #define IDC_TAB1_BTN1                   1001
 #define IDC_TAB1_BTN2                   1002
@@ -23,14 +24,16 @@
 #define IDC_RADIO_USER                  1015
 #define IDC_RADIO_ADMIN                 1016
 #define ID_LOGIN_BTN                    1017
+#define IDC_SET_LIST                    1018
+
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        135
+#define _APS_NEXT_RESOURCE_VALUE        136
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1018
+#define _APS_NEXT_CONTROL_VALUE         1020
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

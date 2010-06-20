@@ -3,10 +3,11 @@
 //#define USE_ASRL_DEVICE						// ASRL Device Listing 여부
 #define		USE_GPIB_DEVICE
 //#define		LOGIN_DLG							// Login Dlg 를 보일지 말지 결정(개발중에는 안보이도록)
+//#define		SCREEN_MAX							// 화면 크기에 무조건 맞도록 수정.
 
 /* 창 및 버튼, 다이얼로그 사이즈 및 각각의 간격 */
-#define		MAIN_DLG_WIDTH				800				// MAIN WINDOW 크기
-#define		MAIN_DLG_HEIGHT				600
+#define		MAIN_DLG_WIDTH				640				// MAIN WINDOW 크기
+#define		MAIN_DLG_HEIGHT				480
 
 #define		INTAB_BTN_START_X			10				// 버튼 시작위치
 #define		INTAB_BTN_START_Y			40
@@ -20,6 +21,9 @@
 
 #define		DEVICE_LIST_WIDTH			400				// 장비 선택창 크기
 #define		DEVICE_LIST_HEIGHT			300
+
+#define		SETTING_LIST_WIDTH			400				// Setting 선택창 크기
+#define		SETTING_LIST_HEIGHT			300
 
 #define		VALUE_COUNT					2500			// 한번의 트랜잭션에 나오는 Data의 양
 
@@ -47,9 +51,15 @@
 #define		TAB1_ST_DEVICE_NAME			"No device"
 
 #define		STR_DEVICE_LIST				"장비 리스트"
+#define		STR_SETTING_LIST			"설정파일 리스트"
+
 #define		NOTSELECT_CFG				"설정 파일이 선택되지 않았습니다."
+#define		STR_NO_SETTING_FILE			"설정 파일이 없습니다."
+
 #define		NOTSELECT_DEVICE			"장비가 선택되지 않았습니다."
 #define		DEVICE_CON_ERROE			"장비 연결이 실패했습니다."
+#define		DEVICE_SET_SUCCESS			"장비 설정이 적용되었습니다."
+#define		DEVICE_SET_FAILED			"장비 설정이 실패했습니다."
 
 #define		LOGIN_STRING_NAME			"이름"
 #define		LOGIN_STRING_PWD			"비밀번호"
