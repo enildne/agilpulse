@@ -110,6 +110,10 @@ SOURCE=.\PulseDisplayDlg.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\SetList.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\stdafx.cpp
 
 !IF  "$(CFG)" == "PulseDisplay - Win32 Debug"
@@ -152,6 +156,10 @@ SOURCE=.\PulseDisplayDlg.h
 # Begin Source File
 
 SOURCE=.\Resource.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SetList.h
 # End Source File
 # Begin Source File
 

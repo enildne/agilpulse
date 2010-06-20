@@ -10,6 +10,7 @@
 #include "DefineAndSize.h"
 #include "DevList.h"
 #include "LoginDlg.h"
+#include "SetList.h"
 
 // CPulseDisplayDlg 대화 상자
 class CPulseDisplayDlg : public CDialog

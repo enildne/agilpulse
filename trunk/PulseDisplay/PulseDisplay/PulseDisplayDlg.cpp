@@ -68,7 +68,15 @@ BOOL CPulseDisplayDlg::OnInitDialog()
 	// 로그인 화면 종료
 #endif
 
+#ifdef SCREEN_MAX
+	int cx = GetSystemMetrics(SM_CXSCREEN);
+	int cy = GetSystemMetrics(SM_CYSCREEN);
+
+	this->SetWindowPos(&CWnd::wndNoTopMost, 0, 0, cx, cy, SWP_NOMOVE);
+#else
 	this->SetWindowPos(&CWnd::wndNoTopMost, 0, 0, MAIN_DLG_WIDTH, MAIN_DLG_HEIGHT, SWP_NOMOVE);
+#endif
+
 	this->SetWindowText(MAIN_WINDOW_NAME);
 
 	SetTimer(TID_TIME, 1000, NULL);
@@ -127,8 +135,7 @@ void CPulseDisplayDlg::OnTcnSelchangeTabMain(NMHDR *pNMHDR, LRESULT *pResult)
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	*pResult = 0;
 	
-	switch(m_ctlTabMain.GetCurSel())
-	{
+	switch(m_ctlTabMain.GetCurSel()) {
 	case 0:						// 최좌측 탭
 	default:
 		m_btnTab1_1.ShowWindow(SW_SHOW);
@@ -171,28 +178,58 @@ void CPulseDisplayDlg::OnTcnSelchangeTabMain(NMHDR *pNMHDR, LRESULT *pResult)
 void CPulseDisplayDlg::OnBnClickedTab1Btn1()
 {
 	CDevList	devList(this);
-	if(devList.DoModal() == IDOK)
-	{
+	if(devList.DoModal() == IDOK) {
 		m_modelName = devList.GetDevice();
 		m_stDevName.SetWindowText(CString(_T(" Device : ")) + m_modelName);
 	}
-	else
-	{
+	else {
 		AfxMessageBox(NOTSELECT_DEVICE);
 	}
 }
 
 void CPulseDisplayDlg::OnBnClickedTab1Btn2()
 {
-	CFileDialog dlg(TRUE, CONFIG_EXT, NULL, OFN_EXPLORER | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, TEXT("set file(*.set)|*.set||"));
-	if(dlg.DoModal() == IDOK)
-	{
-
+#ifndef _DEBUG					// 개발 시에는 Device 가 붙지 않아도 창이 뜰 수 있도록..
+	if(m_modelName.IsEmpty() == TRUE) {
+		AfxMessageBox(NOTSELECT_DEVICE);
+		return;
 	}
-	else
-	{
+#endif
+
+	CSetList	setList(this);
+	ViStatus	status;
+	CString		setCmdByFile;
+	unsigned long actual;
+
+	if(setList.DoModal() == IDOK) {
+		BeginWaitCursor();
+		setCmdByFile = setList.GetSettingString();
+
+		status = viOpenDefaultRM(&defaultRM);
+		if (status < VI_SUCCESS) goto error;
+		status = viOpen(defaultRM, GetDeviceDesc(), VI_NULL, VI_NULL, &vi);
+		if (status < VI_SUCCESS) goto error;
+		status = viWrite(vi, (ViBuf)setCmdByFile.GetBuffer(setCmdByFile.GetLength()), setCmdByFile.GetLength(), &actual);
+		if (status < VI_SUCCESS) goto error;
+		viClose(vi);
+		viClose(defaultRM);
+		Sleep(1000);
+		AfxMessageBox(DEVICE_SET_SUCCESS);
+		EndWaitCursor();
+	}
+	else {
 		AfxMessageBox(NOTSELECT_CFG);
 	}
+	return;
+
+error:
+	EndWaitCursor();
+	AfxMessageBox(DEVICE_SET_FAILED);
+	if (vi != VI_NULL)			viClose(vi);
+	if (defaultRM != VI_NULL)	viClose(defaultRM);
+
+	return;
+
 }
 
 void CPulseDisplayDlg::OnBnClickedTab1Btn3()
@@ -200,8 +237,11 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 	ViStatus status;
 	ViChar buffer[256];
 	double* wfm = NULL;
-	//long elements, i;
 
+	//long elements, i;
+	char CurveCmd[] = "CURVE?";
+
+	BeginWaitCursor();
 	// Open a default Session
 	status = viOpenDefaultRM(&defaultRM);
 	if (status < VI_SUCCESS) goto error;
@@ -210,17 +250,24 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 	if (status < VI_SUCCESS) goto error;
 
 	unsigned long actual;
-	char strres [2400];
+	char strres [3000];
+	memset(strres, NULL, sizeof(strres));
+	//char com[] = ":HEADER 0;:VERBOSE ON;:SELECT:CH1 ON; CH2 OFF;:CH1:COUPLING DC; BANDWIDTH OFF; PROBE 1; SCALE 100E-2; INVERT OFF; POSITION -3;:HORIZONTAL:VIEW MAIN;:HORIZONTAL:MAIN:SCALE 2.5E-3; POSITION 1.0E-2;:TRIGGER:MAIN:TYPE EDGE;:TRIGGER:MAIN:EDGE:SOURCE CH1; COUPLING DC; SLOPE RISE;:TRIGGER:MAIN:MODE AUTO; HOLDOFF:VALUE 5.0E-7;:TRIGGER:MAIN:LEVEL 2.0E0;:DATA:ENCDG RIBINARY; DESTINATION REFA; SOURCE CH1; START 1; STOP 2500; WIDTH 2";
+	//status = viWrite(vi, (ViBuf)com, strlen(com), &actual);
+	//if (status < VI_SUCCESS) goto error;
 
-	status = viWrite(vi, (ViBuf)"CURVe?", 6, &actual);
+	status = viClear(vi);
+	if (status < VI_SUCCESS) goto error;
+
+	status = viWrite(vi, (ViBuf)CurveCmd, (ViUInt32)strlen(CurveCmd), &actual);
 	if (status < VI_SUCCESS) goto error;
 	/* Read results */
 
-	status = /*viRead*/viBufRead(vi, (ViBuf)strres, 6, &actual);
+	status = viBufRead(vi, (ViBuf)strres, sizeof(strres), &actual);
 	if (status < VI_SUCCESS) goto error;
 
 	/* NULL terminate the string */
-	strres[actual]=0;
+	strres[actual] = '\0';
 	/* Print results */
 	printf("Measurement Results: %s\n", strres);
 	/* Close session */
@@ -232,10 +279,12 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 
 error:
 	// Report error and clean up
+	EndWaitCursor();
 	viStatusDesc(vi, status, buffer);
 	fprintf(stderr, "failure: %s\n", buffer);
-	if (defaultRM != VI_NULL) viClose(defaultRM);
-	if (wfm != NULL) free(wfm);
+	if (vi != VI_NULL)			viClose(vi);
+	if (defaultRM != VI_NULL)	viClose(defaultRM);
+	if (wfm != NULL)			free(wfm);
 
 	return;
 }

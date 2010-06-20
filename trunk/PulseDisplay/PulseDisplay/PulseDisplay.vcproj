@@ -145,6 +145,9 @@
 				RelativePath=".\PulseDisplayDlg.cpp">
 			</File>
 			<File
+				RelativePath=".\SetList.cpp">
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -184,6 +187,9 @@
 			</File>
 			<File
 				RelativePath=".\Resource.h">
+			</File>
+			<File
+				RelativePath=".\SetList.h">
 			</File>
 			<File
 				RelativePath=".\stdafx.h">

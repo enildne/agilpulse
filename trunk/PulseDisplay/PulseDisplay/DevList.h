@@ -1,7 +1,8 @@
 #pragma once
 #include "afxwin.h"
 #include "visa.h"
-
+#include "PulseDisplay.h"
+#include "PulseDisplayDlg.h"
 // CDevList 대화 상자입니다.
 
 class CDevList : public CDialog
