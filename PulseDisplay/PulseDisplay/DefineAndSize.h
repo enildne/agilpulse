@@ -6,14 +6,14 @@
 //#define		SCREEN_MAX							// 화면 크기에 무조건 맞도록 수정.
 
 /* 창 및 버튼, 다이얼로그 사이즈 및 각각의 간격 */
-#define		MAIN_DLG_WIDTH				640				// MAIN WINDOW 크기
-#define		MAIN_DLG_HEIGHT				480
+#define		MAIN_DLG_WIDTH				800				// MAIN WINDOW 크기
+#define		MAIN_DLG_HEIGHT				600
 
 #define		INTAB_BTN_START_X			10				// 버튼 시작위치
 #define		INTAB_BTN_START_Y			40
 
 #define		BUTTON_WIDTH				80				// 버튼 사이즈
-#define		BUTTON_HEIGHT				30
+#define		BUTTON_HEIGHT				60
 
 #define		BUTTON_GAP					10				// 버튼 간격
 
@@ -31,6 +31,9 @@
 #define		DRAW_BOTTOM_PAD				5
 #define		DRAW_LEFT_PAD				5
 #define		DRAW_RIGHT_PAD				5
+
+#define		VERTICAL_GRID_COUNT			10
+#define		HORIZONTAL_GRID_COUNT		10
 
 #define		CONFIG_EXT					TEXT(".set")
 

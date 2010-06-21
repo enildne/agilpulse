@@ -85,7 +85,11 @@ BOOL CPulseDisplayDlg::OnInitDialog()
 	m_ctlTabMain.InsertItem(1, _T(TAB2_DSP_NAME));
 	m_ctlTabMain.InsertItem(2, _T(TAB3_DSP_NAME));
 	m_ctlTabMain.InsertItem(3, _T(TAB4_DSP_NAME));
+#ifdef SCREEN_MAX
+	m_ctlTabMain.SetItemSize(CSize(cy / 4 - 5));
+#else
 	m_ctlTabMain.SetItemSize(CSize(MAIN_DLG_WIDTH / 4 - 5));
+#endif
 
 	m_modelName.Empty();				// 모델이름 초기화
 
@@ -310,7 +314,7 @@ void CPulseDisplayDlg::SetTAB1Disp(void)
 {
 	CRect	winRect, tabRect;
 	::GetClientRect(this->GetSafeHwnd(), &winRect);		
-	m_ctlTabMain.MoveWindow(0, 0, winRect.right, winRect.bottom - 100);
+	m_ctlTabMain.MoveWindow(0, 0, winRect.right, winRect.Height() / 8 * 7);
 	m_ctlTabMain.GetClientRect(&tabRect);
 
 

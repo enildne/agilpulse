@@ -53,9 +53,9 @@ void CDrawRect::OnPaint()
 
 	CRect	drawRect;
 	GetClientRect(&drawRect);
+	dc.Rectangle(&drawRect);
 
 	//VALUE_COUNT
-	/*----------------- Reading Value -----------------*/
 	CStdioFile		dataFile;
 	CString			data[VALUE_COUNT + 1];
 	CString			time, val;
@@ -63,8 +63,31 @@ void CDrawRect::OnPaint()
 	int				i = 0, rectHeight = 0, rectWidth = 0, zeroHeight = 0, interval = 0, x_pos = 0;
 	double			height = 0;
 
+	/*---------------- GRID DRAW ----------------------*/
+	CPen	*pOldPen, myPen;
+	int		gridLine = 0;
+
+	myPen.CreatePen(PS_DOT, 1, RGB(0, 0, 255));
+	pOldPen = (CPen*)dc.SelectObject(&myPen);
+
+	for(gridLine = 1; gridLine < VERTICAL_GRID_COUNT; gridLine++)
+	{
+		dc.MoveTo(DRAW_LEFT_PAD, drawRect.Height() / VERTICAL_GRID_COUNT * gridLine);
+		dc.LineTo( drawRect.Width() - DRAW_RIGHT_PAD, drawRect.Height() / VERTICAL_GRID_COUNT * gridLine);
+	}
+	for(gridLine = 1; gridLine < HORIZONTAL_GRID_COUNT; gridLine++)
+	{
+		dc.MoveTo(drawRect.Width() / HORIZONTAL_GRID_COUNT * gridLine, DRAW_LEFT_PAD);
+		dc.LineTo(drawRect.Width() / HORIZONTAL_GRID_COUNT * gridLine, drawRect.Height() - DRAW_BOTTOM_PAD);
+	}
+	dc.SelectObject(pOldPen);
+	myPen.DeleteObject();
+	/*---------------- GRID DRAW ----------------------*/
+
+	/*----------------- Reading Value -----------------*/
 	if(m_bLoading == FALSE)				// 매번 Loading 하지 않도록..
 	{
+#if 0				// SAMPLE DATA 사용할 경우
 		dataFile.Open(_T("SampleData.csv"), CFile::modeRead | CFile::typeText);
 
 		while(1)
@@ -104,7 +127,11 @@ void CDrawRect::OnPaint()
 				m_dMaxVal = m_dconvData[i][1];
 			}
 		}
+#endif
 	}	
+
+	if(m_dMaxVal == 0 && m_dMinVal == 0)			// Data Loading 이 되지 않았으면 return
+		return ;
 
 	height = m_dMaxVal - m_dMinVal; 
 
