@@ -32,11 +32,14 @@
 #define		DRAW_LEFT_PAD				5
 #define		DRAW_RIGHT_PAD				5
 
-#define		VERTICAL_GRID_COUNT			10
-#define		HORIZONTAL_GRID_COUNT		10
+#define		VERTICAL_GRID_COUNT			8
+#define		HORIZONTAL_GRID_COUNT		8
 
 #define		CONFIG_EXT					TEXT(".set")
 
+#define		MAX_GRAPH_VALUE				230.8
+#define		MIN_GRAPH_VALUE				27.6
+#define		VERTICAL_1_GRID_VALUE		25.4			// 180 - 53 / 5
 /* 사용되는 스트링 */
 
 #define		MAIN_WINDOW_NAME			"PULSE DISPLAY"

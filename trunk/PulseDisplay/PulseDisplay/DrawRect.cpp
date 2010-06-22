@@ -59,108 +59,100 @@ void CDrawRect::OnPaint()
 	CStdioFile		dataFile;
 	CString			data[VALUE_COUNT + 1];
 	CString			time, val;
-	char			*timeLine, *valueLine;
-	int				i = 0, rectHeight = 0, rectWidth = 0, zeroHeight = 0, interval = 0, x_pos = 0;
+	int				i = 0, rectHeight = 0, rectWidth = 0, zeroHeight = 0, interval = 0, x_pos = 0, y_pos = 0;
 	double			height = 0;
 
 	/*---------------- GRID DRAW ----------------------*/
-	CPen	*pOldPen, myPen;
+	CPen	*pOldPen, myDotPen, mySolidPen;
 	int		gridLine = 0;
 
-	myPen.CreatePen(PS_DOT, 1, RGB(0, 0, 255));
-	pOldPen = (CPen*)dc.SelectObject(&myPen);
+	mySolidPen.CreatePen(PS_SOLID, 1, RGB(0, 0, 255));
+	myDotPen.CreatePen(PS_DOT, 1, RGB(0, 0, 255));
+	pOldPen = (CPen*)dc.SelectObject(&myDotPen);
 
 	for(gridLine = 1; gridLine < VERTICAL_GRID_COUNT; gridLine++)
 	{
+		// 중앙 선긋는 부분
+		//if(gridLine * 2 == VERTICAL_GRID_COUNT)
+		//	dc.SelectObject(&mySolidPen);
+		//else
+		//	dc.SelectObject(&myDotPen);
+
 		dc.MoveTo(DRAW_LEFT_PAD, drawRect.Height() / VERTICAL_GRID_COUNT * gridLine);
 		dc.LineTo( drawRect.Width() - DRAW_RIGHT_PAD, drawRect.Height() / VERTICAL_GRID_COUNT * gridLine);
 	}
 	for(gridLine = 1; gridLine < HORIZONTAL_GRID_COUNT; gridLine++)
 	{
+		// 중앙 선긋는 부분
+		//if(gridLine * 2 == HORIZONTAL_GRID_COUNT)
+		//	dc.SelectObject(&mySolidPen);
+		//else
+		//	dc.SelectObject(&myDotPen);
+
 		dc.MoveTo(drawRect.Width() / HORIZONTAL_GRID_COUNT * gridLine, DRAW_LEFT_PAD);
 		dc.LineTo(drawRect.Width() / HORIZONTAL_GRID_COUNT * gridLine, drawRect.Height() - DRAW_BOTTOM_PAD);
 	}
 	dc.SelectObject(pOldPen);
-	myPen.DeleteObject();
-	/*---------------- GRID DRAW ----------------------*/
+	myDotPen.DeleteObject();
+	mySolidPen.DeleteObject();
+	/*---------------- GRID DRAW END ----------------------*/
 
-	/*----------------- Reading Value -----------------*/
-	if(m_bLoading == FALSE)				// 매번 Loading 하지 않도록..
-	{
-#if 0				// SAMPLE DATA 사용할 경우
-		dataFile.Open(_T("SampleData.csv"), CFile::modeRead | CFile::typeText);
-
-		while(1)
-		{
-			if(!dataFile.ReadString(data[i]))
-			{
-				RTrace(_T("Read Finish. %d\n"), i);
-				dataFile.Close();
-				break;
-			}
-			else
-			{
-				time = data[i].Left(data[i].Find(','));
-				val = data[i].Mid(data[i].Find(',') + 1, data[i].GetLength() - data[i].Find(',') - 2);
-
-				timeLine = time.GetBuffer(time.GetLength());
-				valueLine = val.GetBuffer(val.GetLength());
-
-				m_dconvData[i][0] = atof(timeLine);
-				m_dconvData[i][1] = atof(valueLine);
-				//RTrace(_T("data = %s\n"), data[i]);
-				i++;
-			}
-		}
-		/*----------------- Reading Value -----------------*/
-
-		/*----------------- Check Min/Max -----------------*/
-		for(i = 0; i < VALUE_COUNT; i++)
-		{
-			if(m_dconvData[i][1] != 0 && m_dconvData[i][1] < m_dMinVal)
-			{
-				m_dMinVal = m_dconvData[i][1];
-			}
-			if(m_dconvData[i][1] != 0 && m_dconvData[i][1] > m_dMaxVal)
-			{
-
-				m_dMaxVal = m_dconvData[i][1];
-			}
-		}
-#endif
-	}	
-
-	if(m_dMaxVal == 0 && m_dMinVal == 0)			// Data Loading 이 되지 않았으면 return
+	if(m_bLoading == FALSE)
 		return ;
 
 	height = m_dMaxVal - m_dMinVal; 
 
 	/*----------------- Check Min/Max -----------------*/
+
 	/*----------------- Graph Draw -----------------*/
+	CPen	graphPen;
+	graphPen.CreatePen(PS_SOLID, 2, RGB(0, 0, 0));
+	pOldPen = dc.SelectObject(&graphPen);
+
 	rectHeight = drawRect.Height() - (DRAW_TOP_PAD + DRAW_BOTTOM_PAD);
 	rectWidth = drawRect.Width() - (DRAW_LEFT_PAD + DRAW_RIGHT_PAD);
 	
-	dc.MoveTo(DRAW_LEFT_PAD, (int)((double)rectHeight * (m_dMaxVal / height) + DRAW_TOP_PAD));
-	dc.LineTo(rectWidth, (int)((double)rectHeight * (m_dMaxVal / height) + DRAW_TOP_PAD));
+	// 0 선을 그리는 루틴. 현재는 필요 없음.
+	//dc.MoveTo(DRAW_LEFT_PAD, (int)((double)rectHeight * (m_dMaxVal / height) + DRAW_TOP_PAD));
+	//dc.LineTo(rectWidth, (int)((double)rectHeight * (m_dMaxVal / height) + DRAW_TOP_PAD));
 	
 	zeroHeight = (int)((double)rectHeight * (m_dMaxVal / height) + DRAW_TOP_PAD);
 
-	dc.MoveTo(DRAW_LEFT_PAD, zeroHeight - (int)((double)rectHeight * (m_dconvData[0][1] / height)));
+	dc.MoveTo(DRAW_LEFT_PAD, zeroHeight - (int)((double)rectHeight * (m_dconvData[0] / height)));
 
 	interval = VALUE_COUNT / rectWidth;
 	x_pos = DRAW_LEFT_PAD;
 
+	BOOL illegalRect = FALSE;
+
 	for(i = interval; i < VALUE_COUNT; i = i + interval)
 	{
-		if(x_pos >= rectWidth) 
-		{
-			m_bLoading = TRUE;
+		if(x_pos > rectWidth + DRAW_LEFT_PAD) 
 			break;
+		
+		y_pos = zeroHeight - (int)((double)rectHeight * (m_dconvData[i] / height));
+		
+		if(y_pos < drawRect.top + DRAW_TOP_PAD) {
+			if(illegalRect == FALSE)
+				dc.LineTo(x_pos, drawRect.top + DRAW_TOP_PAD);
+			dc.MoveTo(x_pos++, y_pos);
+			illegalRect = TRUE;
 		}
-		dc.LineTo(x_pos++, zeroHeight - (int)((double)rectHeight * (m_dconvData[i][1] / height)));
+		else if(y_pos > drawRect.bottom - DRAW_BOTTOM_PAD) {
+			if(illegalRect == FALSE)
+				dc.LineTo(x_pos, drawRect.bottom - DRAW_BOTTOM_PAD);
+			dc.MoveTo(x_pos++, y_pos);
+			illegalRect = TRUE;
+		}
+		else{
+			illegalRect = FALSE;
+			dc.LineTo(x_pos++, y_pos);
+		}
 	}
 
-	/*----------------- Graph Draw -----------------*/
+	dc.SelectObject(pOldPen);
+	graphPen.DeleteObject();
+	/*----------------- Graph Draw END -----------------*/
 }
 
 void CDrawRect::OnShowWindow(BOOL bShow, UINT nStatus)
@@ -168,4 +160,15 @@ void CDrawRect::OnShowWindow(BOOL bShow, UINT nStatus)
 	CStatic::OnShowWindow(bShow, nStatus);
 
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
+}
+
+void CDrawRect::setPulseData(unsigned char* data)
+{
+	setGraphDraw(TRUE);
+	m_dMaxVal = MAX_GRAPH_VALUE;
+	m_dMinVal = MIN_GRAPH_VALUE;
+	for(int i = 0; i < VALUE_COUNT; i++)
+	{
+		m_dconvData[i] = data[i];
+	}
 }

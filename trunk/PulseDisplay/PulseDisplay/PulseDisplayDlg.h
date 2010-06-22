@@ -44,11 +44,11 @@ public:
 	CButton		m_btnTab1_4;
 	CDrawRect	m_stDraw;
 	CString		m_modelName;
+	CString		m_setCmdByFile;
 
 	ViSession	defaultRM, vi ;
 	char		m_cBuf[256];
 	CStatic		m_stDevName;
-	double*		ReadWaveform(ViSession vi, long* elements);
 	
 	ViChar		m_devDesc[256];
 	void SetDeviceDesc(ViChar* selDev)	{

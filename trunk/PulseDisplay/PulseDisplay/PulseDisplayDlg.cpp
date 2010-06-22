@@ -202,18 +202,17 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn2()
 
 	CSetList	setList(this);
 	ViStatus	status;
-	CString		setCmdByFile;
 	unsigned long actual;
 
 	if(setList.DoModal() == IDOK) {
 		BeginWaitCursor();
-		setCmdByFile = setList.GetSettingString();
+		m_setCmdByFile = setList.GetSettingString();
 
 		status = viOpenDefaultRM(&defaultRM);
 		if (status < VI_SUCCESS) goto error;
 		status = viOpen(defaultRM, GetDeviceDesc(), VI_NULL, VI_NULL, &vi);
 		if (status < VI_SUCCESS) goto error;
-		status = viWrite(vi, (ViBuf)setCmdByFile.GetBuffer(setCmdByFile.GetLength()), setCmdByFile.GetLength(), &actual);
+		status = viWrite(vi, (ViBuf)m_setCmdByFile.GetBuffer(m_setCmdByFile.GetLength()), m_setCmdByFile.GetLength(), &actual);
 		if (status < VI_SUCCESS) goto error;
 		viClose(vi);
 		viClose(defaultRM);
@@ -238,12 +237,24 @@ error:
 
 void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 {
+#ifndef _DEBUG					// 개발 시에는 Device 가 붙지 않아도 창이 뜰 수 있도록..
+	if(m_modelName.IsEmpty() == TRUE) {
+		AfxMessageBox(NOTSELECT_DEVICE);
+		return;
+	}
+#endif
+
 	ViStatus status;
 	ViChar buffer[256];
 	double* wfm = NULL;
-
-	//long elements, i;
 	char CurveCmd[] = "CURVE?";
+	unsigned long actual;
+	unsigned char strres [VALUE_COUNT + 6];
+	memset(strres, NULL, sizeof(strres));
+
+	m_stDraw.setGraphDraw(FALSE);
+	m_stDraw.Invalidate();
+	m_stDraw.UpdateWindow();
 
 	BeginWaitCursor();
 	// Open a default Session
@@ -252,40 +263,37 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 
 	status = viOpen(defaultRM, GetDeviceDesc(), VI_NULL, VI_NULL, &vi);
 	if (status < VI_SUCCESS) goto error;
-
-	unsigned long actual;
-	char strres [3000];
-	memset(strres, NULL, sizeof(strres));
-	//char com[] = ":HEADER 0;:VERBOSE ON;:SELECT:CH1 ON; CH2 OFF;:CH1:COUPLING DC; BANDWIDTH OFF; PROBE 1; SCALE 100E-2; INVERT OFF; POSITION -3;:HORIZONTAL:VIEW MAIN;:HORIZONTAL:MAIN:SCALE 2.5E-3; POSITION 1.0E-2;:TRIGGER:MAIN:TYPE EDGE;:TRIGGER:MAIN:EDGE:SOURCE CH1; COUPLING DC; SLOPE RISE;:TRIGGER:MAIN:MODE AUTO; HOLDOFF:VALUE 5.0E-7;:TRIGGER:MAIN:LEVEL 2.0E0;:DATA:ENCDG RIBINARY; DESTINATION REFA; SOURCE CH1; START 1; STOP 2500; WIDTH 2";
-	//status = viWrite(vi, (ViBuf)com, strlen(com), &actual);
-	//if (status < VI_SUCCESS) goto error;
-
+	
 	status = viClear(vi);
 	if (status < VI_SUCCESS) goto error;
 
+	//status = viWrite(vi, (ViBuf)m_setCmdByFile.GetBuffer(m_setCmdByFile.GetLength()), m_setCmdByFile.GetLength(), &actual);
+	//if (status < VI_SUCCESS) goto error;
+
+	//Sleep(1000);
+
 	status = viWrite(vi, (ViBuf)CurveCmd, (ViUInt32)strlen(CurveCmd), &actual);
 	if (status < VI_SUCCESS) goto error;
-	/* Read results */
 
 	status = viBufRead(vi, (ViBuf)strres, sizeof(strres), &actual);
 	if (status < VI_SUCCESS) goto error;
 
-	/* NULL terminate the string */
-	strres[actual] = '\0';
-	/* Print results */
-	printf("Measurement Results: %s\n", strres);
-	/* Close session */
-
-	viClose(vi); // Not needed, but makes things a bit more understandable
+	viClose(vi);
 	viClose(defaultRM);
 
+	m_stDraw.setPulseData(&strres[6]);			// #42500 를 제외한 시작점 
+	m_stDraw.Invalidate();
+	m_stDraw.UpdateWindow();
+
+	EndWaitCursor();
 	return;
 
 error:
 	// Report error and clean up
 	EndWaitCursor();
 	viStatusDesc(vi, status, buffer);
-	fprintf(stderr, "failure: %s\n", buffer);
+	//fprintf(stderr, "failure: %s\n", buffer);
+	RTrace(_T("failure: %s\n"), buffer);
 	if (vi != VI_NULL)			viClose(vi);
 	if (defaultRM != VI_NULL)	viClose(defaultRM);
 	if (wfm != NULL)			free(wfm);
@@ -368,93 +376,4 @@ void CPulseDisplayDlg::OnTimer(UINT nIDEvent)
 	}
 
 	CDialog::OnTimer(nIDEvent);
-}
-
-double* CPulseDisplayDlg::ReadWaveform(ViSession vi, long* elements)
-{
-	ViStatus status;
-	//float yoffset, ymult;
-	ViChar buffer[256];
-	ViChar c;
-	long count, i;
-	double* ptr = NULL;
-	unsigned char szBuff[256] = { 0,};
-
-	ASSERT(elements != NULL);
-
-	//status = viSetAttribute(vi,VI_ATTR_WR_BUF_OPER_MODE, VI_FLUSH_ON_ACCESS);
-	//status = viSetAttribute(vi,VI_ATTR_RD_BUF_OPER_MODE, VI_FLUSH_ON_ACCESS);
-
-	// Turn headers off, this makes parsing easier
-	//status = viPrintf(vi, "header off\n");
-	//if (status < VI_SUCCESS) goto error;
-
-	// Get record length value
-	//status = viQueryf(vi, "hor:reco?\n", "%ld", elements);
-	//if (status < VI_SUCCESS) goto error;
-
-	//// Make sure start, stop values for curve query match the full record length
-	//status = viPrintf(vi, "data:start 1;data:stop %d\n", *elements);
-	//if (status < VI_SUCCESS) goto error;
-
-	// Get the yoffset to help calculate the vertical values.
-
-	//status = viQueryf(vi, "WFMOutpre:YOFF?\n", "%f", &yoffset);
-	//if (status < VI_SUCCESS) goto error;
-
-	//// Get the ymult to help calculate the vertical values.
-	//status = viQueryf(vi, "WFMOutpre:YMULT?\n", "%f", &ymult);
-	//if (status < VI_SUCCESS) goto error;
-
-	// Request 8bit binary data on the curve query
-	status = viPrintf(vi, "DATA:ENCDG RIBINARY;WIDTH 1\n");
-	if (status < VI_SUCCESS) goto error;
-
-	// Request the curve
-	status = viPrintf(vi, "CURVE?\n");
-	if (status < VI_SUCCESS) goto error;
-
-	// Always flush if a viScanf follows a viPrintf or viBufWrite.
-	//status = viFlush(vi, VI_WRITE_BUF | VI_READ_BUF_DISCARD);
-	//if (status < VI_SUCCESS) goto error;
-
-	// Get first char and validate
-	//status = viSetAttribute(vi,VI_ATTR_RD_BUF_OPER_MODE, VI_FLUSH_DISABLE);
-	status = viScanf(vi, "%c", &c);
-	if (status < VI_SUCCESS) goto error;
-	ASSERT(c == '#');
-
-	// Get width of element field.
-	status = viScanf(vi, "%c", &c);
-	if (status < VI_SUCCESS) goto error;
-	ASSERT(c >= '0' && c <= '9');
-
-	// Read element characters
-	count = c - '0';
-	for (i = 0; i < count; i++) {
-		status = viScanf(vi, "%c", &c);
-		if (status < VI_SUCCESS) goto error;
-		ASSERT(c >= '0' && c <= '9');
-	}
-
-	// Read waveform into allocated storage
-	//ptr = (double*) malloc(*elements*sizeof(double));
-
-	//for (i = 0; i < *elements; i++) {
-	//	status = viScanf(vi, "%c", &c);
-	//	if (status < VI_SUCCESS) goto error;
-	//	ptr[i] = (((double) c) - yoffset) * ymult;
-	//}
-
-	//status = viFlush(vi, VI_WRITE_BUF | VI_READ_BUF_DISCARD);
-	//if (status < VI_SUCCESS) goto error;
-
-	return ptr;
-
-error:
-	// Report error and clean up
-	viStatusDesc(vi, status, buffer);
-	fprintf(stderr, "failure: %s\n", buffer);
-	if (ptr != NULL) free(ptr);
-	return NULL;
 }
