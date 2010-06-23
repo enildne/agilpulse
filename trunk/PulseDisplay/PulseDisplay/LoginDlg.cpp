@@ -135,7 +135,7 @@ void CLoginDlg::OnBnClickedLoginBtn()
 
 		if(accountFile.ReadString(fromFileData) != NULL)
 		{
-			if(strcmp(dataForRead, fromFileData.GetBuffer()) == 0)
+			if(strcmp(dataForRead, fromFileData.GetBuffer(fromFileData.GetLength())) == 0)
 			{
 				setUserName(inputName);
 				isValidUser = TRUE;
