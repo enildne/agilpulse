@@ -52,9 +52,10 @@ BOOL CDevList::OnInitDialog()
 	ViSession rm, vi;
 	ViStatus status;
 	ViChar desc[256] = "", id[256] = "";
-	ViUInt32 retCnt, itemCnt;
+	ViUInt32 itemCnt;
 	ViFindList list;
 	ViUInt32 i;
+
 	// Open a default Session
 	status = viOpenDefaultRM(&rm);
 	if (status < VI_SUCCESS) goto GPIB;
@@ -64,20 +65,15 @@ BOOL CDevList::OnInitDialog()
 	for (i = 0; i < itemCnt; i++) {
 		// desc 구문을 전역변수에 저장
 		memcpy((void*)m_arrayDesc[descCount++], (void*)desc, strlen(desc));
-
 		// Open resource found in rsrc list
 		status = viOpen(rm, desc, VI_NULL, VI_NULL, &vi);
 		if (status < VI_SUCCESS) goto GPIB;
-		// Send an ID query.
-		status = viWrite(vi, (ViBuf) "*IDN?", 5, &retCnt);
+		status = viPrintf (vi, "*RST\n");
 		if (status < VI_SUCCESS) goto GPIB;
-		// Clear the buffer and read the response
-		status = viRead(vi, (ViBuf) id, sizeof(id), &retCnt);
-		id[retCnt] = '\0';
+		status = viPrintf(vi, "*IDN?\n");
 		if (status < VI_SUCCESS) goto GPIB;
-		// Print the response
-		//printf("id: %s: %s\n", desc, id);
-
+		status = viScanf(vi, "%t", id);
+		if (status < VI_SUCCESS) goto GPIB;
 		m_lstDevice.AddString(id);
 		memset(id, NULL, sizeof(id));
 		// We’re done with this device so close it
@@ -87,6 +83,7 @@ BOOL CDevList::OnInitDialog()
 	}
 	// Clean up
 	viClose(rm);
+	Sleep(500);
 
 GPIB:
 #ifdef USE_GPIB_DEVICE
@@ -99,18 +96,19 @@ GPIB:
 		// desc 구문을 전역변수에 저장
 		memcpy((void*)m_arrayDesc[descCount++], (void*)desc, strlen(desc));
 
-		// Open resource found in rsrc 		
+		// Open resource found in rsrc list
 		status = viOpen(rm, desc, VI_NULL, VI_NULL, &vi);
+
 		if (status < VI_SUCCESS) goto ASRL;
-		// Send an ID query.
-		status = viWrite(vi, (ViBuf) "*idn?", 5, &retCnt);
+
+		status = viPrintf (vi, "*RST\n");
 		if (status < VI_SUCCESS) goto ASRL;
-		// Clear the buffer and read the response
-		status = viRead(vi, (ViBuf) id, sizeof(id), &retCnt);
-		id[retCnt] = '\0';
+
+		status = viPrintf(vi, "*IDN?\n");
 		if (status < VI_SUCCESS) goto ASRL;
-		// Print the response
-		//printf("id: %s: %s\n", desc, id);
+
+		status = viScanf(vi, "%t", id);
+		if (status < VI_SUCCESS) goto ASRL;
 
 		m_lstDevice.AddString(id);
 		memset(id, NULL, sizeof(id));
@@ -121,9 +119,10 @@ GPIB:
 	}
 	// Clean up
 	viClose(rm);
-#endif
+	Sleep(500);
 
 ASRL:
+#endif
 #ifdef USE_ASRL_DEVICE
 	status = viOpenDefaultRM(&rm);
 	if (status < VI_SUCCESS) goto error;
@@ -131,18 +130,22 @@ ASRL:
 	status = viFindRsrc(rm, "ASRL?*INSTR", &list, &itemCnt, desc);
 	if (status < VI_SUCCESS) goto error;
 	for (i = 0; i < itemCnt; i++) {
+		// desc 구문을 전역변수에 저장
+		memcpy((void*)m_arrayDesc[descCount++], (void*)desc, strlen(desc));
+
 		// Open resource found in rsrc list
 		status = viOpen(rm, desc, VI_NULL, VI_NULL, &vi);
+
 		if (status < VI_SUCCESS) goto error;
-		// Send an ID query.
-		status = viWrite(vi, (ViBuf) "*idn?", 5, &retCnt);
+
+		status = viPrintf (vi, "*RST\n");
 		if (status < VI_SUCCESS) goto error;
-		// Clear the buffer and read the response
-		status = viRead(vi, (ViBuf) id, sizeof(id), &retCnt);
-		id[retCnt] = '\0';
+
+		status = viPrintf(vi, "*IDN?\n");
 		if (status < VI_SUCCESS) goto error;
-		// Print the response
-		//printf("id: %s: %s\n", desc, id);
+
+		status = viScanf(vi, "%t", id);
+		if (status < VI_SUCCESS) goto error;
 
 		m_lstDevice.AddString(id);
 		memset(id, NULL, sizeof(id));

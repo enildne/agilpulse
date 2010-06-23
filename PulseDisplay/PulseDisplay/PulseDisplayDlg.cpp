@@ -186,7 +186,8 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn1()
 	CDevList	devList(this);
 	if(devList.DoModal() == IDOK) {
 		m_modelName = devList.GetDevice();
-		m_stDevName.SetWindowText(CString(_T(" Device : ")) + m_modelName);
+		m_stDevName.SetWindowText(CString(_T(" Device : ")) + m_modelName + CString(_T("                        ")));
+		// µÞºÎºÐ Padding 24Ä­Àº ½Ã°£ Ç¥½Ã¸¦ À§ÇÑ ºóÄ­ÀÓ
 	}
 	else {
 		AfxMessageBox(NOTSELECT_DEVICE);
@@ -215,10 +216,11 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn2()
 		status = viOpen(defaultRM, GetDeviceDesc(), VI_NULL, VI_NULL, &vi);
 		if (status < VI_SUCCESS) goto error;
 		status = viWrite(vi, (ViBuf)m_setCmdByFile.GetBuffer(m_setCmdByFile.GetLength()), m_setCmdByFile.GetLength(), &actual);
+		//status = viPrintf(vi, m_setCmdByFile.GetBuffer());
 		if (status < VI_SUCCESS) goto error;
 		viClose(vi);
 		viClose(defaultRM);
-		Sleep(1000);
+		Sleep(1500);
 		AfxMessageBox(DEVICE_SET_SUCCESS);
 		EndWaitCursor();
 	}
@@ -250,8 +252,7 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 	ViChar buffer[256];
 	double* wfm = NULL;
 	char CurveCmd[] = "CURVE?";
-	unsigned long actual;
-	unsigned char strres [VALUE_COUNT + 6];
+	unsigned char strres [VALUE_COUNT + 10];
 	memset(strres, NULL, sizeof(strres));
 
 	m_stDraw.setGraphDraw(FALSE);
@@ -271,13 +272,13 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 
 	//status = viWrite(vi, (ViBuf)m_setCmdByFile.GetBuffer(m_setCmdByFile.GetLength()), m_setCmdByFile.GetLength(), &actual);
 	//if (status < VI_SUCCESS) goto error;
-
 	//Sleep(1000);
 
-	status = viWrite(vi, (ViBuf)CurveCmd, (ViUInt32)strlen(CurveCmd), &actual);
+	//status = viWrite(vi, (ViBuf)CurveCmd, (ViUInt32)strlen(CurveCmd), &actual);
+	status = viPrintf(vi, CurveCmd);
 	if (status < VI_SUCCESS) goto error;
 
-	status = viBufRead(vi, (ViBuf)strres, sizeof(strres), &actual);
+	status = viScanf(vi, "%t", strres);
 	if (status < VI_SUCCESS) goto error;
 
 	viClose(vi);
