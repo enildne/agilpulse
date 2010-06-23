@@ -20,12 +20,16 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
 
 	DECLARE_MESSAGE_MAP()
+	virtual void OnCancel();
+	CString	m_UserName;
+
 public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	virtual BOOL OnInitDialog();
 	afx_msg void OnBnClickedRadioUser();
 	afx_msg void OnBnClickedRadioAdmin();
 	afx_msg void OnBnClickedLoginBtn();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 	CStatic m_stLoginName;
 	CStatic m_stLoginPwd;
@@ -34,6 +38,10 @@ public:
 	CButton m_btnLogin;
 	CButton m_rdUser;
 	CButton m_rdAdmin;
-protected:
-	virtual void OnCancel();
+
+	void setUserName(CString& name) {m_UserName = name;}
+	CString	getUserName(void) {return m_UserName;}
 };
+
+#define USER_ACCOUNT	"user"
+#define ADMIN_ACCOUNT	"admin"

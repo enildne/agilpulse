@@ -2,7 +2,7 @@
 /* 제어용 정의 */
 //#define USE_ASRL_DEVICE						// ASRL Device Listing 여부
 #define		USE_GPIB_DEVICE
-//#define		LOGIN_DLG							// Login Dlg 를 보일지 말지 결정(개발중에는 안보이도록)
+#define		LOGIN_DLG							// Login Dlg 를 보일지 말지 결정(개발중에는 안보이도록)
 //#define		SCREEN_MAX							// 화면 크기에 무조건 맞도록 수정.
 
 /* 창 및 버튼, 다이얼로그 사이즈 및 각각의 간격 */
@@ -40,6 +40,10 @@
 #define		MAX_GRAPH_VALUE				230.8
 #define		MIN_GRAPH_VALUE				27.6
 #define		VERTICAL_1_GRID_VALUE		25.4			// 180 - 53 / 5
+
+#define		LOGIN_FILE_NAME				"ACCOUNT"
+
+
 /* 사용되는 스트링 */
 
 #define		MAIN_WINDOW_NAME			"PULSE DISPLAY"
@@ -73,3 +77,4 @@
 #define		INVALID_USER				"로그인 후 사용이 가능합니다."
 #define		LOGIN_RD_USER				"사용자"
 #define		LOGIN_RD_ADMIN				"관리자"
+#define		NO_USER_ACCOUNT				"해당 유저정보가 없습니다."

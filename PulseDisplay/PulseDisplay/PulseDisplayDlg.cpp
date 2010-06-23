@@ -65,6 +65,8 @@ BOOL CPulseDisplayDlg::OnInitDialog()
 	{
 		AfxMessageBox(INVALID_USER);
 	}
+	m_UserName = loginDlg.getUserName();
+
 	// 로그인 화면 종료
 #endif
 
