@@ -103,8 +103,6 @@ void CLoginDlg::OnBnClickedLoginBtn()
 		return;
 	}
 
-	accountFile.Open(LOGIN_FILE_NAME, CFile::modeRead);
-
 	if(m_rdAdmin.GetCheck() == TRUE)
 	{
 		inputData.Format(_T("%s:%s:%s"), inputName, inputPwd, ADMIN_ACCOUNT);
@@ -122,6 +120,14 @@ void CLoginDlg::OnBnClickedLoginBtn()
 	for(int i = 0; i < len; i++)
 		dataForRead[i] = ~dataForRead[i];
 	dataForRead[i] = 0x0d;
+
+	accountFile.Open(LOGIN_FILE_NAME, CFile::modeRead);
+
+	if(accountFile.m_pStream == NULL)
+	{
+		AfxMessageBox(NO_USER_ACCOUNT_FILE);
+		return;
+	}
 
 	while(1)
 	{

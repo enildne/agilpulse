@@ -78,3 +78,4 @@
 #define		LOGIN_RD_USER				"사용자"
 #define		LOGIN_RD_ADMIN				"관리자"
 #define		NO_USER_ACCOUNT				"해당 유저정보가 없습니다."
+#define		NO_USER_ACCOUNT_FILE		"유저정보 파일이 없습니다."
