@@ -88,10 +88,14 @@ void CLoginDlg::OnBnClickedLoginBtn()
 {
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
 
-	CString	inputName, inputPwd, inputData;
+	CString		inputName, inputPwd, inputData;
+	CStdioFile	accountFile;
+	BOOL		isValidUser = FALSE;
+	char		dataForRead[1024] = "";
+	int			len = 0;
+
 	m_edtLoginName.GetWindowText(inputName);
 	m_edtLoginPwd.GetWindowText(inputPwd);
-	inputData.Format(_T("%s:%s"), inputName, inputPwd);
 
 	if(inputName.IsEmpty() || inputPwd.IsEmpty())
 	{
@@ -99,21 +103,55 @@ void CLoginDlg::OnBnClickedLoginBtn()
 		return;
 	}
 
+	accountFile.Open(LOGIN_FILE_NAME, CFile::modeRead);
+
 	if(m_rdAdmin.GetCheck() == TRUE)
 	{
-		RTrace(_T("[zest] Admin\n"));		// Admin Check 루틴
-		//CFile	AdminFile;
-		//CString	AdminBuf;
-		//AdminFile.Open(_T("admin"), CFile::modeRead);
-		//AdminFile.Close();
+		inputData.Format(_T("%s:%s:%s"), inputName, inputPwd, ADMIN_ACCOUNT);
+		RTrace(_T("[zest] Admin, data = %s\n"), inputData);		// Admin Check 루틴
 	}
 	else if(m_rdUser.GetCheck() == TRUE)
 	{
-		RTrace(_T("[zest] User\n"));		// User Check 루틴
-		//CFile	UserFile;
-		//CString	UserBuf;
-		//UserFile.Open(_T("user"), CFile::modeRead);
-		//UserFile.Close();
+		inputData.Format(_T("%s:%s:%s"), inputName, inputPwd, USER_ACCOUNT);
+		RTrace(_T("[zest] User, data = %s\n"), inputData);		// User Check 루틴
+	}
+	
+	memcpy(dataForRead, (unsigned char*)(LPCTSTR)inputData, inputData.GetLength());
+	len = inputData.GetLength();
+
+	for(int i = 0; i < len; i++)
+		dataForRead[i] = ~dataForRead[i];
+	dataForRead[i] = 0x0d;
+
+	while(1)
+	{
+		CString		fromFileData;
+
+		if(accountFile.ReadString(fromFileData) != NULL)
+		{
+			if(strcmp(dataForRead, fromFileData.GetBuffer()) == 0)
+			{
+				setUserName(inputName);
+				isValidUser = TRUE;
+				RTrace("[zest] Match! %s\n", inputData);
+				break;
+			}
+			else
+			{
+				RTrace("[zest] UnMatch! %s\n", inputData);
+			}
+		}
+		else
+			break;
+	}
+	accountFile.Close();
+
+	if(isValidUser == FALSE)
+	{
+		AfxMessageBox(NO_USER_ACCOUNT);
+		m_edtLoginName.SetWindowText("");
+		m_edtLoginPwd.SetWindowText("");
+		return;
 	}
 
 	CDialog::OnOK();
@@ -124,3 +162,49 @@ void CLoginDlg::OnCancel()
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
 	GetParent()->DestroyWindow();
 }
+
+
+BOOL CLoginDlg::PreTranslateMessage(MSG* pMsg)
+{
+	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
+
+	if(pMsg->message == WM_KEYDOWN)
+	{
+		if(pMsg->wParam == 'A' && GetKeyState(VK_CONTROL) < 0)
+		{
+			RTrace(_T("[zest] 필요할 경우 User 입력 루틴 추가!\n"));		// User Check 루틴
+
+			CString			accountLevel, inputName, inputPwd, inputData;
+			CStdioFile		accountFile;
+			unsigned char	dataForWrite[1024] = "";
+			int				i = 0, len = 0;
+
+			if(m_rdUser.GetCheck() == TRUE)
+				accountLevel.Format(_T("%s"), USER_ACCOUNT);
+			else
+				accountLevel.Format(_T("%s"), ADMIN_ACCOUNT);
+
+			m_edtLoginName.GetWindowText(inputName);
+			m_edtLoginPwd.GetWindowText(inputPwd);
+			inputData.Format(_T("%s:%s:%s"),inputName, inputPwd, accountLevel);
+
+			memcpy(dataForWrite, (unsigned char*)(LPCTSTR)inputData, inputData.GetLength());
+			len = inputData.GetLength();
+
+			for(i = 0; i < len; i++)
+			{
+				dataForWrite[i] = ~dataForWrite[i];
+			}
+			dataForWrite[i] = 0x0d;
+			dataForWrite[i + 1] = 0x0a;
+	
+			accountFile.Open(LOGIN_FILE_NAME, CFile::modeCreate | CFile::modeWrite | CFile::modeNoTruncate);
+			accountFile.SeekToEnd();
+			accountFile.Write(dataForWrite, i + 2);
+			accountFile.Close();
+		}
+	}
+
+	return CDialog::PreTranslateMessage(pMsg);
+}
+

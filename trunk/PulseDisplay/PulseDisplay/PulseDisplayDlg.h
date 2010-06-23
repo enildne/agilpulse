@@ -12,6 +12,8 @@
 #include "LoginDlg.h"
 #include "SetList.h"
 
+#define TID_TIME	1					// 시계용 TIMER
+
 // CPulseDisplayDlg 대화 상자
 class CPulseDisplayDlg : public CDialog
 {
@@ -25,16 +27,6 @@ public:
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 지원
 
-
-// 구현
-protected:
-	HICON m_hIcon;
-
-	// 메시지 맵 함수를 생성했습니다.
-	virtual BOOL OnInitDialog();
-	afx_msg void OnPaint();
-	afx_msg HCURSOR OnQueryDragIcon();
-	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnTcnSelchangeTabMain(NMHDR *pNMHDR, LRESULT *pResult);
 	CTabCtrl	m_ctlTabMain;
@@ -66,10 +58,18 @@ public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnTimer(UINT nIDEvent);
 
-
 private:
 	void SetTAB1Disp(void);
+	CString	m_UserName;
 
+	// 구현
+protected:
+	HICON m_hIcon;
+
+	// 메시지 맵 함수를 생성했습니다.
+	virtual BOOL OnInitDialog();
+	afx_msg void OnPaint();
+	afx_msg HCURSOR OnQueryDragIcon();
+	DECLARE_MESSAGE_MAP()
 };
 
-#define TID_TIME	1
