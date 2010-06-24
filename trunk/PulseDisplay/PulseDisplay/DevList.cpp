@@ -179,7 +179,13 @@ int CDevList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void CDevList::OnLbnDblclkDevList()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if(m_lstDevice.GetCurSel() < 0)
+		return;
+
 	m_lstDevice.GetText(m_lstDevice.GetCurSel(), selDevice);
-	((CPulseDisplayDlg*)GetParent())->SetDeviceDesc(m_arrayDesc[m_lstDevice.GetCurSel()]);
-	OnOK();
+	if(selDevice.IsEmpty() == FALSE)
+	{
+		((CPulseDisplayDlg*)GetParent())->SetDeviceDesc(m_arrayDesc[m_lstDevice.GetCurSel()]);
+		OnOK();
+	}
 }
