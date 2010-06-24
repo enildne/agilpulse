@@ -192,6 +192,10 @@ BOOL CLoginDlg::PreTranslateMessage(MSG* pMsg)
 
 			m_edtLoginName.GetWindowText(inputName);
 			m_edtLoginPwd.GetWindowText(inputPwd);
+
+			if(inputName.IsEmpty() || inputPwd.IsEmpty())
+				return CDialog::PreTranslateMessage(pMsg);
+
 			inputData.Format(_T("%s:%s:%s"),inputName, inputPwd, accountLevel);
 
 			memcpy(dataForWrite, (unsigned char*)(LPCTSTR)inputData, inputData.GetLength());

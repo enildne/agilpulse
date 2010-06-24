@@ -144,39 +144,18 @@ void CPulseDisplayDlg::OnTcnSelchangeTabMain(NMHDR *pNMHDR, LRESULT *pResult)
 	switch(m_ctlTabMain.GetCurSel()) {
 	case 0:						// 최좌측 탭
 	default:
-		m_btnTab1_1.ShowWindow(SW_SHOW);
-		m_btnTab1_2.ShowWindow(SW_SHOW);
-		m_btnTab1_3.ShowWindow(SW_SHOW);
-		m_btnTab1_4.ShowWindow(SW_SHOW);
-		m_stDevName.ShowWindow(SW_SHOW);
-		m_stDraw.ShowWindow(SW_SHOW);
+		ShowFirstTabCtrl();
 		break;
 	
 	case 1:
-		m_btnTab1_1.ShowWindow(SW_HIDE);
-		m_btnTab1_2.ShowWindow(SW_HIDE);
-		m_btnTab1_3.ShowWindow(SW_HIDE);
-		m_btnTab1_4.ShowWindow(SW_HIDE);
-		m_stDevName.ShowWindow(SW_HIDE);
-		m_stDraw.ShowWindow(SW_HIDE);
+		HideFirstTabCtrl();
 		break;
 	case 2:
-		m_btnTab1_1.ShowWindow(SW_HIDE);
-		m_btnTab1_2.ShowWindow(SW_HIDE);
-		m_btnTab1_3.ShowWindow(SW_HIDE);
-		m_btnTab1_4.ShowWindow(SW_HIDE);
-		m_stDevName.ShowWindow(SW_HIDE);
-		m_stDraw.ShowWindow(SW_HIDE);
+		HideFirstTabCtrl();
 		break;
 	case 3:
-		m_btnTab1_1.ShowWindow(SW_HIDE);
-		m_btnTab1_2.ShowWindow(SW_HIDE);
-		m_btnTab1_3.ShowWindow(SW_HIDE);
-		m_btnTab1_4.ShowWindow(SW_HIDE);
-		m_stDevName.ShowWindow(SW_HIDE);
-		m_stDraw.ShowWindow(SW_HIDE);
+		HideFirstTabCtrl();
 		break;
-
 	}
 
 }
@@ -261,6 +240,14 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 
 	BeginWaitCursor();
 	// Open a default Session
+#ifdef USE_SAMPLE_FILE
+	CFile	sampleFile;
+	sampleFile.Open(_T("test.bin"), CFile::modeRead);
+
+	 sampleFile.Read(strres, sizeof(strres));
+
+	 m_stDraw.setPulseData(&strres[7]);			// #42500 를 제외한 시작점 
+#else
 	status = viOpenDefaultRM(&defaultRM);
 	if (status < VI_SUCCESS) goto error;
 
@@ -285,6 +272,8 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 	viClose(defaultRM);
 
 	m_stDraw.setPulseData(&strres[6]);			// #42500 를 제외한 시작점 
+#endif // USE_SAMPLE_FILE
+
 	m_stDraw.Invalidate();
 	m_stDraw.UpdateWindow();
 
@@ -379,4 +368,27 @@ void CPulseDisplayDlg::OnTimer(UINT nIDEvent)
 	}
 
 	CDialog::OnTimer(nIDEvent);
+}
+
+
+void CPulseDisplayDlg::ShowFirstTabCtrl(void)
+{
+	m_btnTab1_1.ShowWindow(SW_SHOW);
+	m_btnTab1_2.ShowWindow(SW_SHOW);
+	m_btnTab1_3.ShowWindow(SW_SHOW);
+	m_btnTab1_4.ShowWindow(SW_SHOW);
+	m_stDevName.ShowWindow(SW_SHOW);
+	m_stDraw.ShowWindow(SW_SHOW);
+	SetTimer(TID_TIME, 1000, NULL);
+}
+
+void CPulseDisplayDlg::HideFirstTabCtrl(void)
+{
+	m_btnTab1_1.ShowWindow(SW_HIDE);
+	m_btnTab1_2.ShowWindow(SW_HIDE);
+	m_btnTab1_3.ShowWindow(SW_HIDE);
+	m_btnTab1_4.ShowWindow(SW_HIDE);
+	m_stDevName.ShowWindow(SW_HIDE);
+	m_stDraw.ShowWindow(SW_HIDE);
+	KillTimer(TID_TIME);
 }
