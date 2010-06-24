@@ -70,18 +70,20 @@ void CDrawRect::OnPaint()
 	myDotPen.CreatePen(PS_DOT, 1, RGB(0, 0, 255));
 	pOldPen = (CPen*)dc.SelectObject(&myDotPen);
 
-	for(gridLine = 1; gridLine < VERTICAL_GRID_COUNT; gridLine++)
+	for(gridLine = 1; gridLine < HORIZONTAL_GRID_COUNT; gridLine++)
 	{
 		// Áß¾Ó ¼±±ß´Â ºÎºÐ
 		//if(gridLine * 2 == VERTICAL_GRID_COUNT)
 		//	dc.SelectObject(&mySolidPen);
 		//else
 		//	dc.SelectObject(&myDotPen);
+		
+		int vgrid_ypos = (drawRect.Height() - (DRAW_TOP_PAD + DRAW_BOTTOM_PAD)) / HORIZONTAL_GRID_COUNT * gridLine + DRAW_TOP_PAD;
 
-		dc.MoveTo(DRAW_LEFT_PAD, drawRect.Height() / VERTICAL_GRID_COUNT * gridLine);
-		dc.LineTo( drawRect.Width() - DRAW_RIGHT_PAD, drawRect.Height() / VERTICAL_GRID_COUNT * gridLine);
+		dc.MoveTo(DRAW_LEFT_PAD, vgrid_ypos);
+		dc.LineTo( drawRect.Width() - DRAW_RIGHT_PAD, vgrid_ypos);
 	}
-	for(gridLine = 1; gridLine < HORIZONTAL_GRID_COUNT; gridLine++)
+	for(gridLine = 1; gridLine < VERTICAL_GRID_COUNT; gridLine++)
 	{
 		// Áß¾Ó ¼±±ß´Â ºÎºÐ
 		//if(gridLine * 2 == HORIZONTAL_GRID_COUNT)
@@ -89,8 +91,10 @@ void CDrawRect::OnPaint()
 		//else
 		//	dc.SelectObject(&myDotPen);
 
-		dc.MoveTo(drawRect.Width() / HORIZONTAL_GRID_COUNT * gridLine, DRAW_LEFT_PAD);
-		dc.LineTo(drawRect.Width() / HORIZONTAL_GRID_COUNT * gridLine, drawRect.Height() - DRAW_BOTTOM_PAD);
+		int hgrid_xpos = (drawRect.Width() - (DRAW_LEFT_PAD + DRAW_RIGHT_PAD)) / VERTICAL_GRID_COUNT * gridLine + DRAW_LEFT_PAD;
+
+		dc.MoveTo(hgrid_xpos, DRAW_TOP_PAD);
+		dc.LineTo(hgrid_xpos, drawRect.Height() - DRAW_BOTTOM_PAD);
 	}
 	dc.SelectObject(pOldPen);
 	myDotPen.DeleteObject();
@@ -106,7 +110,7 @@ void CDrawRect::OnPaint()
 
 	/*----------------- Graph Draw -----------------*/
 	CPen	graphPen;
-	graphPen.CreatePen(PS_SOLID, 2, RGB(0, 0, 0));
+	graphPen.CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
 	pOldPen = dc.SelectObject(&graphPen);
 
 	rectHeight = drawRect.Height() - (DRAW_TOP_PAD + DRAW_BOTTOM_PAD);
@@ -125,12 +129,14 @@ void CDrawRect::OnPaint()
 
 	BOOL illegalRect = FALSE;
 
-	for(i = interval; i < VALUE_COUNT; i = i + interval)
+	for(i = 0; i < VALUE_COUNT; i = i + interval)
 	{
 		if(x_pos > rectWidth + DRAW_LEFT_PAD) 
 			break;
-		
-		y_pos = zeroHeight - (int)((double)rectHeight * (m_dconvData[i] / height));
+
+		double dy_pos = (double)rectHeight * (m_dconvData[i] / height);
+
+		y_pos = zeroHeight - (int)(dy_pos);
 		
 		if(y_pos < drawRect.top + DRAW_TOP_PAD) {
 			if(illegalRect == FALSE)

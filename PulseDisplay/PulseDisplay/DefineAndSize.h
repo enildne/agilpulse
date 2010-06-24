@@ -1,8 +1,8 @@
 #pragma once
 /* 제어용 정의 */
 //#define USE_ASRL_DEVICE						// ASRL Device Listing 여부
-#define		USE_GPIB_DEVICE
-#define		LOGIN_DLG							// Login Dlg 를 보일지 말지 결정(개발중에는 안보이도록)
+//#define		USE_GPIB_DEVICE
+//#define		LOGIN_DLG							// Login Dlg 를 보일지 말지 결정(개발중에는 안보이도록)
 //#define		SCREEN_MAX							// 화면 크기에 무조건 맞도록 수정.
 
 /* 창 및 버튼, 다이얼로그 사이즈 및 각각의 간격 */

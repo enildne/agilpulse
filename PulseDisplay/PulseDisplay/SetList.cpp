@@ -89,6 +89,9 @@ void CSetList::OnLbnDblclkSetList()
 	CString		selFileName;
 	CStdioFile	dataFile;
 
+	if(m_lstSetting.GetCurSel() < 0)
+		return;
+
 	m_lstSetting.GetText(m_lstSetting.GetCurSel(), selFileName);
 	selFileName = selFileName + _T(".set");
 
