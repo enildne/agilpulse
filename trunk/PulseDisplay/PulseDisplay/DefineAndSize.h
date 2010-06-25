@@ -5,13 +5,15 @@
 //#define USE_ASRL_DEVICE						// ASRL Device Listing 여부
 //#define		USE_GPIB_DEVICE
 //#define		LOGIN_DLG							// Login Dlg 를 보일지 말지 결정(개발중에는 안보이도록)
-//#define		LIMIT_SCREEN_SIZE					// 화면 크기에 무조건 맞도록 수정.
+#define		LIMIT_SCREEN_SIZE					// 화면 크기에 무조건 맞도록 수정.
 //#define		USE_SAMPLE_FILE
 //#define		MAKE_SAMPLE_FILE
 
 /* 창 및 버튼, 다이얼로그 사이즈 및 각각의 간격 */
-#define		MAIN_DLG_WIDTH				800				// MAIN WINDOW 크기
-#define		MAIN_DLG_HEIGHT				600
+#define		MAIN_DLG_WIDTH				1024			// MAIN WINDOW 크기
+#define		MAIN_DLG_HEIGHT				768
+
+#define		TAB_WND_RATIO				0.7				// MAIN WINDOW 대비 TAB Window 의 비율
 
 #define		INTAB_BTN_START_X			10				// 버튼 시작위치
 #define		INTAB_BTN_START_Y			40
@@ -41,8 +43,9 @@
 #define		HORIZONTAL_GRID_COUNT		8
 
 #define		CONFIG_EXT					TEXT(".set")
-
 #define		LOGIN_FILE_NAME				"ACCOUNT"
+
+#define		GRAPH_PEN_WIDTH				3				// GRAPH 를 그리는 PEN 의 두께
 
 #define		START_VOLTAGE_1				320				// 1 Volt 찾기 시작하는 Data 위치 2500 중
 #define		RINGDOWN_START				320				// 

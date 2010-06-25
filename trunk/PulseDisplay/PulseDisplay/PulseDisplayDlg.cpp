@@ -336,7 +336,7 @@ void CPulseDisplayDlg::SetTAB1Disp(void)
 {
 	CRect	winRect, tabRect;
 	::GetClientRect(this->GetSafeHwnd(), &winRect);		
-	m_ctlTabMain.MoveWindow(0, 0, winRect.right, winRect.Height() / 8 * 7);
+	m_ctlTabMain.MoveWindow(0, 0, winRect.right, (int)((double)winRect.Height() * (double)TAB_WND_RATIO));
 	m_ctlTabMain.GetClientRect(&tabRect);
 
 

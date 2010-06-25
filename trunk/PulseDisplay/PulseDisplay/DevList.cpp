@@ -73,7 +73,7 @@ BOOL CDevList::OnInitDialog()
 		status = viRead(vi, (ViBuf) id, sizeof(id), &retCnt);
 		if (status < VI_SUCCESS) goto GPIB;
 
-		id[retCnt] = '\0';
+		id[retCnt - 1] = '\0';
 		m_lstDevice.AddString(id);
 		memset(id, NULL, sizeof(id));
 		// We¡¯re done with this device so close it

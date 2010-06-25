@@ -110,7 +110,7 @@ void CDrawRect::OnPaint()
 
 	/*---------------- Graph Draw Start -----------------*/
 	CPen	graphPen;
-	graphPen.CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
+	graphPen.CreatePen(PS_SOLID, GRAPH_PEN_WIDTH, RGB(0, 0, 0));
 	pOldPen = dc.SelectObject(&graphPen);
 
 	if((m_dconvData[i] - MINUS_1_LEVEL) < 0)
