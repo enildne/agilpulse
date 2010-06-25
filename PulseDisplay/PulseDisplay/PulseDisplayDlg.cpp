@@ -195,7 +195,6 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn2()
 		m_ringdownSetCmd = setList.GetRingdownSetting();
 		m_levelSetCmd = setList.GetLevelSetting();
 
-
 		// 1차 Test 항목
 		m_iRTTestHighPosition = atoi(setList.GetRTTestHighPosition());
 		m_iRTTestLowPosition = atoi(setList.GetRTTestLowPosition());
@@ -212,8 +211,13 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn2()
 		m_iPreRingdownEnd = atoi(setList.GetvoltTestEndPosition());
 		m_stDraw.setVolt1Start(m_iPreRingdownStart);
 		m_stDraw.setVolt1End(m_iPreRingdownEnd);
-		
+		m_stDraw.setStandardVolt(atoi(setList.GetStandardVolt()));
 		m_iRTTestDiff = atoi(setList.GetRTTestDiff());
+
+		m_stDraw.m_levelRangeMax = atoi(setList.GetLevelRangeMax());
+		m_stDraw.m_levelMax = atoi(setList.GetLevelMax());
+		m_stDraw.m_levelRangeMin = atoi(setList.GetLevelRangeMin());
+		m_stDraw.m_levelMin = atoi(setList.GetLevelMin());
 
 		status = viOpenDefaultRM(&defaultRM);
 		if (status < VI_SUCCESS) goto error;
@@ -290,6 +294,8 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 	m_stDraw.Invalidate();
 	m_stDraw.UpdateWindow();
 #else
+	SignalReset();
+
 	status = viOpenDefaultRM(&defaultRM);
 	if (status < VI_SUCCESS) goto error;
 
@@ -298,9 +304,6 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 	
 	if(m_rdRTTest.GetCheck() == TRUE)
 	{
-		status = viWrite(vi, (ViBuf)m_ringdownSetCmd.GetBuffer(m_ringdownSetCmd.GetLength()), m_ringdownSetCmd.GetLength(), &actual);
-		if (status < VI_SUCCESS) goto error;
-
 		for(repeat = 0; repeat < MAX_REPEAT_PER_TEST; repeat++)
 		{
 			if(readFailFlag >= 3)					// FAIL 이 3번 이상
@@ -353,7 +356,7 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 				}
 				
 				BOOL	Pass = TRUE;
-				for(int check = 0; check < 5; check++)
+				for(int check = 1; check < SIGNAL_COUNT; check++)
 				{
 					if(dataFailed[check] >= 3)
 					{
@@ -379,16 +382,29 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 #endif
 		m_stDraw.Invalidate();
 		m_stDraw.UpdateWindow();
-		for(int sig = 0; sig < 6; sig++)
+		for(int sig = 0; sig < SIGNAL_COUNT; sig++)
 		{
 			signal[sig].Invalidate();
 			signal[sig].UpdateWindow();
 		}
-
 	}
 	else
 	{
+		RTrace(_T("Level TEST\n"));
 
+		status = viClear(vi);
+		if (status < VI_SUCCESS) goto error;
+
+		status = viWrite(vi, (ViBuf)CurveCmd, (ViUInt32)strlen(CurveCmd), &actual);
+		if (status < VI_SUCCESS) goto error;
+
+		status = viScanf(vi, "%t", strres);
+		if (status < VI_SUCCESS) goto error;
+
+		m_stDraw.setPulseData(&strres[DATA_START_POSITION]);
+
+		m_stDraw.Invalidate();
+		m_stDraw.UpdateWindow();
 	}
 
 	viClose(vi);
@@ -431,18 +447,23 @@ int CPulseDisplayDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	int Pos_x = ((MAIN_DLG_WIDTH) / 6);
 	int Pos_y = (int)((double)MAIN_DLG_HEIGHT * (double)TAB_WND_RATIO);
 
-	signal[0].Create(_T("ERROR_1"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * 0, Pos_y, Pos_x * 1 - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_1);
-	signal[0].ShowWindow(SW_SHOW);
-	signal[1].Create(_T("ERROR_2"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * 1, Pos_y, Pos_x * 2 - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_2);
-	signal[1].ShowWindow(SW_SHOW);
-	signal[2].Create(_T("ERROR_3"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * 2, Pos_y, Pos_x * 3 - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_3);
-	signal[2].ShowWindow(SW_SHOW);
-	signal[3].Create(_T("ERROR_4"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * 3, Pos_y, Pos_x * 4 - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_4);
-	signal[3].ShowWindow(SW_SHOW);
-	signal[4].Create(_T("ERROR_5"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * 4, Pos_y, Pos_x * 5 - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_5);
-	signal[4].ShowWindow(SW_SHOW);
-	signal[5].Create(_T("ERROR_6"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * 5, Pos_y, Pos_x * 6 - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_6);
-	signal[5].ShowWindow(SW_SHOW);
+	for(int sigCount = 0; sigCount < SIGNAL_COUNT; sigCount++)
+	{
+		signal[sigCount].Create(_T("ERROR_1"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * sigCount, Pos_y, Pos_x * (sigCount + 1) - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_1 + sigCount);
+		signal[sigCount].ShowWindow(SW_SHOW);
+	}
+	//signal[0].Create(_T("ERROR_1"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * 0, Pos_y, Pos_x * 1 - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_1);
+	//signal[0].ShowWindow(SW_SHOW);
+	//signal[1].Create(_T("ERROR_2"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * 1, Pos_y, Pos_x * 2 - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_2);
+	//signal[1].ShowWindow(SW_SHOW);
+	//signal[2].Create(_T("ERROR_3"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * 2, Pos_y, Pos_x * 3 - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_3);
+	//signal[2].ShowWindow(SW_SHOW);
+	//signal[3].Create(_T("ERROR_4"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * 3, Pos_y, Pos_x * 4 - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_4);
+	//signal[3].ShowWindow(SW_SHOW);
+	//signal[4].Create(_T("ERROR_5"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * 4, Pos_y, Pos_x * 5 - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_5);
+	//signal[4].ShowWindow(SW_SHOW);
+	//signal[5].Create(_T("ERROR_6"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * 5, Pos_y, Pos_x * 6 - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_6);
+	//signal[5].ShowWindow(SW_SHOW);
 
 	return 0;
 }
@@ -535,6 +556,7 @@ void CPulseDisplayDlg::ShowFirstTabCtrl(void)
 	m_stDraw.ShowWindow(SW_SHOW);
 	m_rdRTTest.ShowWindow(SW_SHOW);
 	m_rdLevelTest.ShowWindow(SW_SHOW);
+	SignalReset();
 	SetTimer(TID_TIME, 1000, NULL);
 }
 
@@ -548,19 +570,76 @@ void CPulseDisplayDlg::HideFirstTabCtrl(void)
 	m_stDraw.ShowWindow(SW_HIDE);
 	m_rdRTTest.ShowWindow(SW_HIDE);
 	m_rdLevelTest.ShowWindow(SW_HIDE);
+	SignalReset();
 	KillTimer(TID_TIME);
 }
 
 void CPulseDisplayDlg::OnBnClickedRtTest()
 {
+	BeginWaitCursor();
+	if(m_ringdownSetCmd.IsEmpty() == FALSE)
+	{
+		ViStatus status;
+		unsigned long actual;
+
+		status = viOpenDefaultRM(&defaultRM);
+		if (status < VI_SUCCESS) goto error;
+
+		status = viOpen(defaultRM, GetDeviceDesc(), VI_NULL, VI_NULL, &vi);
+		if (status < VI_SUCCESS) goto error;
+
+		status = viWrite(vi, (ViBuf)m_ringdownSetCmd.GetBuffer(m_ringdownSetCmd.GetLength()), m_ringdownSetCmd.GetLength(), &actual);
+		if (status < VI_SUCCESS) goto error;
+
+		viClose(vi);
+		viClose(defaultRM);
+	}
+
+	Sleep(1000);
 	m_rdLevelTest.SetCheck(FALSE);
 	m_rdRTTest.SetCheck(TRUE);
+	EndWaitCursor();
+	return;
+error:
+	EndWaitCursor();
+	if (vi != VI_NULL)			viClose(vi);
+	if (defaultRM != VI_NULL)	viClose(defaultRM);
+	return;
 }
 
 void CPulseDisplayDlg::OnBnClickedLevelTest()
 {
+	BeginWaitCursor();
+	if(m_levelSetCmd.IsEmpty() == FALSE)
+	{
+		ViStatus status;
+		unsigned long actual;
+
+		status = viOpenDefaultRM(&defaultRM);
+		if (status < VI_SUCCESS) goto error;
+
+		status = viOpen(defaultRM, GetDeviceDesc(), VI_NULL, VI_NULL, &vi);
+		if (status < VI_SUCCESS) goto error;
+
+		status = viWrite(vi, (ViBuf)m_levelSetCmd.GetBuffer(m_levelSetCmd.GetLength()), m_levelSetCmd.GetLength(), &actual);
+		if (status < VI_SUCCESS) goto error;
+
+		viClose(vi);
+		viClose(defaultRM);
+	}
+
+	Sleep(1000);
 	m_rdRTTest.SetCheck(FALSE);
 	m_rdLevelTest.SetCheck(TRUE);
+	
+	EndWaitCursor();
+	return;
+
+error:
+	EndWaitCursor();
+	if (vi != VI_NULL)			viClose(vi);
+	if (defaultRM != VI_NULL)	viClose(defaultRM);
+	return;
 }
 
 int CPulseDisplayDlg::CheckRingdownPosition(unsigned char* data)
@@ -624,4 +703,16 @@ bool CPulseDisplayDlg::CheckBeforeValue(unsigned char* data, int ringingPoint, i
 	}
 
 	return true;
+}
+
+void CPulseDisplayDlg::SignalReset(void)
+{
+	for(int check = 0; check < 6; check++) {
+		signal[check].setColor = SET_NONE;
+	}
+	for(int check = 0; check < 6; check++) {
+		signal[check].Invalidate();
+		signal[check].UpdateWindow();
+	}
+
 }

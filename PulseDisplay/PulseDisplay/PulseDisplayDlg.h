@@ -55,6 +55,11 @@ public:
 	int			m_iPreRingdownStart;
 	int			m_iPreRingdownEnd;
 
+	int			m_iLevelRangeMin;
+	int			m_iLevelRangeMax;
+	int			m_iLevelMin;
+	int			m_iLevelMax;
+
 	ViSession	defaultRM, vi ;
 	char		m_cBuf[256];
 	CStatic		m_stDevName;
@@ -101,5 +106,6 @@ public:
 	int CheckLevelOnePosition(unsigned char* data);
 	bool Check16Value(unsigned char* data, int ringingPoint, int LevelOnePoint);
 	bool CheckBeforeValue(unsigned char* data, int ringingPoint, int LevelOnePoint);
+	void SignalReset(void);
 };
 

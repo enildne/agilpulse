@@ -34,6 +34,12 @@ protected:
 	CString		m_test2Max;		 
 	CString		m_testDiff;		 
 
+	CString		m_levelTestRangeMin;
+	CString		m_levelTestRangeMax;
+	CString		m_levelTestLevelMin;
+	CString		m_levelTestLevelMax;
+
+	CString		m_Standard_Volt;
 
 	DECLARE_MESSAGE_MAP()
 public:
@@ -51,9 +57,16 @@ public:
 	CString		GetRTTestLowLimit(void)				{return m_rtTestLowLimit;}
 	CString		GetRTTestHighPosition(void)			{return m_rtTestHighPosition;}
 	CString		GetRTTestHighLimit(void)			{return m_rtTestHighLimit;}
-	CString		GetRTTest1Min(void)				{return m_test1Min;}
-	CString		GetRTTest1Max(void)				{return m_test1Max;}
-	CString		GetRTTest2Min(void)				{return m_test2Min;}
-	CString		GetRTTest2Max(void)				{return m_test2Max;}
-	CString		GetRTTestDiff(void)				{return m_testDiff;}
+	CString		GetRTTest1Min(void)					{return m_test1Min;}
+	CString		GetRTTest1Max(void)					{return m_test1Max;}
+	CString		GetRTTest2Min(void)					{return m_test2Min;}
+	CString		GetRTTest2Max(void)					{return m_test2Max;}
+	CString		GetRTTestDiff(void)					{return m_testDiff;}
+
+	CString		GetLevelRangeMax(void)				{return m_levelTestRangeMax;}
+	CString		GetLevelRangeMin(void)				{return m_levelTestRangeMin;}
+	CString		GetLevelMin(void)					{return m_levelTestLevelMin;}
+	CString		GetLevelMax(void)					{return m_levelTestLevelMax;}
+	CString		GetStandardVolt(void)				{return m_Standard_Volt;}
+
 };

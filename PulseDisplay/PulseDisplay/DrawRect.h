@@ -20,6 +20,12 @@ public:
 	BOOL		GetGraphDraw(void)		{return m_bLoading;}
 	void		setVolt1Start(int val)	{m_voltage_1_start =  val;}
 	void		setVolt1End(int val)	{m_voltage_1_end =  val;}
+	void		setStandardVolt(int val)	{m_standard_voltage_1 =  val;}
+
+	int			m_levelRangeMax;
+	int			m_levelRangeMin;
+	int			m_levelMax;
+	int			m_levelMin;
 
 protected:
 	DECLARE_MESSAGE_MAP()
@@ -27,4 +33,5 @@ protected:
 	unsigned char	m_dconvData[VALUE_COUNT + 1];
 	int			m_voltage_1_start;
 	int			m_voltage_1_end;
+	int			m_standard_voltage_1;					// ±‚¡ÿ 1volt
 };
