@@ -148,6 +148,9 @@
 				RelativePath=".\SetList.cpp">
 			</File>
 			<File
+				RelativePath=".\Signal.cpp">
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -190,6 +193,9 @@
 			</File>
 			<File
 				RelativePath=".\SetList.h">
+			</File>
+			<File
+				RelativePath=".\Signal.h">
 			</File>
 			<File
 				RelativePath=".\stdafx.h">
