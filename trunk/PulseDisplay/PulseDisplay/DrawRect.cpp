@@ -12,8 +12,7 @@
 IMPLEMENT_DYNAMIC(CDrawRect, CStatic)
 CDrawRect::CDrawRect() :
 m_bLoading(FALSE),
-m_dMinVal(0),
-m_dMaxVal(0)
+m_voltage_1_start(0)
 {
 }
 
@@ -66,9 +65,16 @@ void CDrawRect::OnPaint()
 	CPen	*pOldPen, myDotPen, mySolidPen;
 	int		gridLine = 0;
 
+	drawRect.top = drawRect.top + DRAW_TOP_PAD;
+	drawRect.left = drawRect.left + DRAW_LEFT_PAD;
+	drawRect.right = drawRect.right - DRAW_RIGHT_PAD;
+	drawRect.bottom = drawRect.bottom- DRAW_BOTTOM_PAD;
+
+
 	dc.SetMapMode(MM_ANISOTROPIC);
 	dc.SetWindowExt(VALUE_COUNT, MAX_INPUT_VALUE);
-	dc.SetViewportExt(drawRect.Width(), drawRect.Height());
+	dc.SetViewportExt(drawRect.Width(), -drawRect.Height());
+	dc.SetViewportOrg(drawRect.left, drawRect.bottom);
 
 	mySolidPen.CreatePen(PS_SOLID, 1, RGB(0, 0, 255));
 	myDotPen.CreatePen(PS_DOT, 1, RGB(0, 0, 255));
@@ -77,37 +83,60 @@ void CDrawRect::OnPaint()
 	for(gridLine = 1; gridLine < HORIZONTAL_GRID_COUNT; gridLine++)
 	{
 		int vgrid_ypos = MAX_INPUT_VALUE / HORIZONTAL_GRID_COUNT * gridLine;
+		if(gridLine * 2 == HORIZONTAL_GRID_COUNT)
+			dc.SelectObject(mySolidPen);
+		else
+			dc.SelectObject(&myDotPen);
 		dc.MoveTo(0, vgrid_ypos);
 		dc.LineTo(VALUE_COUNT, vgrid_ypos);
 	}
 	for(gridLine = 1; gridLine < VERTICAL_GRID_COUNT; gridLine++)
 	{
 		int hgrid_xpos = VALUE_COUNT / VERTICAL_GRID_COUNT * gridLine;
+		if(gridLine * 2 == VERTICAL_GRID_COUNT)
+			dc.SelectObject(mySolidPen);
+		else
+			dc.SelectObject(&myDotPen);
 		dc.MoveTo(hgrid_xpos, 0);
 		dc.LineTo(hgrid_xpos, MAX_INPUT_VALUE);
 	}
 	dc.SelectObject(pOldPen);
 	myDotPen.DeleteObject();
 	mySolidPen.DeleteObject();
+	/* GRID DRAW END */
 
-	/*---------------- GRID DRAW END ----------------------*/
 	if(m_bLoading == FALSE)
 		return ;
 
+	/*---------------- Graph Draw Start -----------------*/
 	CPen	graphPen;
 	graphPen.CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
 	pOldPen = dc.SelectObject(&graphPen);
 
-	dc.MoveTo(0, MAX_INPUT_VALUE - m_dconvData[0] + 28);
+	if((m_dconvData[i] - MINUS_1_LEVEL) < 0)
+		dc.MoveTo(0, 0);
+	else if((m_dconvData[0] - MINUS_1_LEVEL) > MAX_INPUT_VALUE)
+		dc.MoveTo(0, MAX_INPUT_VALUE);
+	else
+		dc.MoveTo(0, m_dconvData[0] - MINUS_1_LEVEL);
 
-	for(i = 0; i < VALUE_COUNT; i++)
+	for(i = 1; i < VALUE_COUNT; i++)
 	{
-		dc.LineTo(i, MAX_INPUT_VALUE - m_dconvData[i] + 28);
+		if((m_dconvData[i] - MINUS_1_LEVEL) < 0)
+		{
+			dc.LineTo(i, 0);
+		}
+		else if((m_dconvData[i] - MINUS_1_LEVEL) > MAX_INPUT_VALUE)
+		{
+			dc.LineTo(i, MAX_INPUT_VALUE);
+		}
+		else
+			dc.LineTo(i, m_dconvData[i] - MINUS_1_LEVEL);
 	}
 
 	dc.SelectObject(pOldPen);
 	graphPen.DeleteObject();
-	/*----------------- Graph Draw END -----------------*/
+	/* Graph Draw END */
 
 	/*----------------- 1 Volt Line ----------------*/
 	CPen	Vol1LinePen;
@@ -115,7 +144,7 @@ void CDrawRect::OnPaint()
 	pOldPen = dc.SelectObject(&Vol1LinePen);
 	int vol_1 = 0, reverseFind =0, vol_Max;
 
-	for(vol_1 = START_VOLTAGE_1; vol_1 < VALUE_COUNT; vol_1++)
+	for(vol_1 = m_voltage_1_start; vol_1 < VALUE_COUNT; vol_1++)
 	{
 		if(m_dconvData[vol_1] <= 78)				// 1Volt
 			break;
@@ -127,7 +156,8 @@ void CDrawRect::OnPaint()
 	dc.SelectObject(pOldPen);
 	Vol1LinePen.DeleteObject();
 
-	/* ---------------- 1 Volt Line --------------*/
+	/* 1 Volt Line */
+
 	/* ---------------- Down Line ------------------*/
 	CPen	RingdownLinePen;
 	RingdownLinePen.CreatePen(PS_DOT, 1, RGB(255, 0, 0));
@@ -135,36 +165,21 @@ void CDrawRect::OnPaint()
 
 	int flag = 0;
 
-	for(vol_Max = RINGDOWN_START; vol_Max < RINGDOWN_END; vol_Max++)
-	{
-		if(m_dconvData[vol_Max - 70] - m_dconvData[vol_Max] >= 3)
-		{
+	for(vol_Max = RINGDOWN_START; vol_Max < RINGDOWN_END; vol_Max++) {
+		if(m_dconvData[vol_Max - 70] - m_dconvData[vol_Max] >= 3) {
 			flag++;
 			if(flag > 2)
 				break;
 		}
-		else
-		{
+		else {
 			flag = 0;
 		}
 	}
-
-	RTrace(_T("Vol Max = %d\n"), vol_Max);
 
 	dc.MoveTo(vol_Max, 0);
 	dc.LineTo(vol_Max, MAX_INPUT_VALUE);
 	dc.SelectObject(pOldPen);
 	RingdownLinePen.DeleteObject();
-
-	/* ---------------- Down Line ------------------*/
-	//for(reverseFind = vol_1 - 1; reverseFind >= 0; reverseFind--)
-	//{
-	//	if(m_dconvData[reverseFind] + 1 < m_dconvData[reverseFind + 1])
-	//		break;
-	//}
-
-
-
 
 	/*----------------- RingDown Start Draw End ----------------*/
 }
@@ -179,8 +194,6 @@ void CDrawRect::OnShowWindow(BOOL bShow, UINT nStatus)
 void CDrawRect::setPulseData(unsigned char* data)
 {
 	setGraphDraw(TRUE);
-	m_dMaxVal = MAX_GRAPH_VALUE;
-	m_dMinVal = MIN_GRAPH_VALUE;
 	for(int i = 0; i < VALUE_COUNT; i++)
 	{
 		m_dconvData[i] = data[i];

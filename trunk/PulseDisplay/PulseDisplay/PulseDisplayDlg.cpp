@@ -70,7 +70,7 @@ BOOL CPulseDisplayDlg::OnInitDialog()
 	// 로그인 화면 종료
 #endif
 
-#ifdef SCREEN_MAX
+#ifndef LIMIT_SCREEN_SIZE
 	int cx = GetSystemMetrics(SM_CXSCREEN);
 	int cy = GetSystemMetrics(SM_CYSCREEN);
 
@@ -87,7 +87,7 @@ BOOL CPulseDisplayDlg::OnInitDialog()
 	m_ctlTabMain.InsertItem(1, _T(TAB2_DSP_NAME));
 	m_ctlTabMain.InsertItem(2, _T(TAB3_DSP_NAME));
 	m_ctlTabMain.InsertItem(3, _T(TAB4_DSP_NAME));
-#ifdef SCREEN_MAX
+#ifndef LIMIT_SCREEN_SIZE
 	m_ctlTabMain.SetItemSize(CSize(cy / 4 - 5));
 #else
 	m_ctlTabMain.SetItemSize(CSize(MAIN_DLG_WIDTH / 4 - 5));
@@ -242,6 +242,8 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 	memset(strres, NULL, sizeof(strres));
 	unsigned long actual;
 
+	m_btnTab1_3.EnableWindow(FALSE);
+
 	m_stDraw.setGraphDraw(FALSE);
 	m_stDraw.Invalidate();
 	m_stDraw.UpdateWindow();
@@ -295,6 +297,7 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 	m_stDraw.Invalidate();
 	m_stDraw.UpdateWindow();
 
+	m_btnTab1_3.EnableWindow(TRUE);
 	EndWaitCursor();
 	return;
 
@@ -308,6 +311,7 @@ error:
 	if (defaultRM != VI_NULL)	viClose(defaultRM);
 	if (wfm != NULL)			free(wfm);
 
+	m_btnTab1_3.EnableWindow(TRUE);
 	return;
 }
 
