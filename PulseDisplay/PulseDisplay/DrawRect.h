@@ -22,7 +22,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 	BOOL		m_bLoading;	
 	double		m_dMinVal, m_dMaxVal;
-	double		m_dconvData[VALUE_COUNT + 1];
+	unsigned char	m_dconvData[VALUE_COUNT + 1];
 };
 
 
