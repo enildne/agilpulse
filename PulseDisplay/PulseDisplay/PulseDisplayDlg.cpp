@@ -710,9 +710,9 @@ void CPulseDisplayDlg::SignalReset(void)
 	for(int check = 0; check < 6; check++) {
 		signal[check].setColor = SET_NONE;
 	}
-	for(int check = 0; check < 6; check++) {
-		signal[check].Invalidate();
-		signal[check].UpdateWindow();
+	for(int check_2 = 0; check_2 < 6; check_2++) {
+		signal[check_2].Invalidate();
+		signal[check_2].UpdateWindow();
 	}
 
 }
