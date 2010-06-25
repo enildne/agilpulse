@@ -105,7 +105,7 @@ void CDrawRect::OnPaint()
 	mySolidPen.DeleteObject();
 	/* GRID DRAW END */
 
-	if(m_bLoading == FALSE)
+	if(GetGraphDraw() == FALSE)
 		return ;
 
 	/*---------------- Graph Draw Start -----------------*/
@@ -158,7 +158,7 @@ void CDrawRect::OnPaint()
 
 	/* 1 Volt Line */
 
-	/* ---------------- Down Line ------------------*/
+	/* ---------------- RingDown Line ------------------*/
 	CPen	RingdownLinePen;
 	RingdownLinePen.CreatePen(PS_DOT, 1, RGB(255, 0, 0));
 	dc.SelectObject(&RingdownLinePen);
