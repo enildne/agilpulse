@@ -4,6 +4,7 @@
 //#define		USE_GPIB_DEVICE
 //#define		LOGIN_DLG							// Login Dlg 를 보일지 말지 결정(개발중에는 안보이도록)
 //#define		SCREEN_MAX							// 화면 크기에 무조건 맞도록 수정.
+//#define		USE_SAMPLE_FILE
 
 /* 창 및 버튼, 다이얼로그 사이즈 및 각각의 간격 */
 #define		MAIN_DLG_WIDTH				800				// MAIN WINDOW 크기
@@ -32,8 +33,9 @@
 #define		DRAW_LEFT_PAD				5
 #define		DRAW_RIGHT_PAD				5
 
-#define		VERTICAL_GRID_COUNT			8
+#define		VERTICAL_GRID_COUNT			10
 #define		HORIZONTAL_GRID_COUNT		8
+#define		USE_8_GRID									// 실제 Data 는 10개중 8개까지의 그래프만 나온다
 
 #define		CONFIG_EXT					TEXT(".set")
 

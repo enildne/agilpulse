@@ -68,9 +68,9 @@ BOOL CDevList::OnInitDialog()
 		// Open resource found in rsrc list
 		status = viOpen(rm, desc, VI_NULL, VI_NULL, &vi);
 		if (status < VI_SUCCESS) goto GPIB;
-		status = viPrintf (vi, "*RST\n");
+		status = viPrintf (vi, "*RST");
 		if (status < VI_SUCCESS) goto GPIB;
-		status = viPrintf(vi, "*IDN?\n");
+		status = viPrintf(vi, "*IDN?");
 		if (status < VI_SUCCESS) goto GPIB;
 		status = viScanf(vi, "%t", id);
 		if (status < VI_SUCCESS) goto GPIB;

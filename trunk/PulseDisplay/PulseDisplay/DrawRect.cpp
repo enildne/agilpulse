@@ -110,11 +110,15 @@ void CDrawRect::OnPaint()
 
 	/*----------------- Graph Draw -----------------*/
 	CPen	graphPen;
-	graphPen.CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
+	graphPen.CreatePen(PS_SOLID, 2, RGB(0, 0, 0));
 	pOldPen = dc.SelectObject(&graphPen);
 
 	rectHeight = drawRect.Height() - (DRAW_TOP_PAD + DRAW_BOTTOM_PAD);
 	rectWidth = drawRect.Width() - (DRAW_LEFT_PAD + DRAW_RIGHT_PAD);
+#ifdef USE_8_GRID
+	rectWidth = rectWidth * 0.8;
+#endif
+
 	
 	// 0 선을 그리는 루틴. 현재는 필요 없음.
 	//dc.MoveTo(DRAW_LEFT_PAD, (int)((double)rectHeight * (m_dMaxVal / height) + DRAW_TOP_PAD));
