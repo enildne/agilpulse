@@ -98,9 +98,16 @@ void CSetList::OnLbnDblclkSetList()
 	dataFile.Open(selFileName, CFile::modeRead | CFile::typeText);
 	if(dataFile != NULL)
 	{
-		dataFile.ReadString(m_setDefaultString);		// 첫줄(Set 명령)을 읽는다
-		dataFile.ReadString(m_setRingdownString);		// 첫줄(Set 명령)을 읽는다
-		dataFile.ReadString(m_setLevelString);		// 첫줄(Set 명령)을 읽는다
+		dataFile.ReadString(m_setDefaultString);		// Default Setting	
+		dataFile.ReadString(m_setRingdownString);		// Ringdown Setting
+		dataFile.ReadString(m_setLevelString);			// Level Setting
+		//dataFile.ReadString(m_voltTestStartPosition);	// Volt 1 check start position
+		//dataFile.ReadString(m_voltTestEndPosition);			// Volt 1 check end position
+		//dataFile.ReadString(m_test1Min);		 
+		//dataFile.ReadString(m_test1Max);		 
+		//dataFile.ReadString(m_test2Min);		 
+		//dataFile.ReadString(m_test2Max);		 
+		//dataFile.ReadString(m_testDiff);		 
 		dataFile.Close();
 	}
 
