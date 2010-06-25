@@ -280,7 +280,7 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 	status = viScanf(vi, "%t", strres);
 	if (status < VI_SUCCESS) goto error;
 
-#ifdef USE_SAMPLE_FILE
+#ifdef MAKE_SAMPLE_FILE
 	sampleCreate.Open(_T("sample.bin"), CFile::modeCreate | CFile::modeWrite);
 	sampleCreate.Write(strres, sizeof(strres));
 	sampleCreate.Close();

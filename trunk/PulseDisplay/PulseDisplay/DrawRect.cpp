@@ -66,103 +66,107 @@ void CDrawRect::OnPaint()
 	CPen	*pOldPen, myDotPen, mySolidPen;
 	int		gridLine = 0;
 
+	dc.SetMapMode(MM_ANISOTROPIC);
+	dc.SetWindowExt(VALUE_COUNT, MAX_INPUT_VALUE);
+	dc.SetViewportExt(drawRect.Width(), drawRect.Height());
+
 	mySolidPen.CreatePen(PS_SOLID, 1, RGB(0, 0, 255));
 	myDotPen.CreatePen(PS_DOT, 1, RGB(0, 0, 255));
 	pOldPen = (CPen*)dc.SelectObject(&myDotPen);
 
 	for(gridLine = 1; gridLine < HORIZONTAL_GRID_COUNT; gridLine++)
 	{
-		// 중앙 선긋는 부분
-		//if(gridLine * 2 == VERTICAL_GRID_COUNT)
-		//	dc.SelectObject(&mySolidPen);
-		//else
-		//	dc.SelectObject(&myDotPen);
-		
-		int vgrid_ypos = (drawRect.Height() - (DRAW_TOP_PAD + DRAW_BOTTOM_PAD)) / HORIZONTAL_GRID_COUNT * gridLine + DRAW_TOP_PAD;
-
-		dc.MoveTo(DRAW_LEFT_PAD, vgrid_ypos);
-		dc.LineTo( drawRect.Width() - DRAW_RIGHT_PAD, vgrid_ypos);
+		int vgrid_ypos = MAX_INPUT_VALUE / HORIZONTAL_GRID_COUNT * gridLine;
+		dc.MoveTo(0, vgrid_ypos);
+		dc.LineTo(VALUE_COUNT, vgrid_ypos);
 	}
 	for(gridLine = 1; gridLine < VERTICAL_GRID_COUNT; gridLine++)
 	{
-		// 중앙 선긋는 부분
-		//if(gridLine * 2 == HORIZONTAL_GRID_COUNT)
-		//	dc.SelectObject(&mySolidPen);
-		//else
-		//	dc.SelectObject(&myDotPen);
-
-		int hgrid_xpos = (drawRect.Width() - (DRAW_LEFT_PAD + DRAW_RIGHT_PAD)) / VERTICAL_GRID_COUNT * gridLine + DRAW_LEFT_PAD;
-
-		dc.MoveTo(hgrid_xpos, DRAW_TOP_PAD);
-		dc.LineTo(hgrid_xpos, drawRect.Height() - DRAW_BOTTOM_PAD);
+		int hgrid_xpos = VALUE_COUNT / VERTICAL_GRID_COUNT * gridLine;
+		dc.MoveTo(hgrid_xpos, 0);
+		dc.LineTo(hgrid_xpos, MAX_INPUT_VALUE);
 	}
 	dc.SelectObject(pOldPen);
 	myDotPen.DeleteObject();
 	mySolidPen.DeleteObject();
-	/*---------------- GRID DRAW END ----------------------*/
 
+	/*---------------- GRID DRAW END ----------------------*/
 	if(m_bLoading == FALSE)
 		return ;
 
-	height = m_dMaxVal - m_dMinVal; 
-
-	/*----------------- Check Min/Max -----------------*/
-
-	/*----------------- Graph Draw -----------------*/
 	CPen	graphPen;
-	graphPen.CreatePen(PS_SOLID, 2, RGB(0, 0, 0));
+	graphPen.CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
 	pOldPen = dc.SelectObject(&graphPen);
 
-	rectHeight = drawRect.Height() - (DRAW_TOP_PAD + DRAW_BOTTOM_PAD);
-	rectWidth = drawRect.Width() - (DRAW_LEFT_PAD + DRAW_RIGHT_PAD);
-#ifdef USE_8_GRID
-	rectWidth = rectWidth * 0.8;
-#endif
+	dc.MoveTo(0, MAX_INPUT_VALUE - m_dconvData[0] + 28);
 
-	
-	// 0 선을 그리는 루틴. 현재는 필요 없음.
-	//dc.MoveTo(DRAW_LEFT_PAD, (int)((double)rectHeight * (m_dMaxVal / height) + DRAW_TOP_PAD));
-	//dc.LineTo(rectWidth, (int)((double)rectHeight * (m_dMaxVal / height) + DRAW_TOP_PAD));
-	
-	zeroHeight = (int)((double)rectHeight * (m_dMaxVal / height) + DRAW_TOP_PAD);
-
-	dc.MoveTo(DRAW_LEFT_PAD, zeroHeight - (int)((double)rectHeight * (m_dconvData[0] / height)));
-
-	interval = VALUE_COUNT / rectWidth;
-	x_pos = DRAW_LEFT_PAD;
-
-	BOOL illegalRect = FALSE;
-
-	for(i = 0; i < VALUE_COUNT; i = i + interval)
+	for(i = 0; i < VALUE_COUNT; i++)
 	{
-		if(x_pos > rectWidth + DRAW_LEFT_PAD) 
-			break;
-
-		double dy_pos = (double)rectHeight * (m_dconvData[i] / height);
-
-		y_pos = zeroHeight - (int)(dy_pos);
-		
-		if(y_pos < drawRect.top + DRAW_TOP_PAD) {
-			if(illegalRect == FALSE)
-				dc.LineTo(x_pos, drawRect.top + DRAW_TOP_PAD);
-			dc.MoveTo(x_pos++, y_pos);
-			illegalRect = TRUE;
-		}
-		else if(y_pos > drawRect.bottom - DRAW_BOTTOM_PAD) {
-			if(illegalRect == FALSE)
-				dc.LineTo(x_pos, drawRect.bottom - DRAW_BOTTOM_PAD);
-			dc.MoveTo(x_pos++, y_pos);
-			illegalRect = TRUE;
-		}
-		else{
-			illegalRect = FALSE;
-			dc.LineTo(x_pos++, y_pos);
-		}
+		dc.LineTo(i, MAX_INPUT_VALUE - m_dconvData[i] + 28);
 	}
 
 	dc.SelectObject(pOldPen);
 	graphPen.DeleteObject();
 	/*----------------- Graph Draw END -----------------*/
+
+	/*----------------- 1 Volt Line ----------------*/
+	CPen	Vol1LinePen;
+	Vol1LinePen.CreatePen(PS_DOT, 1, RGB(255, 0, 0));
+	pOldPen = dc.SelectObject(&Vol1LinePen);
+	int vol_1 = 0, reverseFind =0, vol_Max;
+
+	for(vol_1 = START_VOLTAGE_1; vol_1 < VALUE_COUNT; vol_1++)
+	{
+		if(m_dconvData[vol_1] <= 78)				// 1Volt
+			break;
+	}
+	
+	dc.MoveTo(vol_1, 0);
+	dc.LineTo(vol_1, MAX_INPUT_VALUE);
+
+	dc.SelectObject(pOldPen);
+	Vol1LinePen.DeleteObject();
+
+	/* ---------------- 1 Volt Line --------------*/
+	/* ---------------- Down Line ------------------*/
+	CPen	RingdownLinePen;
+	RingdownLinePen.CreatePen(PS_DOT, 1, RGB(255, 0, 0));
+	dc.SelectObject(&RingdownLinePen);
+
+	int flag = 0;
+
+	for(vol_Max = RINGDOWN_START; vol_Max < RINGDOWN_END; vol_Max++)
+	{
+		if(m_dconvData[vol_Max - 70] - m_dconvData[vol_Max] >= 3)
+		{
+			flag++;
+			if(flag > 2)
+				break;
+		}
+		else
+		{
+			flag = 0;
+		}
+	}
+
+	RTrace(_T("Vol Max = %d\n"), vol_Max);
+
+	dc.MoveTo(vol_Max, 0);
+	dc.LineTo(vol_Max, MAX_INPUT_VALUE);
+	dc.SelectObject(pOldPen);
+	RingdownLinePen.DeleteObject();
+
+	/* ---------------- Down Line ------------------*/
+	//for(reverseFind = vol_1 - 1; reverseFind >= 0; reverseFind--)
+	//{
+	//	if(m_dconvData[reverseFind] + 1 < m_dconvData[reverseFind + 1])
+	//		break;
+	//}
+
+
+
+
+	/*----------------- RingDown Start Draw End ----------------*/
 }
 
 void CDrawRect::OnShowWindow(BOOL bShow, UINT nStatus)
