@@ -52,10 +52,9 @@ BOOL CDevList::OnInitDialog()
 	ViSession rm, vi;
 	ViStatus status;
 	ViChar desc[256] = "", id[256] = "";
-	ViUInt32 itemCnt;
+	ViUInt32 retCnt, itemCnt;
 	ViFindList list;
 	ViUInt32 i;
-
 	// Open a default Session
 	status = viOpenDefaultRM(&rm);
 	if (status < VI_SUCCESS) goto GPIB;
@@ -71,13 +70,16 @@ BOOL CDevList::OnInitDialog()
 		
 		status = viClear(vi);
 		if (status < VI_SUCCESS) goto GPIB;
-		
-		status = viPrintf(vi, "*IDN?");
+
+		// Send an ID query.
+		status = viWrite(vi, (ViBuf) "*IDN?", 5, &retCnt);
 		if (status < VI_SUCCESS) goto GPIB;
-		
-		status = viScanf(vi, "%t", id);
+
+		// Clear the buffer and read the response
+		status = viRead(vi, (ViBuf) id, sizeof(id), &retCnt);
 		if (status < VI_SUCCESS) goto GPIB;
-		
+
+		id[retCnt] = '\0';
 		m_lstDevice.AddString(id);
 		memset(id, NULL, sizeof(id));
 		// We’re done with this device so close it
@@ -106,12 +108,13 @@ GPIB:
 		status = viClear(vi);
 		if (status < VI_SUCCESS) goto ASRL;
 
-		status = viPrintf(vi, "*IDN?");
+		status = viWrite(vi, (ViBuf) "*idn?", 5, &retCnt);
 		if (status < VI_SUCCESS) goto ASRL;
 
-		status = viScanf(vi, "%t", id);
+		status = viRead(vi, (ViBuf) id, sizeof(id), &retCnt);
 		if (status < VI_SUCCESS) goto ASRL;
 
+		id[retCnt] = '\0';
 		m_lstDevice.AddString(id);
 		memset(id, NULL, sizeof(id));
 		// We’re done with this device so close it
@@ -132,22 +135,21 @@ ASRL:
 	status = viFindRsrc(rm, "ASRL?*INSTR", &list, &itemCnt, desc);
 	if (status < VI_SUCCESS) goto error;
 	for (i = 0; i < itemCnt; i++) {
-		// desc 구문을 전역변수에 저장
 		memcpy((void*)m_arrayDesc[descCount++], (void*)desc, strlen(desc));
 
-		// Open resource found in rsrc list
 		status = viOpen(rm, desc, VI_NULL, VI_NULL, &vi);
 		if (status < VI_SUCCESS) goto error;
 
 		status = viClear(vi);
 		if (status < VI_SUCCESS) goto error;
 
-		status = viPrintf(vi, "*IDN?");
+		status = viWrite(vi, (ViBuf) "*idn?", 5, &retCnt);
 		if (status < VI_SUCCESS) goto error;
 
-		status = viScanf(vi, "%t", id);
+		status = viRead(vi, (ViBuf) id, sizeof(id), &retCnt);
 		if (status < VI_SUCCESS) goto error;
-
+		
+		id[retCnt] = '\0';
 		m_lstDevice.AddString(id);
 		memset(id, NULL, sizeof(id));
 		// We’re done with this device so close it
