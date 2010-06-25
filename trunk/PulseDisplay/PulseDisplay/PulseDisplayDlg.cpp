@@ -233,6 +233,7 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 	char CurveCmd[] = "CURVE?";
 	unsigned char strres [VALUE_COUNT + 10];
 	memset(strres, NULL, sizeof(strres));
+	unsigned long actual;
 
 	m_stDraw.setGraphDraw(FALSE);
 	m_stDraw.Invalidate();
@@ -261,8 +262,8 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 	//if (status < VI_SUCCESS) goto error;
 	//Sleep(1000);
 
-	//status = viWrite(vi, (ViBuf)CurveCmd, (ViUInt32)strlen(CurveCmd), &actual);
-	status = viPrintf(vi, CurveCmd);
+	status = viWrite(vi, (ViBuf)CurveCmd, (ViUInt32)strlen(CurveCmd), &actual);
+	//status = viPrintf(vi, CurveCmd);
 	if (status < VI_SUCCESS) goto error;
 
 	status = viScanf(vi, "%t", strres);
