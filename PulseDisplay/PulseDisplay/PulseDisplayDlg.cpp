@@ -379,6 +379,11 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 #endif
 		m_stDraw.Invalidate();
 		m_stDraw.UpdateWindow();
+		for(int sig = 0; sig < 6; sig++)
+		{
+			signal[sig].Invalidate();
+			signal[sig].UpdateWindow();
+		}
 
 	}
 	else
