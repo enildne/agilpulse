@@ -50,3 +50,9 @@
 #define		START_VOLTAGE_1				320				// 1 Volt 찾기 시작하는 Data 위치 2500 중
 #define		RINGDOWN_START				320				// 
 #define		RINGDOWN_END				1000			// 
+
+#define		MAX_REPEAT_PER_TEST			5
+#define		RT_TEST_FAIL_LOW			128
+#define		RT_TEST_FAIL_HIGH			203
+#define		RT_TEST_LOW_POSITION		1250
+#define		RT_TEST_HIGH_POSITION		250
