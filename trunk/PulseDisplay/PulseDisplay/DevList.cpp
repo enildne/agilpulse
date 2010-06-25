@@ -68,12 +68,16 @@ BOOL CDevList::OnInitDialog()
 		// Open resource found in rsrc list
 		status = viOpen(rm, desc, VI_NULL, VI_NULL, &vi);
 		if (status < VI_SUCCESS) goto GPIB;
-		status = viPrintf (vi, "*RST");
+		
+		status = viClear(vi);
 		if (status < VI_SUCCESS) goto GPIB;
+		
 		status = viPrintf(vi, "*IDN?");
 		if (status < VI_SUCCESS) goto GPIB;
+		
 		status = viScanf(vi, "%t", id);
 		if (status < VI_SUCCESS) goto GPIB;
+		
 		m_lstDevice.AddString(id);
 		memset(id, NULL, sizeof(id));
 		// We’re done with this device so close it
@@ -96,15 +100,13 @@ GPIB:
 		// desc 구문을 전역변수에 저장
 		memcpy((void*)m_arrayDesc[descCount++], (void*)desc, strlen(desc));
 
-		// Open resource found in rsrc list
 		status = viOpen(rm, desc, VI_NULL, VI_NULL, &vi);
-
+		if (status < VI_SUCCESS) goto ASRL;
+		
+		status = viClear(vi);
 		if (status < VI_SUCCESS) goto ASRL;
 
-		status = viPrintf (vi, "*RST\n");
-		if (status < VI_SUCCESS) goto ASRL;
-
-		status = viPrintf(vi, "*IDN?\n");
+		status = viPrintf(vi, "*IDN?");
 		if (status < VI_SUCCESS) goto ASRL;
 
 		status = viScanf(vi, "%t", id);
@@ -135,13 +137,12 @@ ASRL:
 
 		// Open resource found in rsrc list
 		status = viOpen(rm, desc, VI_NULL, VI_NULL, &vi);
-
 		if (status < VI_SUCCESS) goto error;
 
-		status = viPrintf (vi, "*RST\n");
+		status = viClear(vi);
 		if (status < VI_SUCCESS) goto error;
 
-		status = viPrintf(vi, "*IDN?\n");
+		status = viPrintf(vi, "*IDN?");
 		if (status < VI_SUCCESS) goto error;
 
 		status = viScanf(vi, "%t", id);
