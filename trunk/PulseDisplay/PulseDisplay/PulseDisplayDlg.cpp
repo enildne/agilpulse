@@ -188,13 +188,15 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn2()
 
 	if(setList.DoModal() == IDOK) {
 		BeginWaitCursor();
-		m_setCmdByFile = setList.GetSettingString();
+		m_defaultSetCmd = setList.GetDefaultSetting();
+		m_ringdownSetCmd = setList.GetRingdownSetting();
+		m_levelSetCmd = setList.GetLevelSetting();
 
 		status = viOpenDefaultRM(&defaultRM);
 		if (status < VI_SUCCESS) goto error;
 		status = viOpen(defaultRM, GetDeviceDesc(), VI_NULL, VI_NULL, &vi);
 		if (status < VI_SUCCESS) goto error;
-		status = viWrite(vi, (ViBuf)m_setCmdByFile.GetBuffer(m_setCmdByFile.GetLength()), m_setCmdByFile.GetLength(), &actual);
+		status = viWrite(vi, (ViBuf)m_defaultSetCmd.GetBuffer(m_defaultSetCmd.GetLength()), m_defaultSetCmd.GetLength(), &actual);
 		//status = viPrintf(vi, m_setCmdByFile.GetBuffer());
 		if (status < VI_SUCCESS) goto error;
 		viClose(vi);
@@ -225,6 +227,11 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 		AfxMessageBox(NOTSELECT_DEVICE);
 		return;
 	}
+
+	if(m_defaultSetCmd.IsEmpty() == TRUE || m_ringdownSetCmd.IsEmpty() == TRUE || m_levelSetCmd.IsEmpty() == TRUE) {
+		AfxMessageBox(NOTSELECT_CFG);
+		return;
+	}
 #endif
 
 	ViStatus status;
@@ -241,13 +248,17 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 
 	BeginWaitCursor();
 	// Open a default Session
+#ifdef MAKE_SAMPLE_FILE
+	CFile	sampleCreate;
+#endif
+
 #ifdef USE_SAMPLE_FILE
 	CFile	sampleFile;
-	sampleFile.Open(_T("test.bin"), CFile::modeRead);
+	sampleFile.Open(_T("sample.bin"), CFile::modeRead);
 
 	 sampleFile.Read(strres, sizeof(strres));
 
-	 m_stDraw.setPulseData(&strres[7]);			// #42500 를 제외한 시작점 
+	 m_stDraw.setPulseData(&strres[6]);			// #42500 를 제외한 시작점 
 #else
 	status = viOpenDefaultRM(&defaultRM);
 	if (status < VI_SUCCESS) goto error;
@@ -268,6 +279,12 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 
 	status = viScanf(vi, "%t", strres);
 	if (status < VI_SUCCESS) goto error;
+
+#ifdef USE_SAMPLE_FILE
+	sampleCreate.Open(_T("sample.bin"), CFile::modeCreate | CFile::modeWrite);
+	sampleCreate.Write(strres, sizeof(strres));
+	sampleCreate.Close();
+#endif
 
 	viClose(vi);
 	viClose(defaultRM);
