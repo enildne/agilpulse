@@ -25,7 +25,9 @@
 #define IDC_RADIO_ADMIN                 1016
 #define ID_LOGIN_BTN                    1017
 #define IDC_SET_LIST                    1018
-
+#define IDC_RT_TEST                     1020
+#define IDC_RADIO2                      1021
+#define IDC_LEVEL_TEST                  1021
 
 // Next default values for new objects
 // 
@@ -33,7 +35,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        136
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1020
+#define _APS_NEXT_CONTROL_VALUE         1022
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

@@ -31,7 +31,6 @@ BEGIN_MESSAGE_MAP(CSetList, CDialog)
 	ON_LBN_DBLCLK(IDC_SET_LIST, OnLbnDblclkSetList)
 END_MESSAGE_MAP()
 
-
 // CSetList 메시지 처리기입니다.
 
 BOOL CSetList::OnInitDialog()
@@ -101,13 +100,17 @@ void CSetList::OnLbnDblclkSetList()
 		dataFile.ReadString(m_setDefaultString);		// Default Setting	
 		dataFile.ReadString(m_setRingdownString);		// Ringdown Setting
 		dataFile.ReadString(m_setLevelString);			// Level Setting
-		//dataFile.ReadString(m_voltTestStartPosition);	// Volt 1 check start position
-		//dataFile.ReadString(m_voltTestEndPosition);			// Volt 1 check end position
-		//dataFile.ReadString(m_test1Min);		 
-		//dataFile.ReadString(m_test1Max);		 
-		//dataFile.ReadString(m_test2Min);		 
-		//dataFile.ReadString(m_test2Max);		 
-		//dataFile.ReadString(m_testDiff);		 
+		dataFile.ReadString(m_voltTestStartPosition);	// Volt 1 check start position
+		dataFile.ReadString(m_voltTestEndPosition);			// Volt 1 check end position
+		dataFile.ReadString(m_rtTestLowPosition);
+		dataFile.ReadString(m_rtTestLowLimit);
+		dataFile.ReadString(m_rtTestHighPosition);
+		dataFile.ReadString(m_rtTestHighLimit);
+		dataFile.ReadString(m_test1Min);		 
+		dataFile.ReadString(m_test1Max);		 
+		dataFile.ReadString(m_test2Min);		 
+		dataFile.ReadString(m_test2Max);		 
+		dataFile.ReadString(m_testDiff);		 
 		dataFile.Close();
 	}
 

@@ -34,3 +34,8 @@
 #define		LOGIN_RD_ADMIN				"관리자"
 #define		NO_USER_ACCOUNT				"해당 유저정보가 없습니다."
 #define		NO_USER_ACCOUNT_FILE		"유저정보 파일이 없습니다."
+
+#define		RT_TEST						"RT 테스트"
+#define		LEVEL_TEST					"레벨 테스트"
+
+#define		NOT_VALID_CURVE				"수신파형이 확인되지 않습니다."

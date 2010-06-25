@@ -29,8 +29,9 @@ void CPulseDisplayDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TAB1_BTN2, m_btnTab1_2);
 	DDX_Control(pDX, IDC_TAB1_BTN3, m_btnTab1_3);
 	DDX_Control(pDX, IDC_TAB1_BTN4, m_btnTab1_4);
-	//DDX_Control(pDX, IDC_TAB1_DRAW, m_stDraw1);
 	DDX_Control(pDX, IDC_DEVICE_NAME, m_stDevName);
+	DDX_Control(pDX, IDC_RT_TEST, m_rdRTTest);
+	DDX_Control(pDX, IDC_LEVEL_TEST, m_rdLevelTest);
 }
 
 BEGIN_MESSAGE_MAP(CPulseDisplayDlg, CDialog)
@@ -44,6 +45,8 @@ BEGIN_MESSAGE_MAP(CPulseDisplayDlg, CDialog)
 	ON_BN_CLICKED(IDC_TAB1_BTN4, OnBnClickedTab1Btn4)
 	ON_WM_CREATE()
 	ON_WM_TIMER()
+	ON_BN_CLICKED(IDC_RT_TEST, OnBnClickedRtTest)
+	ON_BN_CLICKED(IDC_LEVEL_TEST, OnBnClickedLevelTest)
 END_MESSAGE_MAP()
 
 
@@ -191,6 +194,13 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn2()
 		m_defaultSetCmd = setList.GetDefaultSetting();
 		m_ringdownSetCmd = setList.GetRingdownSetting();
 		m_levelSetCmd = setList.GetLevelSetting();
+		
+		m_stDraw.setVolt1Start(atoi(setList.GetvoltTestStartPosition()));
+		m_stDraw.setVolt1End(atoi(setList.GetvoltTestEndPosition()));
+		m_iRTTestHighPosition = atoi(setList.GetvoltTestLowPosition());
+		m_iRTTestLowPosition = atoi(setList.GetvoltTestLowLimit());
+		m_iRTTestHighLimit = atoi(setList.GetvoltTestHighPosition());
+		m_iRTTestLowLimit = atoi(setList.GetvoltTestHighLimit());
 
 		status = viOpenDefaultRM(&defaultRM);
 		if (status < VI_SUCCESS) goto error;
@@ -241,6 +251,7 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 	unsigned char strres [VALUE_COUNT + 10];
 	memset(strres, NULL, sizeof(strres));
 	unsigned long actual;
+	int	repeat = 0, failFlag = 0;
 
 	m_btnTab1_3.EnableWindow(FALSE);
 
@@ -260,42 +271,66 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 
 	 sampleFile.Read(strres, sizeof(strres));
 
-	 m_stDraw.setPulseData(&strres[6]);			// #42500 를 제외한 시작점 
+	 m_stDraw.setPulseData(&strres[DATA_START_POSITION]);			// #42500 를 제외한 시작점 
+	 m_stDraw.Invalidate();
+	 m_stDraw.UpdateWindow();
 #else
 	status = viOpenDefaultRM(&defaultRM);
 	if (status < VI_SUCCESS) goto error;
 
 	status = viOpen(defaultRM, GetDeviceDesc(), VI_NULL, VI_NULL, &vi);
 	if (status < VI_SUCCESS) goto error;
+
 	
-	status = viClear(vi);
-	if (status < VI_SUCCESS) goto error;
+	if(m_rdRTTest.GetCheck() == TRUE)
+	{
+		status = viWrite(vi, (ViBuf)m_ringdownSetCmd.GetBuffer(m_ringdownSetCmd.GetLength()), m_ringdownSetCmd.GetLength(), &actual);
+		if (status < VI_SUCCESS) goto error;
 
-	//status = viWrite(vi, (ViBuf)m_setCmdByFile.GetBuffer(m_setCmdByFile.GetLength()), m_setCmdByFile.GetLength(), &actual);
-	//if (status < VI_SUCCESS) goto error;
-	//Sleep(1000);
+		for(repeat = 0; repeat < MAX_REPEAT_PER_TEST; repeat++)
+		{
+			if(failFlag >= 3)					// FAIL 이 3번 이상
+			{
+				AfxMessageBox(NOT_VALID_CURVE);
+				goto error;
+			}
 
-	status = viWrite(vi, (ViBuf)CurveCmd, (ViUInt32)strlen(CurveCmd), &actual);
-	//status = viPrintf(vi, CurveCmd);
-	if (status < VI_SUCCESS) goto error;
+			status = viClear(vi);
+			if (status < VI_SUCCESS) goto error;
 
-	status = viScanf(vi, "%t", strres);
-	if (status < VI_SUCCESS) goto error;
+			status = viWrite(vi, (ViBuf)CurveCmd, (ViUInt32)strlen(CurveCmd), &actual);
+			//status = viPrintf(vi, CurveCmd);
+			if (status < VI_SUCCESS) goto error;
 
+			status = viScanf(vi, "%t", strres);
+			if (status < VI_SUCCESS) goto error;
+
+			if(strres[m_iRTTestLowPosition + DATA_START_POSITION] <= m_iRTTestLowLimit &&
+				strres[m_iRTTestHighPosition + DATA_START_POSITION] >= m_iRTTestHighLimit)
+			{
+				failFlag++;
+			}
+
+		}
 #ifdef MAKE_SAMPLE_FILE
-	sampleCreate.Open(_T("sample.bin"), CFile::modeCreate | CFile::modeWrite);
-	sampleCreate.Write(strres, sizeof(strres));
-	sampleCreate.Close();
+		sampleCreate.Open(_T("sample.bin"), CFile::modeCreate | CFile::modeWrite);
+		sampleCreate.Write(strres, sizeof(strres));
+		sampleCreate.Close();
 #endif
+		m_stDraw.setPulseData(&strres[DATA_START_POSITION]);			// #42500 를 제외한 시작점 
+		m_stDraw.Invalidate();
+		m_stDraw.UpdateWindow();
+
+	}
+	else
+	{
+
+	}
+
 
 	viClose(vi);
 	viClose(defaultRM);
-
-	m_stDraw.setPulseData(&strres[6]);			// #42500 를 제외한 시작점 
 #endif // USE_SAMPLE_FILE
-
-	m_stDraw.Invalidate();
-	m_stDraw.UpdateWindow();
 
 	m_btnTab1_3.EnableWindow(TRUE);
 	EndWaitCursor();
@@ -342,21 +377,37 @@ void CPulseDisplayDlg::SetTAB1Disp(void)
 
 	if(m_btnTab1_1) {
 		m_btnTab1_1.SetWindowText(_T(TAB1_BTN1_NAME));
-		m_btnTab1_1.MoveWindow(&CRect(INTAB_BTN_START_X, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 0, BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 0 + BUTTON_HEIGHT), TRUE);
+		m_btnTab1_1.MoveWindow(&CRect(INTAB_BTN_START_X, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 0, \
+			BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 0 + BUTTON_HEIGHT), TRUE);
 	}
 	if(m_btnTab1_2) {
 		m_btnTab1_2.SetWindowText(_T(TAB1_BTN2_NAME));
-		m_btnTab1_2.MoveWindow(&CRect(INTAB_BTN_START_X, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 1, BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 1 + BUTTON_HEIGHT), TRUE);
+		m_btnTab1_2.MoveWindow(&CRect(INTAB_BTN_START_X, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 1, \
+			BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 1 + BUTTON_HEIGHT), TRUE);
 	}
 	if(m_btnTab1_3) {
 		m_btnTab1_3.SetWindowText(_T(TAB1_BTN3_NAME));
-		m_btnTab1_3.MoveWindow(&CRect(INTAB_BTN_START_X, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 2, BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 2 + BUTTON_HEIGHT), TRUE);
+		m_btnTab1_3.MoveWindow(&CRect(INTAB_BTN_START_X, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 2, \
+			BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 2 + BUTTON_HEIGHT), TRUE);
 	}
 	if(m_btnTab1_4)	{
 		m_btnTab1_4.SetWindowText(_T(TAB1_BTN4_NAME));
-		m_btnTab1_4.MoveWindow(&CRect(INTAB_BTN_START_X, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 3, BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 3 + BUTTON_HEIGHT), TRUE);
+		m_btnTab1_4.MoveWindow(&CRect(INTAB_BTN_START_X, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 3, \
+			BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 3 + BUTTON_HEIGHT), TRUE);
 	}
-	
+	if(m_rdRTTest) {
+		m_rdRTTest.SetWindowText(_T(RT_TEST));
+		m_rdRTTest.MoveWindow(&CRect(INTAB_BTN_START_X, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 4, \
+			BUTTON_WIDTH / 2 - 10, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 4 + BUTTON_HEIGHT), TRUE);
+		m_rdRTTest.SetCheck(TRUE);
+	}
+	if(m_rdLevelTest) {
+		m_rdLevelTest.SetWindowText(_T(LEVEL_TEST));
+		m_rdLevelTest.MoveWindow(&CRect(BUTTON_WIDTH / 2 + 10, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 4, \
+			BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 4 + BUTTON_HEIGHT), TRUE);
+		m_rdLevelTest.SetCheck(FALSE);
+	}
+
 	if(m_stDraw)
 		m_stDraw.MoveWindow(&CRect(INTAB_BTN_START_X + BUTTON_WIDTH, INTAB_BTN_START_Y, tabRect.right - 5, tabRect.bottom - DEVNAME_HEIGHT + 1));
 	
@@ -413,4 +464,16 @@ void CPulseDisplayDlg::HideFirstTabCtrl(void)
 	m_stDevName.ShowWindow(SW_HIDE);
 	m_stDraw.ShowWindow(SW_HIDE);
 	KillTimer(TID_TIME);
+}
+
+void CPulseDisplayDlg::OnBnClickedRtTest()
+{
+	m_rdLevelTest.SetCheck(FALSE);
+	m_rdRTTest.SetCheck(TRUE);
+}
+
+void CPulseDisplayDlg::OnBnClickedLevelTest()
+{
+	m_rdRTTest.SetCheck(FALSE);
+	m_rdLevelTest.SetCheck(TRUE);
 }

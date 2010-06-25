@@ -86,6 +86,10 @@ BEGIN
                     WS_EX_CLIENTEDGE | WS_EX_STATICEDGE
     CONTROL         "",IDC_TAB_MAIN,"SysTabControl32",TCS_MULTILINE | 
                     TCS_FIXEDWIDTH,7,7,280,30,WS_EX_STATICEDGE
+    CONTROL         "Radio1",IDC_RT_TEST,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,23,218,43,12
+    CONTROL         "Radio2",IDC_LEVEL_TEST,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,23,229,41,12
 END
 
 IDD_DEVLIST DIALOGEX 0, 0, 185, 95

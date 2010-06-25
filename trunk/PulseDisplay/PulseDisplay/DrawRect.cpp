@@ -165,7 +165,7 @@ void CDrawRect::OnPaint()
 
 	int flag = 0;
 
-	for(vol_Max = RINGDOWN_START; vol_Max < RINGDOWN_END; vol_Max++) {
+	for(vol_Max = m_voltage_1_start; vol_Max < m_voltage_1_end; vol_Max++) {
 		if(m_dconvData[vol_Max - 70] - m_dconvData[vol_Max] >= 3) {
 			flag++;
 			if(flag > 2)

@@ -12,8 +12,8 @@
 #include "LoginDlg.h"
 #include "SetList.h"
 
-#define TID_TIME	1					// 시계용 TIMER
-
+#define TID_TIME				1					// 시계용 TIMER
+#define	DATA_START_POSITION		6
 // CPulseDisplayDlg 대화 상자
 class CPulseDisplayDlg : public CDialog
 {
@@ -40,6 +40,11 @@ public:
 	CString		m_ringdownSetCmd;
 	CString		m_levelSetCmd;
 
+	int			m_iRTTestHighPosition;
+	int			m_iRTTestLowPosition;
+	int			m_iRTTestHighLimit;
+	int			m_iRTTestLowLimit;
+
 	ViSession	defaultRM, vi ;
 	char		m_cBuf[256];
 	CStatic		m_stDevName;
@@ -53,6 +58,8 @@ public:
 		return m_devDesc;
 	}
 
+	void ShowFirstTabCtrl(void);
+	void HideFirstTabCtrl(void);
 	afx_msg void OnBnClickedTab1Btn1();
 	afx_msg void OnBnClickedTab1Btn2();
 	afx_msg void OnBnClickedTab1Btn3();
@@ -74,7 +81,9 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
-	void ShowFirstTabCtrl(void);
-	void HideFirstTabCtrl(void);
+	CButton m_rdLevelTest;
+	CButton m_rdRTTest;
+	afx_msg void OnBnClickedRtTest();
+	afx_msg void OnBnClickedLevelTest();
 };
 
