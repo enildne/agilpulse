@@ -96,5 +96,7 @@ public:
 	afx_msg void OnBnClickedLevelTest();
 	int CheckRingdownPosition(unsigned char* data);
 	int CheckLevelOnePosition(unsigned char* data);
+	bool Check16Value(unsigned char* data, int ringingPoint, int LevelOnePoint);
+	bool CheckBeforeValue(unsigned char* data, int ringingPoint, int LevelOnePoint);
 };
 
