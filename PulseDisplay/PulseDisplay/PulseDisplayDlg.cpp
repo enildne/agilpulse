@@ -264,7 +264,8 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 	unsigned char strres [VALUE_COUNT + 10];
 	memset(strres, NULL, sizeof(strres));
 	unsigned long actual;
-	int	repeat = 0, readFailFlag = 0, dataFailFlag = 0;
+	int	repeat = 0, readFailFlag = 0, dataFailCount = 0;
+	char	dataFailed = 0;
 
 	m_btnTab1_3.EnableWindow(FALSE);
 
@@ -321,33 +322,39 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 			if(strres[m_iRTTestLowPosition + DATA_START_POSITION] <= m_iRTTestLowLimit &&
 				strres[m_iRTTestHighPosition + DATA_START_POSITION] >= m_iRTTestHighLimit)			// Data Get Á¶°Ç
 			{
+				dataFailed = 0;
+
 				int ringDown = CheckRingdownPosition(&strres[DATA_START_POSITION]);
 				int levelOne = CheckLevelOnePosition(&strres[DATA_START_POSITION]);
 				
 				if(ringDown <= m_iRingdownStartPosition || levelOne <= m_iVolOneStartPosition)
 				{
-					dataFailFlag++;
+					dataFailed |= 0x1;
 					RTrace(_T("#RT 1 : Ringing ÂªÀ½\n"));			// Ringing ÂªÀ½
 				}	
 				if(ringDown >= m_iRingdownEndPosition || levelOne >= m_iVolOneEndPosition)
 				{
-					dataFailFlag++;
+					dataFailed |= 0x2;
 					RTrace(_T("#RT 2 : Ringing ±è\n"));			// Ringing ±è
 				}
 				if(levelOne - ringDown >= m_iRTTestDiff)
 				{
-					dataFailFlag++;
+					dataFailed |= 0x4;
 					RTrace(_T("#RT 3 : ´Ã¾îÁü\n"));			// ´Ã¾îÁü
 				}
 				if(Check16Value(&strres[DATA_START_POSITION], ringDown, levelOne) == FALSE)
 				{
-					dataFailFlag++;
+					dataFailed |= 0x8;
 					RTrace(_T("#RT 4 : 16°³ Àü Å×½ºÆ®\n"));
 				}
 				if(CheckBeforeValue(&strres[DATA_START_POSITION], ringDown, levelOne) == FALSE)
 				{
-					dataFailFlag++;
+					dataFailed |= 0x10;
 					RTrace(_T("#RT 5 : Á÷Àü°ª Å×½ºÆ®\n"));
+				}
+				if(dataFailed != 0x0)
+				{
+					dataFailCount++;
 				}
 				
 				m_stDraw.setPulseData(&strres[DATA_START_POSITION]);
@@ -441,13 +448,13 @@ void CPulseDisplayDlg::SetTAB1Disp(void)
 	if(m_rdRTTest) {
 		m_rdRTTest.SetWindowText(_T(RT_TEST));
 		m_rdRTTest.MoveWindow(&CRect(INTAB_BTN_START_X, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 4, \
-			BUTTON_WIDTH / 2 - 10, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 4 + BUTTON_HEIGHT), TRUE);
+			BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 4 + (BUTTON_HEIGHT / 2)), TRUE);
 		m_rdRTTest.SetCheck(TRUE);
 	}
 	if(m_rdLevelTest) {
 		m_rdLevelTest.SetWindowText(_T(LEVEL_TEST));
-		m_rdLevelTest.MoveWindow(&CRect(BUTTON_WIDTH / 2 + 10, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 4, \
-			BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 4 + BUTTON_HEIGHT), TRUE);
+		m_rdLevelTest.MoveWindow(&CRect(INTAB_BTN_START_X, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 4 + (BUTTON_HEIGHT / 2), \
+			BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 4 + (BUTTON_HEIGHT)), TRUE);
 		m_rdLevelTest.SetCheck(FALSE);
 	}
 
@@ -554,11 +561,11 @@ int CPulseDisplayDlg::CheckLevelOnePosition(unsigned char* data)
 
 bool CPulseDisplayDlg::Check16Value(unsigned char* data, int ringingPoint, int LevelOnePoint)
 {
-	int pos = ringingPoint + 16;
+	int pos = ringingPoint;
 
 	for(pos; pos < LevelOnePoint + 200; pos++)
 	{
-		if(data[pos] <= (data[pos - 16] + 10))
+		if(data[pos] >= (data[pos - 16] + 10))
 			return false;
 	}
 
@@ -567,11 +574,11 @@ bool CPulseDisplayDlg::Check16Value(unsigned char* data, int ringingPoint, int L
 
 bool CPulseDisplayDlg::CheckBeforeValue(unsigned char* data, int ringingPoint, int LevelOnePoint)
 {
-	int pos = ringingPoint + 1;
+	int pos = ringingPoint;
 
 	for(pos; pos < LevelOnePoint; pos++)
 	{
-		if(data[pos] <= (data[pos - 1] + 2))
+		if(data[pos] >= (data[pos - 1] + 2))
 			return false;
 	}
 
