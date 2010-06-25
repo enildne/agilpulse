@@ -16,9 +16,10 @@ public:
 	afx_msg void	OnShowWindow(BOOL bShow, UINT nStatus);
 
 	void		setPulseData(unsigned char* data);
-	void		setGraphDraw(BOOL set) {m_bLoading = set;}		// FALSE 이면 GRID만 그린다.
-	void		setVolt1Start(int val) {m_voltage_1_start =  val;}
-	void		setVolt1End(int val) {m_voltage_1_end =  val;}
+	void		setGraphDraw(BOOL set)	{m_bLoading = set;}		// FALSE 이면 GRID만 그린다.
+	BOOL		GetGraphDraw(void)		{return m_bLoading;}
+	void		setVolt1Start(int val)	{m_voltage_1_start =  val;}
+	void		setVolt1End(int val)	{m_voltage_1_end =  val;}
 
 protected:
 	DECLARE_MESSAGE_MAP()

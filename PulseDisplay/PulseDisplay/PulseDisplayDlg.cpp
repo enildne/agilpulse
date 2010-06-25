@@ -194,13 +194,19 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn2()
 		m_defaultSetCmd = setList.GetDefaultSetting();
 		m_ringdownSetCmd = setList.GetRingdownSetting();
 		m_levelSetCmd = setList.GetLevelSetting();
-		
+
 		m_stDraw.setVolt1Start(atoi(setList.GetvoltTestStartPosition()));
 		m_stDraw.setVolt1End(atoi(setList.GetvoltTestEndPosition()));
-		m_iRTTestHighPosition = atoi(setList.GetvoltTestLowPosition());
-		m_iRTTestLowPosition = atoi(setList.GetvoltTestLowLimit());
-		m_iRTTestHighLimit = atoi(setList.GetvoltTestHighPosition());
-		m_iRTTestLowLimit = atoi(setList.GetvoltTestHighLimit());
+		
+		m_iRingdownStartPosition = atoi(setList.GetRTTest1Min());
+		m_iRingdownEndPosition = atoi(setList.GetRTTest1Max());;
+		m_iVolOneStartPosition = atoi(setList.GetRTTest2Min());;
+		m_iVolOneEndPosition = atoi(setList.GetRTTest2Max());;
+		
+		m_iRTTestHighPosition = atoi(setList.GetRTTestLowPosition());
+		m_iRTTestLowPosition = atoi(setList.GetRTTestLowLimit());
+		m_iRTTestHighLimit = atoi(setList.GetRTTestHighPosition());
+		m_iRTTestLowLimit = atoi(setList.GetRTTestHighLimit());
 
 		status = viOpenDefaultRM(&defaultRM);
 		if (status < VI_SUCCESS) goto error;
@@ -280,7 +286,6 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 
 	status = viOpen(defaultRM, GetDeviceDesc(), VI_NULL, VI_NULL, &vi);
 	if (status < VI_SUCCESS) goto error;
-
 	
 	if(m_rdRTTest.GetCheck() == TRUE)
 	{
@@ -291,8 +296,9 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 		{
 			if(failFlag >= 3)					// FAIL 이 3번 이상
 			{
-				AfxMessageBox(NOT_VALID_CURVE);
-				goto error;
+				AfxMessageBox(INVALID_CURVE);
+				m_stDraw.setPulseData(&strres[DATA_START_POSITION]);			// #42500 를 제외한 시작점 
+				break;
 			}
 
 			status = viClear(vi);
@@ -306,18 +312,26 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 			if (status < VI_SUCCESS) goto error;
 
 			if(strres[m_iRTTestLowPosition + DATA_START_POSITION] <= m_iRTTestLowLimit &&
-				strres[m_iRTTestHighPosition + DATA_START_POSITION] >= m_iRTTestHighLimit)
+				strres[m_iRTTestHighPosition + DATA_START_POSITION] >= m_iRTTestHighLimit)			// Data Get 조건
+			{
+				int ringDown = CheckRingdownPosition(&strres[DATA_START_POSITION]);
+				int levelOne = CheckLevelOnePosition(&strres[DATA_START_POSITION]);
+				
+				if(levelOne - ringDown >= 140)
+					failFlag++;
+				else
+					m_stDraw.setPulseData(&strres[DATA_START_POSITION]);
+			}
+			else										// Data 가 이상한 경우.
 			{
 				failFlag++;
 			}
-
 		}
 #ifdef MAKE_SAMPLE_FILE
 		sampleCreate.Open(_T("sample.bin"), CFile::modeCreate | CFile::modeWrite);
 		sampleCreate.Write(strres, sizeof(strres));
 		sampleCreate.Close();
 #endif
-		m_stDraw.setPulseData(&strres[DATA_START_POSITION]);			// #42500 를 제외한 시작점 
 		m_stDraw.Invalidate();
 		m_stDraw.UpdateWindow();
 
@@ -326,7 +340,6 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 	{
 
 	}
-
 
 	viClose(vi);
 	viClose(defaultRM);
@@ -476,4 +489,35 @@ void CPulseDisplayDlg::OnBnClickedLevelTest()
 {
 	m_rdRTTest.SetCheck(FALSE);
 	m_rdLevelTest.SetCheck(TRUE);
+}
+
+int CPulseDisplayDlg::CheckRingdownPosition(unsigned char* data)
+{
+	int flag = 0, pos = 0;
+
+	for(pos = m_iRingdownStartPosition; pos < m_iRingdownEndPosition; pos++) {
+		if(data[pos - 70] - data[pos] >= 3) {
+			flag++;
+			if(flag > 2)
+				return pos;
+		}
+		else {
+			flag = 0;
+		}
+	}
+
+	return 0;
+}
+
+int CPulseDisplayDlg::CheckLevelOnePosition(unsigned char* data)
+{
+	int pos = 0;
+
+	for(pos = m_iVolOneStartPosition; pos < m_iVolOneEndPosition; pos++)
+	{
+		if(data[pos] <= 78)				// 1Volt
+			return pos;
+	}
+	
+	return 0;
 }

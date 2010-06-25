@@ -38,4 +38,4 @@
 #define		RT_TEST						"RT 테스트"
 #define		LEVEL_TEST					"레벨 테스트"
 
-#define		NOT_VALID_CURVE				"수신파형이 확인되지 않습니다."
+#define		INVALID_CURVE				"수신파형이 확인되지 않습니다."

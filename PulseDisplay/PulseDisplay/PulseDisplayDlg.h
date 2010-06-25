@@ -40,6 +40,10 @@ public:
 	CString		m_ringdownSetCmd;
 	CString		m_levelSetCmd;
 
+	int			m_iVolOneStartPosition;
+	int			m_iVolOneEndPosition;
+	int			m_iRingdownStartPosition;
+	int			m_iRingdownEndPosition;
 	int			m_iRTTestHighPosition;
 	int			m_iRTTestLowPosition;
 	int			m_iRTTestHighLimit;
@@ -85,5 +89,7 @@ public:
 	CButton m_rdRTTest;
 	afx_msg void OnBnClickedRtTest();
 	afx_msg void OnBnClickedLevelTest();
+	int CheckRingdownPosition(unsigned char* data);
+	int CheckLevelOnePosition(unsigned char* data);
 };
 
