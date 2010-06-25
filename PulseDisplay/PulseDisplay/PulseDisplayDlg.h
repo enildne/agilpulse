@@ -49,6 +49,11 @@ public:
 	int			m_iRTTestHighLimit;
 	int			m_iRTTestLowLimit;
 
+	int			m_iRTTestDiff;
+
+	int			m_iPreRingdownStart;
+	int			m_iPreRingdownEnd;
+
 	ViSession	defaultRM, vi ;
 	char		m_cBuf[256];
 	CStatic		m_stDevName;

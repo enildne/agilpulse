@@ -195,18 +195,25 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn2()
 		m_ringdownSetCmd = setList.GetRingdownSetting();
 		m_levelSetCmd = setList.GetLevelSetting();
 
-		m_stDraw.setVolt1Start(atoi(setList.GetvoltTestStartPosition()));
-		m_stDraw.setVolt1End(atoi(setList.GetvoltTestEndPosition()));
+
+		// 1차 Test 항목
+		m_iRTTestHighPosition = atoi(setList.GetRTTestHighPosition());
+		m_iRTTestLowPosition = atoi(setList.GetRTTestLowPosition());
+		m_iRTTestHighLimit = atoi(setList.GetRTTestHighLimit());
+		m_iRTTestLowLimit = atoi(setList.GetRTTestLowLimit());
 		
+		// 2차 Test 항목
 		m_iRingdownStartPosition = atoi(setList.GetRTTest1Min());
 		m_iRingdownEndPosition = atoi(setList.GetRTTest1Max());;
 		m_iVolOneStartPosition = atoi(setList.GetRTTest2Min());;
 		m_iVolOneEndPosition = atoi(setList.GetRTTest2Max());;
+
+		m_iPreRingdownStart = atoi(setList.GetvoltTestStartPosition());
+		m_iPreRingdownEnd = atoi(setList.GetvoltTestEndPosition());
+		m_stDraw.setVolt1Start(m_iPreRingdownStart);
+		m_stDraw.setVolt1End(m_iPreRingdownEnd);
 		
-		m_iRTTestHighPosition = atoi(setList.GetRTTestLowPosition());
-		m_iRTTestLowPosition = atoi(setList.GetRTTestLowLimit());
-		m_iRTTestHighLimit = atoi(setList.GetRTTestHighPosition());
-		m_iRTTestLowLimit = atoi(setList.GetRTTestHighLimit());
+		m_iRTTestDiff = atoi(setList.GetRTTestDiff());
 
 		status = viOpenDefaultRM(&defaultRM);
 		if (status < VI_SUCCESS) goto error;
@@ -317,7 +324,7 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 				int ringDown = CheckRingdownPosition(&strres[DATA_START_POSITION]);
 				int levelOne = CheckLevelOnePosition(&strres[DATA_START_POSITION]);
 				
-				if(levelOne - ringDown >= 140)
+				if(levelOne - ringDown >= m_iRTTestDiff)
 					failFlag++;
 				else
 					m_stDraw.setPulseData(&strres[DATA_START_POSITION]);
@@ -495,7 +502,7 @@ int CPulseDisplayDlg::CheckRingdownPosition(unsigned char* data)
 {
 	int flag = 0, pos = 0;
 
-	for(pos = m_iRingdownStartPosition; pos < m_iRingdownEndPosition; pos++) {
+	for(pos = m_iPreRingdownStart; pos < m_iPreRingdownEnd; pos++) {
 		if(data[pos - 70] - data[pos] >= 3) {
 			flag++;
 			if(flag > 2)
