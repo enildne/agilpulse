@@ -543,7 +543,7 @@ int CPulseDisplayDlg::CheckLevelOnePosition(unsigned char* data)
 {
 	int pos = 0;
 
-	for(pos = m_iVolOneStartPosition; pos < m_iVolOneEndPosition; pos++)
+	for(pos = m_iPreRingdownStart; pos < m_iPreRingdownEnd; pos++)
 	{
 		if(data[pos] <= 78)				// 1Volt
 			return pos;
