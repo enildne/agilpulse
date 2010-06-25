@@ -264,7 +264,7 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 	unsigned char strres [VALUE_COUNT + 10];
 	memset(strres, NULL, sizeof(strres));
 	unsigned long actual;
-	int	repeat = 0, failFlag = 0;
+	int	repeat = 0, readFailFlag = 0, dataFailFlag = 0;
 
 	m_btnTab1_3.EnableWindow(FALSE);
 
@@ -282,11 +282,11 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 	CFile	sampleFile;
 	sampleFile.Open(_T("sample.bin"), CFile::modeRead);
 
-	 sampleFile.Read(strres, sizeof(strres));
+	sampleFile.Read(strres, sizeof(strres));
 
-	 m_stDraw.setPulseData(&strres[DATA_START_POSITION]);			// #42500 를 제외한 시작점 
-	 m_stDraw.Invalidate();
-	 m_stDraw.UpdateWindow();
+	m_stDraw.setPulseData(&strres[DATA_START_POSITION]);			// #42500 를 제외한 시작점 
+	m_stDraw.Invalidate();
+	m_stDraw.UpdateWindow();
 #else
 	status = viOpenDefaultRM(&defaultRM);
 	if (status < VI_SUCCESS) goto error;
@@ -301,7 +301,7 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 
 		for(repeat = 0; repeat < MAX_REPEAT_PER_TEST; repeat++)
 		{
-			if(failFlag >= 3)					// FAIL 이 3번 이상
+			if(readFailFlag >= 3)					// FAIL 이 3번 이상
 			{
 				AfxMessageBox(INVALID_CURVE);
 				m_stDraw.setPulseData(&strres[DATA_START_POSITION]);			// #42500 를 제외한 시작점 
@@ -324,16 +324,37 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 				int ringDown = CheckRingdownPosition(&strres[DATA_START_POSITION]);
 				int levelOne = CheckLevelOnePosition(&strres[DATA_START_POSITION]);
 				
-				if(ringDown <= m_iRingdownStartPosition || ringDown >= m_iRingdownEndPosition)
-					failFlag++;
-				else if(levelOne - ringDown >= m_iRTTestDiff)
-					failFlag++;
-				else
-					m_stDraw.setPulseData(&strres[DATA_START_POSITION]);
+				if(ringDown <= m_iRingdownStartPosition || levelOne <= m_iVolOneStartPosition)
+				{
+					dataFailFlag++;
+					RTrace(_T("#RT 1 : Ringing 짧음\n"));			// Ringing 짧음
+				}	
+				if(ringDown >= m_iRingdownEndPosition || levelOne >= m_iVolOneEndPosition)
+				{
+					dataFailFlag++;
+					RTrace(_T("#RT 2 : Ringing 김\n"));			// Ringing 김
+				}
+				if(levelOne - ringDown >= m_iRTTestDiff)
+				{
+					dataFailFlag++;
+					RTrace(_T("#RT 3 : 늘어짐\n"));			// 늘어짐
+				}
+				if(Check16Value(&strres[DATA_START_POSITION], ringDown, levelOne) == FALSE)
+				{
+					dataFailFlag++;
+					RTrace(_T("#RT 4 : 16개 전 테스트\n"));
+				}
+				if(CheckBeforeValue(&strres[DATA_START_POSITION], ringDown, levelOne) == FALSE)
+				{
+					dataFailFlag++;
+					RTrace(_T("#RT 5 : 직전값 테스트\n"));
+				}
+				
+				m_stDraw.setPulseData(&strres[DATA_START_POSITION]);
 			}
 			else										// Data 가 이상한 경우.
 			{
-				failFlag++;
+				readFailFlag++;
 			}
 		}
 #ifdef MAKE_SAMPLE_FILE
@@ -529,4 +550,30 @@ int CPulseDisplayDlg::CheckLevelOnePosition(unsigned char* data)
 	}
 	
 	return 0;
+}
+
+bool CPulseDisplayDlg::Check16Value(unsigned char* data, int ringingPoint, int LevelOnePoint)
+{
+	int pos = ringingPoint + 16;
+
+	for(pos; pos < LevelOnePoint + 200; pos++)
+	{
+		if(data[pos] <= (data[pos - 16] + 10))
+			return false;
+	}
+
+	return true;
+}
+
+bool CPulseDisplayDlg::CheckBeforeValue(unsigned char* data, int ringingPoint, int LevelOnePoint)
+{
+	int pos = ringingPoint + 1;
+
+	for(pos; pos < LevelOnePoint; pos++)
+	{
+		if(data[pos] <= (data[pos - 1] + 2))
+			return false;
+	}
+
+	return true;
 }
