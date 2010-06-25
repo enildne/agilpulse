@@ -27,6 +27,10 @@ public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnLbnDblclkSetList();
 
-	CString		m_setString;
-	CString		GetSettingString(void)	{return m_setString;}
+	CString		m_setDefaultString;
+	CString		m_setLevelString;
+	CString		m_setRingdownString;
+	CString		GetDefaultSetting(void)		{return m_setDefaultString;}
+	CString		GetLevelSetting(void)		{return m_setLevelString;}
+	CString		GetRingdownSetting(void)	{return m_setRingdownString;}
 };

@@ -98,7 +98,9 @@ void CSetList::OnLbnDblclkSetList()
 	dataFile.Open(selFileName, CFile::modeRead | CFile::typeText);
 	if(dataFile != NULL)
 	{
-		dataFile.ReadString(m_setString);		// 첫줄(Set 명령)을 읽는다
+		dataFile.ReadString(m_setDefaultString);		// 첫줄(Set 명령)을 읽는다
+		dataFile.ReadString(m_setRingdownString);		// 첫줄(Set 명령)을 읽는다
+		dataFile.ReadString(m_setLevelString);		// 첫줄(Set 명령)을 읽는다
 		dataFile.Close();
 	}
 

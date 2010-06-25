@@ -36,7 +36,9 @@ public:
 	CButton		m_btnTab1_4;
 	CDrawRect	m_stDraw;
 	CString		m_modelName;
-	CString		m_setCmdByFile;
+	CString		m_defaultSetCmd;
+	CString		m_ringdownSetCmd;
+	CString		m_levelSetCmd;
 
 	ViSession	defaultRM, vi ;
 	char		m_cBuf[256];

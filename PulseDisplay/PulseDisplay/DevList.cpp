@@ -39,12 +39,6 @@ BOOL CDevList::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	// TODO:  여기에 추가 초기화 작업을 추가합니다.
-#if 0
-	viFindRsrc/* Find a list of resources associated with a specified interface	2--25 */
-	viFindNext /* Return the next resource from the find list 2--23 */
-	viParseRsrc /* Parses a resource string to get the interface information 2--41 */
-#endif
-
 	CRect	dlgRect;
 	GetClientRect(&dlgRect);
 	m_lstDevice.MoveWindow(&dlgRect);

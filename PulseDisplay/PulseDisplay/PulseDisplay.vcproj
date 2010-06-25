@@ -194,6 +194,9 @@
 			<File
 				RelativePath=".\stdafx.h">
 			</File>
+			<File
+				RelativePath=".\Strings.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="리소스 파일"
