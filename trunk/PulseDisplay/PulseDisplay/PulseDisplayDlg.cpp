@@ -265,7 +265,8 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 	memset(strres, NULL, sizeof(strres));
 	unsigned long actual;
 	int	repeat = 0, readFailFlag = 0, dataFailCount = 0;
-	char	dataFailed = 0;
+	char	dataFailed[5] = "";
+	BOOL	Failed = FALSE;
 
 	m_btnTab1_3.EnableWindow(FALSE);
 
@@ -322,41 +323,48 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 			if(strres[m_iRTTestLowPosition + DATA_START_POSITION] <= m_iRTTestLowLimit &&
 				strres[m_iRTTestHighPosition + DATA_START_POSITION] >= m_iRTTestHighLimit)			// Data Get 조건
 			{
-				dataFailed = 0;
-
 				int ringDown = CheckRingdownPosition(&strres[DATA_START_POSITION]);
 				int levelOne = CheckLevelOnePosition(&strres[DATA_START_POSITION]);
 				
 				if(ringDown <= m_iRingdownStartPosition || levelOne <= m_iVolOneStartPosition)
 				{
-					dataFailed |= 0x1;
+					dataFailed[0] = dataFailed[0] + 1;
 					RTrace(_T("#RT 1 : Ringing 짧음\n"));			// Ringing 짧음
 				}	
 				if(ringDown >= m_iRingdownEndPosition || levelOne >= m_iVolOneEndPosition)
 				{
-					dataFailed |= 0x2;
+					dataFailed[1] = dataFailed[1] + 1;
 					RTrace(_T("#RT 2 : Ringing 김\n"));			// Ringing 김
 				}
 				if(levelOne - ringDown >= m_iRTTestDiff)
 				{
-					dataFailed |= 0x4;
+					dataFailed[2] = dataFailed[2] + 1;
 					RTrace(_T("#RT 3 : 늘어짐\n"));			// 늘어짐
 				}
 				if(Check16Value(&strres[DATA_START_POSITION], ringDown, levelOne) == FALSE)
 				{
-					dataFailed |= 0x8;
+					dataFailed[3] = dataFailed[3] + 1;
 					RTrace(_T("#RT 4 : 16개 전 테스트\n"));
 				}
 				if(CheckBeforeValue(&strres[DATA_START_POSITION], ringDown, levelOne) == FALSE)
 				{
-					dataFailed |= 0x10;
+					dataFailed[4] = dataFailed[4] + 1;
 					RTrace(_T("#RT 5 : 직전값 테스트\n"));
 				}
-				if(dataFailed != 0x0)
-				{
-					dataFailCount++;
-				}
 				
+				BOOL	Pass = TRUE;
+				for(int check = 0; check < 5; check++)
+				{
+					if(dataFailed[check] >= 3)
+					{
+						signal[check + 1].setColor = SET_RED;
+						signal[0].setColor = SET_RED;
+						Pass = FALSE;
+					}
+				}
+				if(Pass)
+					signal[0].setColor = SET_GREEN;
+
 				m_stDraw.setPulseData(&strres[DATA_START_POSITION]);
 			}
 			else										// Data 가 이상한 경우.
@@ -403,6 +411,8 @@ error:
 void CPulseDisplayDlg::OnBnClickedTab1Btn4()
 {
 	RTrace(_T("[zest] Tab1 Button4 Clicked\n"));
+
+	// 현재의 Log 에서 -1 하고 난 다음에 다시 Btn3 수행
 }
 
 int CPulseDisplayDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -410,9 +420,24 @@ int CPulseDisplayDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDialog::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	// TODO:  여기에 특수화된 작성 코드를 추가합니다.
 	m_stDraw.Create(_T("DrawPlace"), WS_CHILD | WS_THICKFRAME, CRect(0, 0, 0, 0), this, IDC_TAB1_DRAW_MAIN);
 	m_stDraw.ShowWindow(SW_SHOW);
+
+	int Pos_x = ((MAIN_DLG_WIDTH) / 6);
+	int Pos_y = (int)((double)MAIN_DLG_HEIGHT * (double)TAB_WND_RATIO);
+
+	signal[0].Create(_T("ERROR_1"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * 0, Pos_y, Pos_x * 1 - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_1);
+	signal[0].ShowWindow(SW_SHOW);
+	signal[1].Create(_T("ERROR_2"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * 1, Pos_y, Pos_x * 2 - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_2);
+	signal[1].ShowWindow(SW_SHOW);
+	signal[2].Create(_T("ERROR_3"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * 2, Pos_y, Pos_x * 3 - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_3);
+	signal[2].ShowWindow(SW_SHOW);
+	signal[3].Create(_T("ERROR_4"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * 3, Pos_y, Pos_x * 4 - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_4);
+	signal[3].ShowWindow(SW_SHOW);
+	signal[4].Create(_T("ERROR_5"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * 4, Pos_y, Pos_x * 5 - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_5);
+	signal[4].ShowWindow(SW_SHOW);
+	signal[5].Create(_T("ERROR_6"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * 5, Pos_y, Pos_x * 6 - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_6);
+	signal[5].ShowWindow(SW_SHOW);
 
 	return 0;
 }
@@ -423,7 +448,6 @@ void CPulseDisplayDlg::SetTAB1Disp(void)
 	::GetClientRect(this->GetSafeHwnd(), &winRect);		
 	m_ctlTabMain.MoveWindow(0, 0, winRect.right, (int)((double)winRect.Height() * (double)TAB_WND_RATIO));
 	m_ctlTabMain.GetClientRect(&tabRect);
-
 
 	if(m_btnTab1_1) {
 		m_btnTab1_1.SetWindowText(_T(TAB1_BTN1_NAME));
@@ -446,12 +470,14 @@ void CPulseDisplayDlg::SetTAB1Disp(void)
 			BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 3 + BUTTON_HEIGHT), TRUE);
 	}
 	if(m_rdRTTest) {
+		m_rdRTTest.SetButtonStyle(m_rdRTTest.GetStyle() | WS_EX_TRANSPARENT);
 		m_rdRTTest.SetWindowText(_T(RT_TEST));
 		m_rdRTTest.MoveWindow(&CRect(INTAB_BTN_START_X, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 4, \
 			BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 4 + (BUTTON_HEIGHT / 2)), TRUE);
 		m_rdRTTest.SetCheck(TRUE);
 	}
 	if(m_rdLevelTest) {
+		m_rdLevelTest.SetButtonStyle(m_rdLevelTest.GetStyle() | WS_EX_TRANSPARENT);
 		m_rdLevelTest.SetWindowText(_T(LEVEL_TEST));
 		m_rdLevelTest.MoveWindow(&CRect(INTAB_BTN_START_X, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 4 + (BUTTON_HEIGHT / 2), \
 			BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 4 + (BUTTON_HEIGHT)), TRUE);
@@ -502,6 +528,8 @@ void CPulseDisplayDlg::ShowFirstTabCtrl(void)
 	m_btnTab1_4.ShowWindow(SW_SHOW);
 	m_stDevName.ShowWindow(SW_SHOW);
 	m_stDraw.ShowWindow(SW_SHOW);
+	m_rdRTTest.ShowWindow(SW_SHOW);
+	m_rdLevelTest.ShowWindow(SW_SHOW);
 	SetTimer(TID_TIME, 1000, NULL);
 }
 
@@ -513,6 +541,8 @@ void CPulseDisplayDlg::HideFirstTabCtrl(void)
 	m_btnTab1_4.ShowWindow(SW_HIDE);
 	m_stDevName.ShowWindow(SW_HIDE);
 	m_stDraw.ShowWindow(SW_HIDE);
+	m_rdRTTest.ShowWindow(SW_HIDE);
+	m_rdLevelTest.ShowWindow(SW_HIDE);
 	KillTimer(TID_TIME);
 }
 
@@ -566,7 +596,10 @@ bool CPulseDisplayDlg::Check16Value(unsigned char* data, int ringingPoint, int L
 	for(pos; pos < LevelOnePoint + 200; pos++)
 	{
 		if(data[pos] >= (data[pos - 16] + 10))
+		{
+			RTrace(_T("현재 Data = %d, 16개전 Data = %d"), data[pos], data[pos - 16]);
 			return false;
+		}
 	}
 
 	return true;
@@ -579,7 +612,10 @@ bool CPulseDisplayDlg::CheckBeforeValue(unsigned char* data, int ringingPoint, i
 	for(pos; pos < LevelOnePoint; pos++)
 	{
 		if(data[pos] >= (data[pos - 1] + 2))
+		{
+			RTrace(_T("현재 Data = %d, 직전 Data = %d"), data[pos], data[pos - 1]);
 			return false;
+		}
 	}
 
 	return true;

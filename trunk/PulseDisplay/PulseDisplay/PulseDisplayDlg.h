@@ -11,6 +11,7 @@
 #include "DevList.h"
 #include "LoginDlg.h"
 #include "SetList.h"
+#include "Signal.h"
 
 #define TID_TIME				1					// 시계용 TIMER
 #define	DATA_START_POSITION		6
@@ -79,6 +80,8 @@ public:
 private:
 	void SetTAB1Disp(void);
 	CString	m_UserName;
+
+	CSignal		signal[6];
 
 	// 구현
 protected:

@@ -26,8 +26,14 @@
 #define ID_LOGIN_BTN                    1017
 #define IDC_SET_LIST                    1018
 #define IDC_RT_TEST                     1020
-#define IDC_RADIO2                      1021
 #define IDC_LEVEL_TEST                  1021
+#define IDC_SIGNAL_1					1022
+#define IDC_SIGNAL_2					1023
+#define IDC_SIGNAL_3					1024
+#define IDC_SIGNAL_4					1025
+#define IDC_SIGNAL_5					1026
+#define IDC_SIGNAL_6					1027
+
 
 // Next default values for new objects
 // 
