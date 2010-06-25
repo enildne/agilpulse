@@ -165,6 +165,10 @@ SOURCE=.\SetList.h
 
 SOURCE=.\stdafx.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\Strings.h
+# End Source File
 # End Group
 # Begin Group "¸®¼Ò½º"
 
