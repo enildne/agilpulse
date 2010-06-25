@@ -324,7 +324,9 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 				int ringDown = CheckRingdownPosition(&strres[DATA_START_POSITION]);
 				int levelOne = CheckLevelOnePosition(&strres[DATA_START_POSITION]);
 				
-				if(levelOne - ringDown >= m_iRTTestDiff)
+				if(ringDown <= m_iRingdownStartPosition || ringDown >= m_iRingdownEndPosition)
+					failFlag++;
+				else if(levelOne - ringDown >= m_iRTTestDiff)
 					failFlag++;
 				else
 					m_stDraw.setPulseData(&strres[DATA_START_POSITION]);
