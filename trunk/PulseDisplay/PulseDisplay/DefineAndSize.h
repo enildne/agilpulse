@@ -56,3 +56,5 @@
 #define		RT_TEST_FAIL_HIGH			203
 #define		RT_TEST_LOW_POSITION		1250
 #define		RT_TEST_HIGH_POSITION		250
+
+#define		SIGNAL_COUNT				6

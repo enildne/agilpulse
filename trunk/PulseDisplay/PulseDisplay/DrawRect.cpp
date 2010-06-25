@@ -5,7 +5,7 @@
 #include "PulseDisplay.h"
 #include "DrawRect.h"
 #include ".\drawrect.h"
-
+#include "PulseDisplayDlg.h"
 
 // CDrawRect
 
@@ -137,51 +137,71 @@ void CDrawRect::OnPaint()
 	dc.SelectObject(pOldPen);
 	graphPen.DeleteObject();
 	/* Graph Draw END */
-
-	/*----------------- 1 Volt Line ----------------*/
-	CPen	Vol1LinePen;
-	Vol1LinePen.CreatePen(PS_DOT, 1, RGB(255, 0, 0));
-	pOldPen = dc.SelectObject(&Vol1LinePen);
-	int vol_1 = 0, reverseFind =0, vol_Max;
-
-	for(vol_1 = m_voltage_1_start; vol_1 < VALUE_COUNT; vol_1++)
-	{
-		if(m_dconvData[vol_1] <= 78)				// 1Volt
-			break;
-	}
 	
-	dc.MoveTo(vol_1, 0);
-	dc.LineTo(vol_1, MAX_INPUT_VALUE);
+	if(((CPulseDisplayDlg*)GetParent())->m_rdRTTest.GetCheck() == TRUE)
+	{
+		/*----------------- 1 Volt Line ----------------*/
+		CPen	Vol1LinePen;
+		Vol1LinePen.CreatePen(PS_DOT, 1, RGB(255, 0, 0));
+		pOldPen = dc.SelectObject(&Vol1LinePen);
+		int vol_1 = 0, reverseFind =0, vol_Max;
 
-	dc.SelectObject(pOldPen);
-	Vol1LinePen.DeleteObject();
-
-	/* 1 Volt Line */
-
-	/* ---------------- RingDown Line ------------------*/
-	CPen	RingdownLinePen;
-	RingdownLinePen.CreatePen(PS_DOT, 1, RGB(255, 0, 0));
-	dc.SelectObject(&RingdownLinePen);
-
-	int flag = 0;
-
-	for(vol_Max = m_voltage_1_start; vol_Max < m_voltage_1_end; vol_Max++) {
-		if(m_dconvData[vol_Max - 70] - m_dconvData[vol_Max] >= 3) {
-			flag++;
-			if(flag > 2)
+		for(vol_1 = m_voltage_1_start; vol_1 < VALUE_COUNT; vol_1++)
+		{
+			if(m_dconvData[vol_1] <= m_standard_voltage_1)				// 1Volt
 				break;
 		}
-		else {
-			flag = 0;
+
+		dc.MoveTo(vol_1, 0);
+		dc.LineTo(vol_1, MAX_INPUT_VALUE);
+
+		dc.SelectObject(pOldPen);
+		Vol1LinePen.DeleteObject();
+		/* 1 Volt Line */
+
+		/* ---------------- RingDown Line ------------------*/
+		CPen	RingdownLinePen;
+		RingdownLinePen.CreatePen(PS_DOT, 1, RGB(255, 0, 0));
+		dc.SelectObject(&RingdownLinePen);
+
+		int flag = 0;
+
+		for(vol_Max = m_voltage_1_start; vol_Max < m_voltage_1_end; vol_Max++) {
+			if(m_dconvData[vol_Max - 70] - m_dconvData[vol_Max] >= 3) {
+				flag++;
+				if(flag > 2)
+					break;
+			}
+			else {
+				flag = 0;
+			}
 		}
+
+		dc.MoveTo(vol_Max, 0);
+		dc.LineTo(vol_Max, MAX_INPUT_VALUE);
+		dc.SelectObject(pOldPen);
+		RingdownLinePen.DeleteObject();
+		/*----------------- RingDown Start Draw End ----------------*/
 	}
+	else
+	{
+		int lvlCheck = 0, max = m_levelRangeMin;
+		CPen	lvlLinePen;
+		lvlLinePen.CreatePen(PS_DOT, 1, RGB(255, 0, 0));
+		pOldPen = dc.SelectObject(&lvlLinePen);
 
-	dc.MoveTo(vol_Max, 0);
-	dc.LineTo(vol_Max, MAX_INPUT_VALUE);
-	dc.SelectObject(pOldPen);
-	RingdownLinePen.DeleteObject();
+		for(lvlCheck = m_levelRangeMin; lvlCheck < m_levelRangeMax; lvlCheck++)
+		{
+            if(m_dconvData[lvlCheck] > m_dconvData[max])
+				max = lvlCheck;
+		}
 
-	/*----------------- RingDown Start Draw End ----------------*/
+		dc.MoveTo(m_levelRangeMin, m_dconvData[max] - MINUS_1_LEVEL);
+		dc.LineTo(m_levelRangeMax, m_dconvData[max] - MINUS_1_LEVEL);
+
+		dc.SelectObject(&pOldPen);
+		lvlLinePen.DeleteObject();
+	}
 }
 
 void CDrawRect::OnShowWindow(BOOL bShow, UINT nStatus)

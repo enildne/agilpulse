@@ -100,6 +100,7 @@ void CSetList::OnLbnDblclkSetList()
 		dataFile.ReadString(m_setDefaultString);		// Default Setting	
 		dataFile.ReadString(m_setRingdownString);		// Ringdown Setting
 		dataFile.ReadString(m_setLevelString);			// Level Setting
+		dataFile.ReadString(m_Standard_Volt);			// 기준 1볼트
 		dataFile.ReadString(m_voltTestStartPosition);	// Volt 1 check start position
 		dataFile.ReadString(m_voltTestEndPosition);			// Volt 1 check end position
 		dataFile.ReadString(m_rtTestLowPosition);
@@ -111,6 +112,10 @@ void CSetList::OnLbnDblclkSetList()
 		dataFile.ReadString(m_test2Min);		 
 		dataFile.ReadString(m_test2Max);		 
 		dataFile.ReadString(m_testDiff);		 
+		dataFile.ReadString(m_levelTestRangeMin);
+		dataFile.ReadString(m_levelTestRangeMax);
+		dataFile.ReadString(m_levelTestLevelMin);
+		dataFile.ReadString(m_levelTestLevelMax);
 		dataFile.Close();
 	}
 
