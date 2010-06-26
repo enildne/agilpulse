@@ -360,13 +360,13 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 				{
 					if(dataFailed[check] >= 3)
 					{
-						signal[check + 1].setColor = SET_RED;
-						signal[0].setColor = SET_RED;
+						signalWindow[check + 1].setColor = SET_RED;
+						signalWindow[0].setColor = SET_RED;
 						Pass = FALSE;
 					}
 				}
 				if(Pass)
-					signal[0].setColor = SET_GREEN;
+					signalWindow[0].setColor = SET_GREEN;
 
 				m_stDraw.setPulseData(&strres[DATA_START_POSITION]);
 			}
@@ -384,8 +384,8 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 		m_stDraw.UpdateWindow();
 		for(int sig = 0; sig < SIGNAL_COUNT; sig++)
 		{
-			signal[sig].Invalidate();
-			signal[sig].UpdateWindow();
+			signalWindow[sig].Invalidate();
+			signalWindow[sig].UpdateWindow();
 		}
 	}
 	else
@@ -444,26 +444,22 @@ int CPulseDisplayDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_stDraw.Create(_T("DrawPlace"), WS_CHILD | WS_THICKFRAME, CRect(0, 0, 0, 0), this, IDC_TAB1_DRAW_MAIN);
 	m_stDraw.ShowWindow(SW_SHOW);
 
-	int Pos_x = ((MAIN_DLG_WIDTH) / 6);
+	int Pos_x = ((MAIN_DLG_WIDTH) / SIGNAL_COUNT);
 	int Pos_y = (int)((double)MAIN_DLG_HEIGHT * (double)TAB_WND_RATIO);
 
 	for(int sigCount = 0; sigCount < SIGNAL_COUNT; sigCount++)
 	{
-		signal[sigCount].Create(_T("ERROR_1"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * sigCount, Pos_y, Pos_x * (sigCount + 1) - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_1 + sigCount);
-		signal[sigCount].ShowWindow(SW_SHOW);
+		signalWindow[sigCount].Create(_T("ERROR_1"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * sigCount, Pos_y, Pos_x * (sigCount + 1) - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_1 + sigCount);
+		signalWindow[sigCount].ShowWindow(SW_SHOW);
 	}
-	//signal[0].Create(_T("ERROR_1"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * 0, Pos_y, Pos_x * 1 - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_1);
-	//signal[0].ShowWindow(SW_SHOW);
-	//signal[1].Create(_T("ERROR_2"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * 1, Pos_y, Pos_x * 2 - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_2);
-	//signal[1].ShowWindow(SW_SHOW);
-	//signal[2].Create(_T("ERROR_3"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * 2, Pos_y, Pos_x * 3 - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_3);
-	//signal[2].ShowWindow(SW_SHOW);
-	//signal[3].Create(_T("ERROR_4"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * 3, Pos_y, Pos_x * 4 - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_4);
-	//signal[3].ShowWindow(SW_SHOW);
-	//signal[4].Create(_T("ERROR_5"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * 4, Pos_y, Pos_x * 5 - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_5);
-	//signal[4].ShowWindow(SW_SHOW);
-	//signal[5].Create(_T("ERROR_6"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * 5, Pos_y, Pos_x * 6 - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_6);
-	//signal[5].ShowWindow(SW_SHOW);
+	signalWindow[SIGNAL_COUNT - 1].ShowWindow(SW_HIDE);
+
+	signalWindow[0].SetString(CString(_T("OK PART")));
+	signalWindow[1].SetString(CString(_T("#1")));
+	signalWindow[2].SetString(CString(_T("#2")));
+	signalWindow[3].SetString(CString(_T("#3")));
+	signalWindow[4].SetString(CString(_T("#4")));
+	signalWindow[5].SetString(CString(_T("#5")));
 
 	return 0;
 }
@@ -708,11 +704,11 @@ bool CPulseDisplayDlg::CheckBeforeValue(unsigned char* data, int ringingPoint, i
 void CPulseDisplayDlg::SignalReset(void)
 {
 	for(int check = 0; check < 6; check++) {
-		signal[check].setColor = SET_NONE;
+		signalWindow[check].setColor = SET_NONE;
 	}
 	for(int check_2 = 0; check_2 < 6; check_2++) {
-		signal[check_2].Invalidate();
-		signal[check_2].UpdateWindow();
+		signalWindow[check_2].Invalidate();
+		signalWindow[check_2].UpdateWindow();
 	}
 
 }

@@ -39,3 +39,5 @@
 #define		LEVEL_TEST					"레벨 테스트"
 
 #define		INVALID_CURVE				"수신파형이 확인되지 않습니다."
+
+#define		STR_READY					"Ready"
