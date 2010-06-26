@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Strings.h"
 
 // CSignal
 enum
@@ -18,9 +19,12 @@ public:
 	virtual ~CSignal();
 
 	int setColor;
-	
+	void	SetString(CString setStr) { m_String = setStr; }
+
 protected:
 	DECLARE_MESSAGE_MAP()
+
+	CString		m_String;
 public:
 	afx_msg void OnPaint();
 };

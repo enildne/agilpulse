@@ -33,6 +33,7 @@
 #define IDC_SIGNAL_4					1025
 #define IDC_SIGNAL_5					1026
 #define IDC_SIGNAL_6					1027
+#define IDC_SIGNAL_7					1028
 
 
 // Next default values for new objects

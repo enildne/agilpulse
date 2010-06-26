@@ -86,7 +86,7 @@ private:
 	void SetTAB1Disp(void);
 	CString	m_UserName;
 
-	CSignal		signal[6];
+	CSignal		signalWindow[SIGNAL_COUNT];
 
 	// ±¸Çö
 protected:
