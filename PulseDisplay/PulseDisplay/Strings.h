@@ -44,6 +44,7 @@
 #define		STR_USER					""
 #define		STR_SUCCESS					"성공 :    "
 #define		STR_FAIL					"실패 :    "
+#define		STR_TOTAL					"총합 :    "
 
 #define		RINGING_OUTPUT				_T("\n  x1 : %.3f ms\n  x2 : %.3f ms\n\n  diff : %.3f ms")
 #define		LEVEL_OUTPUT				_T("\n  Volt : %.2f V")
