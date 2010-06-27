@@ -7,7 +7,8 @@ enum
 {
 	SET_NONE = 0,
 	SET_GREEN,
-	SET_RED
+	SET_RED,
+	SET_TEXT
 };
 
 class CSignal : public CStatic

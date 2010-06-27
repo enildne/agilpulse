@@ -8,10 +8,10 @@
 #define		TAB3_DSP_NAME				"Reserved"
 #define		TAB4_DSP_NAME				"Reserved"
 
-#define		TAB1_BTN1_NAME				"장비설정"
-#define		TAB1_BTN2_NAME				"모델선택"
-#define		TAB1_BTN3_NAME				"시작"
-#define		TAB1_BTN4_NAME				"반복"
+#define		TAB1_BTN1_NAME				"장비 설정"
+#define		TAB1_BTN2_NAME				"모델 선택"
+#define		TAB1_BTN3_NAME				"시   작"
+#define		TAB1_BTN4_NAME				"반   복"
 #define		TAB1_ST_DEVICE_NAME			"No device"
 
 #define		STR_DEVICE_LIST				"장비 리스트"

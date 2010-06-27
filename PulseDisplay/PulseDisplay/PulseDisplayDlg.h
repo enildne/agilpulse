@@ -59,11 +59,13 @@ public:
 	int			m_iLevelRangeMax;
 	int			m_iLevelMin;
 	int			m_iLevelMax;
+	
+	int			m_standard_1volt;
 
 	ViSession	defaultRM, vi ;
 	char		m_cBuf[256];
 	CStatic		m_stDevName;
-	
+
 	ViChar		m_devDesc[256];
 	void SetDeviceDesc(ViChar* selDev)	{
 		memset(m_devDesc, NULL, sizeof(m_devDesc));
@@ -106,5 +108,7 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+public:
+	CStatic m_picLogo;
 };
 

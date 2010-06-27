@@ -209,6 +209,36 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
 			<File
+				RelativePath=".\res\icons\Er01_fa.bmp">
+			</File>
+			<File
+				RelativePath=".\res\icons\Er01_ok.bmp">
+			</File>
+			<File
+				RelativePath=".\res\icons\Er02_fa.bmp">
+			</File>
+			<File
+				RelativePath=".\res\icons\Er02_ok.bmp">
+			</File>
+			<File
+				RelativePath=".\res\icons\Er03_fa.bmp">
+			</File>
+			<File
+				RelativePath=".\res\icons\Er03_ok.bmp">
+			</File>
+			<File
+				RelativePath=".\res\icons\Er04_fa.bmp">
+			</File>
+			<File
+				RelativePath=".\res\icons\Er04_ok.bmp">
+			</File>
+			<File
+				RelativePath=".\res\icons\ER05_FA.bmp">
+			</File>
+			<File
+				RelativePath=".\res\icons\ER05_OK.bmp">
+			</File>
+			<File
 				RelativePath=".\res\PulseDisplay.ico">
 			</File>
 			<File
@@ -216,6 +246,9 @@
 			</File>
 			<File
 				RelativePath=".\res\PulseDisplay.rc2">
+			</File>
+			<File
+				RelativePath=".\res\icons\ST_LOGO.bmp">
 			</File>
 		</Filter>
 		<File
