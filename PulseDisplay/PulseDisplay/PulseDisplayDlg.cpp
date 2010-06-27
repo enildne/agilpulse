@@ -53,6 +53,7 @@ BEGIN_MESSAGE_MAP(CPulseDisplayDlg, CDialog)
 	ON_WM_TIMER()
 	ON_BN_CLICKED(IDC_RT_TEST, OnBnClickedRtTest)
 	ON_BN_CLICKED(IDC_LEVEL_TEST, OnBnClickedLevelTest)
+	ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
 
@@ -279,6 +280,9 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 	int	repeat = 0, readFailFlag = 0, dataFailCount = 0;
 	char	dataFailed[5] = "";
 	BOOL	Failed = FALSE;
+	CString dispData;
+	double	volt;
+	double	x1, x2, diff;
 
 	m_btnTab1_3.EnableWindow(FALSE);
 
@@ -367,17 +371,17 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 					RTrace(_T("#RT 5 : 직전값 테스트\n"));
 				}
 				
-				BOOL	Pass = TRUE;
+				m_bPass = TRUE;
 				for(int check = 1; check < SIGNAL_COUNT; check++)
 				{
 					if(dataFailed[check] >= 3)
 					{
 						signalWindow[check].setColor = SET_RED;
 						MainSignal->setColor = SET_RED;
-						Pass = FALSE;
+						m_bPass = FALSE;
 					}
 				}
-				if(Pass)
+				if(m_bPass)
 				{
 					for(int pos = 1; pos < SIGNAL_COUNT; pos++)
 					{
@@ -391,8 +395,6 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 					m_iRingingFail++;
 				}
 
-				CString dispData;
-				double	x1, x2, diff;
 				x1 = (double)ringDown * 0.002;
 				x2 = (double)levelOne * 0.002;
 				diff = x2 - x1;
@@ -431,17 +433,17 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 			dataFailed[ran % 5] += rand() % 2;
 		}
 
-		BOOL	Pass = TRUE;
+		m_bPass = TRUE;
 		for(int check = 1; check < SIGNAL_COUNT; check++)
 		{
 			if(dataFailed[check] >= 3)
 			{
 				signalWindow[check].setColor = SET_RED;
 				MainSignal->setColor = SET_RED;
-				Pass = FALSE;
+				m_bPass = FALSE;
 			}
 		}
-		if(Pass)
+		if(m_bPass)
 		{
 			for(int pos = 1; pos < SIGNAL_COUNT; pos++)
 			{
@@ -491,10 +493,17 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 		m_stDraw.Invalidate();
 		m_stDraw.UpdateWindow();
 		
-		CString dispData;
-		double	volt;
-		volt = (double)m_stDraw.GetLevelMax();
+		volt = (double)m_stDraw.GetCheckedLevel();
 		
+		if(volt >= m_stDraw.m_levelMax || volt <= m_stDraw.m_levelMin) {
+			MainSignal->setColor = SET_RED;
+			m_iLevelFail++;
+		}
+		else {
+			MainSignal->setColor = SET_GREEN;
+			m_iLevelSuccess++;
+		}
+
 		dispData.Format(LEVEL_OUTPUT, (volt - 53) / 50);
 		MainSignal->SetString(dispData);
 		MainSignal->Invalidate();
@@ -536,6 +545,22 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn4()
 {
 	RTrace(_T("[zest] Tab1 Button4 Clicked\n"));
 
+	if(m_rdRTTest.GetCheck() == TRUE)
+	{
+		if(m_bPass == TRUE)
+			m_iRingingSuccess -= 1;
+		else
+			m_iRingingFail -= 1;
+	}
+	else
+	{
+		if(m_bPass == TRUE)
+			m_iLevelSuccess -= 1;
+		else
+			m_iLevelFail -= 1;
+	}
+
+	OnBnClickedTab1Btn3();
 	// 현재의 Log 에서 -1 하고 난 다음에 다시 Btn3 수행
 }
 
@@ -873,4 +898,26 @@ void CPulseDisplayDlg::SetRingingLoggingData(CString name, int succCount, int fa
 
 	winText.Format("%s\n%s%4d\n%s%4d", name, STR_SUCCESS, succCount, STR_FAIL, failCount);
 	m_stLog.SetWindowText(winText);
+}
+
+void CPulseDisplayDlg::OnClose()
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	CString LogFileName, LogData;
+	CTime CurTime;
+
+	CurTime = CTime::GetCurrentTime(); // 현재 시스템 시각을 구한다.
+	LogFileName.Format(_T("%s_%02d%02d_%02d%02d.log"), m_UserName, CurTime.GetMonth(), CurTime.GetDay(), CurTime.GetHour(), CurTime.GetMinute());
+	
+	LogData.Format(_T("%s,%4d,%2d,%2d,%2d,%2d,%04d,%04d,%04d,%04d"), \
+		m_UserName, CurTime.GetYear(), CurTime.GetMonth(), CurTime.GetDay(), CurTime.GetHour(), CurTime.GetMinute(),
+		m_iRingingSuccess, m_iRingingFail, m_iLevelSuccess, m_iLevelFail);
+
+	CStdioFile	logFile;
+	logFile.Open(LogFileName, CFile::modeCreate | CFile::modeWrite);
+	logFile.SeekToEnd();
+	logFile.WriteString(LogData);
+	logFile.Close();
+
+	CDialog::OnClose();
 }
