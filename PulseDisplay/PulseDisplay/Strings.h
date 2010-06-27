@@ -47,3 +47,5 @@
 
 #define		RINGING_OUTPUT				_T("\n  x1 : %.3f ms\n  x2 : %.3f ms\n\n  diff : %.3f ms")
 #define		LEVEL_OUTPUT				_T("\n  Volt : %.2f V")
+#define		FORMAT_RESULT				_T("%s,%4d-%02d-%02d,%02d-%02d,%04d,%04d,%04d,%04d")
+#define		RESULT_FILE_NAME			_T("Result.log")
