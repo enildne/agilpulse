@@ -302,16 +302,20 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 	m_stDraw.Invalidate();
 	m_stDraw.UpdateWindow();
 #else
-	SignalReset();
+
 #ifndef USE_RANDOM_DATA
 	status = viOpenDefaultRM(&defaultRM);
 	if (status < VI_SUCCESS) goto error;
 
 	status = viOpen(defaultRM, GetDeviceDesc(), VI_NULL, VI_NULL, &vi);
 	if (status < VI_SUCCESS) goto error;
-	
+#endif
+
 	if(m_rdRTTest.GetCheck() == TRUE)
 	{
+#ifndef USE_RANDOM_DATA
+		SignalReset();
+
 		for(repeat = 0; repeat < MAX_REPEAT_PER_TEST; repeat++)
 		{
 			if(readFailFlag >= 3)					// FAIL 이 3번 이상
@@ -392,7 +396,7 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 				x1 = (double)ringDown * 0.002;
 				x2 = (double)levelOne * 0.002;
 				diff = x2 - x1;
-				dispData.Format(_T("  x1 : %.3f ms\n  x2 : %.3f ms\n  diff : %.3f ms"), x1, x2, diff);
+				dispData.Format(RINGING_OUTPUT, x1, x2, diff);
 
 				MainSignal->SetString(dispData);
 				SetRingingLoggingData(m_UserName, m_iRingingSuccess, m_iRingingFail);
@@ -455,7 +459,7 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 		x1 = (double)(rand() % 2500) * 0.002;
 		x2 = (double)(rand() % 2500) * 0.002;
 		diff = x2 - x1;
-		dispData.Format(_T("  x1 : %.3f ms\n  x2 : %.3f ms\n  diff : %.3f ms"), x1, x2, diff);
+		dispData.Format(RINGING_OUTPUT, x1, x2, diff);
 
 		MainSignal->SetString(dispData);
 
@@ -466,12 +470,13 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 			signalWindow[sig].Invalidate();
 			signalWindow[sig].UpdateWindow();
 		}
+	}
 #endif
 	}
 	else
 	{
 		RTrace(_T("Level TEST\n"));
-
+#ifndef USE_RANDOM_DATA
 		status = viClear(vi);
 		if (status < VI_SUCCESS) goto error;
 
@@ -485,6 +490,24 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 
 		m_stDraw.Invalidate();
 		m_stDraw.UpdateWindow();
+		
+		CString dispData;
+		double	volt;
+		volt = (double)m_stDraw.GetLevelMax();
+		
+		dispData.Format(LEVEL_OUTPUT, (volt - 53) / 50);
+		MainSignal->SetString(dispData);
+		MainSignal->Invalidate();
+		MainSignal->UpdateWindow();
+#else
+		CString dispData;
+		double	volt = rand() % 200 + 53;
+
+		dispData.Format(LEVEL_OUTPUT, (volt - 53) / 50);
+		MainSignal->SetString(dispData);
+		MainSignal->Invalidate();
+		MainSignal->UpdateWindow();
+#endif
 	}
 
 	viClose(vi);
@@ -609,7 +632,7 @@ void CPulseDisplayDlg::SetTAB1Disp(void)
 	MainSignal = &signalWindow[0];
 	MainSignal->SetText(TRUE);							// MAIN SIGNAL 글씨 셋팅
 	CString dispData;
-	dispData.Format(_T("  x1 : %.3f ms\n  x2 : %.3f ms\n  diff : %.3f ms"), 0, 0, 0);
+	dispData.Format(RINGING_OUTPUT, 0, 0, 0);
 	MainSignal->SetString(dispData);
 
 	signalWindow[SIGNAL_COUNT - 1].ShowWindow(SW_HIDE);
@@ -659,6 +682,8 @@ void CPulseDisplayDlg::ShowFirstTabCtrl(void)
 	m_stDraw.ShowWindow(SW_SHOW);
 	m_rdRTTest.ShowWindow(SW_SHOW);
 	m_rdLevelTest.ShowWindow(SW_SHOW);
+	m_stLog.ShowWindow(SW_SHOW);
+	m_picLogo.ShowWindow(SW_SHOW);
 	SignalReset();
 	SetTimer(TID_TIME, 1000, NULL);
 }
@@ -673,12 +698,16 @@ void CPulseDisplayDlg::HideFirstTabCtrl(void)
 	m_stDraw.ShowWindow(SW_HIDE);
 	m_rdRTTest.ShowWindow(SW_HIDE);
 	m_rdLevelTest.ShowWindow(SW_HIDE);
+	m_stLog.ShowWindow(SW_HIDE);
+	m_picLogo.ShowWindow(SW_HIDE);
 	SignalReset();
 	KillTimer(TID_TIME);
 }
 
 void CPulseDisplayDlg::OnBnClickedRtTest()
 {
+	CString dispData;
+
 	BeginWaitCursor();
 	if(m_ringdownSetCmd.IsEmpty() == FALSE)
 	{
@@ -702,8 +731,13 @@ void CPulseDisplayDlg::OnBnClickedRtTest()
 	m_rdLevelTest.SetCheck(FALSE);
 	m_rdRTTest.SetCheck(TRUE);
 
+	SignalReset();
+	dispData.Format(RINGING_OUTPUT, 0, 0, 0);
+	MainSignal->SetString(dispData);
 	SetRingingLoggingData(m_UserName, m_iRingingSuccess, m_iRingingFail);
-
+	MainSignal->Invalidate();
+	MainSignal->UpdateWindow();
+	
 	EndWaitCursor();
 	return;
 error:
@@ -715,6 +749,8 @@ error:
 
 void CPulseDisplayDlg::OnBnClickedLevelTest()
 {
+	CString dispData;
+
 	BeginWaitCursor();
 	if(m_levelSetCmd.IsEmpty() == FALSE)
 	{
@@ -738,7 +774,12 @@ void CPulseDisplayDlg::OnBnClickedLevelTest()
 	m_rdRTTest.SetCheck(FALSE);
 	m_rdLevelTest.SetCheck(TRUE);
 
+	SignalReset();
+	dispData.Format(LEVEL_OUTPUT, 0);
+	MainSignal->SetString(dispData);
 	SetRingingLoggingData(m_UserName, m_iLevelSuccess, m_iLevelFail);
+	MainSignal->Invalidate();
+	MainSignal->UpdateWindow();
 	
 	EndWaitCursor();
 	return;
@@ -818,6 +859,7 @@ void CPulseDisplayDlg::SignalReset(void)
 	for(int check = 0; check < SIGNAL_COUNT; check++) {
 		signalWindow[check].setColor = SET_NONE;
 	}
+
 	for(int check_2 = 0; check_2 < SIGNAL_COUNT; check_2++) {
 		signalWindow[check_2].Invalidate();
 		signalWindow[check_2].UpdateWindow();
