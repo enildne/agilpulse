@@ -51,8 +51,8 @@ BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo 
 # ADD BSC32 /nologo 
 LINK32=link.exe
-# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib visa32.lib /nologo /out:"..\bin\PulseDisplay.exe" /incremental:yes /debug /pdbtype:sept /subsystem:windows /machine:ix86 
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib visa32.lib /nologo /out:"..\bin\PulseDisplay.exe" /incremental:yes /debug /pdbtype:sept /subsystem:windows /machine:ix86 
+# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib visa32.lib msimg32.lib /nologo /out:"..\bin\PulseDisplay.exe" /incremental:yes /debug /pdbtype:sept /subsystem:windows /machine:ix86 
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib visa32.lib msimg32.lib /nologo /out:"..\bin\PulseDisplay.exe" /incremental:yes /debug /pdbtype:sept /subsystem:windows /machine:ix86 
 
 !ELSEIF  "$(CFG)" == "PulseDisplay - Win32 Release"
 
@@ -76,8 +76,8 @@ BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo 
 # ADD BSC32 /nologo 
 LINK32=link.exe
-# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib visa32.lib /nologo /out:"..\bin\PulseDisplay.exe" /incremental:no /debug /pdbtype:sept /subsystem:windows /opt:ref /opt:icf /machine:ix86 
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib visa32.lib /nologo /out:"..\bin\PulseDisplay.exe" /incremental:no /debug /pdbtype:sept /subsystem:windows /opt:ref /opt:icf /machine:ix86 
+# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib visa32.lib msimg32.lib /nologo /out:"..\bin\PulseDisplay.exe" /incremental:no /debug /pdbtype:sept /subsystem:windows /opt:ref /opt:icf /machine:ix86 
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib visa32.lib msimg32.lib /nologo /out:"..\bin\PulseDisplay.exe" /incremental:no /debug /pdbtype:sept /subsystem:windows /opt:ref /opt:icf /machine:ix86 
 
 !ENDIF
 
