@@ -3,23 +3,25 @@
 
 /* 제어용 정의 */
 //#define USE_ASRL_DEVICE						// ASRL Device Listing 여부
-//#define		USE_GPIB_DEVICE
-//#define		LOGIN_DLG							// Login Dlg 를 보일지 말지 결정(개발중에는 안보이도록)
-#define		LIMIT_SCREEN_SIZE					// 화면 크기에 무조건 맞도록 수정.
+#define		USE_GPIB_DEVICE
+#define		LOGIN_DLG							// Login Dlg 를 보일지 말지 결정(개발중에는 안보이도록)
+#define		LIMIT_SCREEN_SIZE
+
 //#define		USE_SAMPLE_FILE
 //#define		MAKE_SAMPLE_FILE
+//#define		USE_RANDOM_DATA
 
 /* 창 및 버튼, 다이얼로그 사이즈 및 각각의 간격 */
 #define		MAIN_DLG_WIDTH				1024			// MAIN WINDOW 크기
 #define		MAIN_DLG_HEIGHT				768
 
-#define		TAB_WND_RATIO				0.7				// MAIN WINDOW 대비 TAB Window 의 비율
+#define		TAB_WND_RATIO				0.75			// MAIN WINDOW 대비 TAB Window 의 비율
 
 #define		INTAB_BTN_START_X			10				// 버튼 시작위치
 #define		INTAB_BTN_START_Y			40
 
 #define		BUTTON_WIDTH				200				// 버튼 사이즈
-#define		BUTTON_HEIGHT				60
+#define		BUTTON_HEIGHT				40
 
 #define		BUTTON_GAP					10				// 버튼 간격
 

@@ -50,9 +50,6 @@ void CSignal::OnPaint()
 	int bmp_cx = rect.Width() - 4;
 	int bmp_cy = rect.Height() - circlePosition_cy - 4;
 
-	//int bmp_cx = rect.right - 2;
-	//int bmp_cy = rect.bottom - 2;
-
 	int text_x = 5;
 	int text_y = circlePosition_cy + 5;
 	int text_cx = rect.Width() - text_x;
@@ -81,6 +78,8 @@ void CSignal::OnPaint()
 		bx=bit.bmWidth;
 		by=bit.bmHeight;
 		::TransparentBlt(dc, bmp_x, bmp_y, bmp_cx, bmp_cy, MemDC, 0, 0, bx, by, RGB(0,0,0));
+		::SelectObject(MemDC, OldBitmap);
+		m_hBitmap.DeleteObject();
 	}
 	else if(setColor == SET_RED)
 	{
@@ -105,8 +104,10 @@ void CSignal::OnPaint()
 		bx=bit.bmWidth;
 		by=bit.bmHeight;
 		::TransparentBlt(dc, bmp_x, bmp_y, bmp_cx, bmp_cy, MemDC, 0, 0, bx, by, RGB(0,0,0));
+		::SelectObject(MemDC, OldBitmap);
+		m_hBitmap.DeleteObject();
 	}
-	else
+	else if(setColor == SET_GREEN)
 	{
 		HDC MemDC;
 		HBITMAP OldBitmap;
@@ -122,11 +123,18 @@ void CSignal::OnPaint()
 		dc.SelectObject( oldBrush );
 		brush.DeleteObject();
 
+		m_hBitmap.LoadBitmap(MAKEINTRESOURCE(m_IDBmp_OK));
 		MemDC=::CreateCompatibleDC(dc);
 		OldBitmap=(HBITMAP)::SelectObject(MemDC, m_hBitmap);
 		::GetObject(m_hBitmap, sizeof(BITMAP), &bit);
 		bx=bit.bmWidth;
 		by=bit.bmHeight;
 		::TransparentBlt(dc, bmp_x, bmp_y, bmp_cx, bmp_cy, MemDC, 0, 0, bx, by, RGB(0,0,0));
+		::SelectObject(MemDC, OldBitmap);
+		m_hBitmap.DeleteObject();
+	}
+	else if(setColor == SET_TEXT)
+	{
+
 	}
 }

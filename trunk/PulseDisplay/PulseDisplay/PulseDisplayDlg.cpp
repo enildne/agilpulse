@@ -32,6 +32,7 @@ void CPulseDisplayDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_DEVICE_NAME, m_stDevName);
 	DDX_Control(pDX, IDC_RT_TEST, m_rdRTTest);
 	DDX_Control(pDX, IDC_LEVEL_TEST, m_rdLevelTest);
+	DDX_Control(pDX, IDC_LOGO_PIC, m_picLogo);
 }
 
 BEGIN_MESSAGE_MAP(CPulseDisplayDlg, CDialog)
@@ -212,7 +213,8 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn2()
 		m_iPreRingdownEnd = atoi(setList.GetvoltTestEndPosition());
 		m_stDraw.setVolt1Start(m_iPreRingdownStart);
 		m_stDraw.setVolt1End(m_iPreRingdownEnd);
-		m_stDraw.setStandardVolt(atoi(setList.GetStandardVolt()));
+		m_standard_1volt = atoi(setList.GetStandardVolt());
+		m_stDraw.setStandardVolt(m_standard_1volt);
 		m_iRTTestDiff = atoi(setList.GetRTTestDiff());
 
 		m_stDraw.m_levelRangeMax = atoi(setList.GetLevelRangeMax());
@@ -296,7 +298,7 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 	m_stDraw.UpdateWindow();
 #else
 	SignalReset();
-
+#ifndef USE_RANDOM_DATA
 	status = viOpenDefaultRM(&defaultRM);
 	if (status < VI_SUCCESS) goto error;
 
@@ -361,13 +363,13 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 				{
 					if(dataFailed[check] >= 3)
 					{
-						signalWindow[check + 1].setColor = SET_RED;
-						signalWindow[0].setColor = SET_RED;
+						signalWindow[check].setColor = SET_RED;
+						MainSignal->setColor = SET_RED;
 						Pass = FALSE;
 					}
 				}
 				if(Pass)
-					signalWindow[0].setColor = SET_GREEN;
+					MainSignal->setColor = SET_GREEN;
 
 				m_stDraw.setPulseData(&strres[DATA_START_POSITION]);
 			}
@@ -383,11 +385,49 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 #endif
 		m_stDraw.Invalidate();
 		m_stDraw.UpdateWindow();
+
 		for(int sig = 0; sig < SIGNAL_COUNT; sig++)
 		{
 			signalWindow[sig].Invalidate();
 			signalWindow[sig].UpdateWindow();
 		}
+
+
+#else		// USE_RANDOM_DATA
+	if(1)
+	{
+		for(int ran = 0; ran < 25; ran++)
+		{
+			dataFailed[ran % 5] += rand() % 2;
+		}
+
+
+		BOOL	Pass = TRUE;
+		for(int check = 1; check < SIGNAL_COUNT; check++)
+		{
+			if(dataFailed[check] >= 3)
+			{
+				signalWindow[check].setColor = SET_RED;
+				MainSignal->setColor = SET_RED;
+				Pass = FALSE;
+			}
+		}
+		if(Pass)
+		{
+			for(int pos = 1; pos < SIGNAL_COUNT; pos++)
+			{
+				signalWindow[pos].setColor = SET_GREEN;
+				MainSignal->setColor = SET_GREEN;
+			}
+		}
+
+		for(int sig = 0; sig < SIGNAL_COUNT; sig++)
+		{
+			signalWindow[sig].Invalidate();
+			signalWindow[sig].UpdateWindow();
+		}
+
+#endif
 	}
 	else
 	{
@@ -494,6 +534,11 @@ void CPulseDisplayDlg::SetTAB1Disp(void)
 		m_stDraw.MoveWindow(&CRect(INTAB_BTN_START_X + BUTTON_WIDTH, INTAB_BTN_START_Y, tabRect.right - 5, tabRect.bottom - DEVNAME_HEIGHT + 1));
 	}
 
+	if(m_picLogo) {
+		m_picLogo.MoveWindow(&CRect(INTAB_BTN_START_X, tabRect.bottom - 100 - 5, \
+			INTAB_BTN_START_X + BUTTON_WIDTH, tabRect.bottom - 5));
+	}
+
 	if(m_stDevName)	{
 		m_stDevName.SetWindowText(_T(TAB1_ST_DEVICE_NAME));
 		m_stDevName.ModifyStyle(NULL, SS_CENTERIMAGE, NULL);
@@ -515,10 +560,10 @@ void CPulseDisplayDlg::SetTAB1Disp(void)
 
 	int sigNum, sigBmpID;
 
-	for(sigNum = 1, sigBmpID = IDB_FIRST_OK; sigNum < SIGNAL_COUNT; sigNum++)
+	for(sigNum = 1, sigBmpID = IDB_FIRST_ERR; sigNum < SIGNAL_COUNT; sigNum++)
 	{
-		signalWindow[sigNum].SetOKBmp(sigBmpID++);
 		signalWindow[sigNum].SetFailBmp(sigBmpID++);
+		signalWindow[sigNum].SetOKBmp(sigBmpID++);
 	}
 }
 
@@ -668,7 +713,7 @@ int CPulseDisplayDlg::CheckLevelOnePosition(unsigned char* data)
 
 	for(pos = m_iPreRingdownStart; pos < m_iPreRingdownEnd; pos++)
 	{
-		if(data[pos] <= 78)				// 1Volt
+		if(data[pos] <= m_standard_1volt)				// 1Volt
 			return pos;
 	}
 	
