@@ -123,6 +123,8 @@ void CPulseDisplayDlg::OnPaint()
 		int x = (rect.Width() - cxIcon + 1) / 2;
 		int y = (rect.Height() - cyIcon + 1) / 2;
 
+		dc.FillRect(rect, WHITE_BRUSH);
+
 		// 아이콘을 그립니다.
 		dc.DrawIcon(x, y, m_hIcon);
 	}
@@ -149,7 +151,6 @@ void CPulseDisplayDlg::OnTcnSelchangeTabMain(NMHDR *pNMHDR, LRESULT *pResult)
 	default:
 		ShowFirstTabCtrl();
 		break;
-	
 	case 1:
 		HideFirstTabCtrl();
 		break;
@@ -444,23 +445,6 @@ int CPulseDisplayDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_stDraw.Create(_T("DrawPlace"), WS_CHILD | WS_THICKFRAME, CRect(0, 0, 0, 0), this, IDC_TAB1_DRAW_MAIN);
 	m_stDraw.ShowWindow(SW_SHOW);
 
-	int Pos_x = ((MAIN_DLG_WIDTH) / SIGNAL_COUNT);
-	int Pos_y = (int)((double)MAIN_DLG_HEIGHT * (double)TAB_WND_RATIO);
-
-	for(int sigCount = 0; sigCount < SIGNAL_COUNT; sigCount++)
-	{
-		signalWindow[sigCount].Create(_T("ERROR_1"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * sigCount, Pos_y, Pos_x * (sigCount + 1) - 1, MAIN_DLG_HEIGHT), this, IDC_SIGNAL_1 + sigCount);
-		signalWindow[sigCount].ShowWindow(SW_SHOW);
-	}
-	signalWindow[SIGNAL_COUNT - 1].ShowWindow(SW_HIDE);
-
-	signalWindow[0].SetString(CString(_T("OK PART")));
-	signalWindow[1].SetString(CString(_T("#1")));
-	signalWindow[2].SetString(CString(_T("#2")));
-	signalWindow[3].SetString(CString(_T("#3")));
-	signalWindow[4].SetString(CString(_T("#4")));
-	signalWindow[5].SetString(CString(_T("#5")));
-
 	return 0;
 }
 
@@ -506,13 +490,35 @@ void CPulseDisplayDlg::SetTAB1Disp(void)
 		m_rdLevelTest.SetCheck(FALSE);
 	}
 
-	if(m_stDraw)
+	if(m_stDraw) {
 		m_stDraw.MoveWindow(&CRect(INTAB_BTN_START_X + BUTTON_WIDTH, INTAB_BTN_START_Y, tabRect.right - 5, tabRect.bottom - DEVNAME_HEIGHT + 1));
-	
+	}
+
 	if(m_stDevName)	{
 		m_stDevName.SetWindowText(_T(TAB1_ST_DEVICE_NAME));
 		m_stDevName.ModifyStyle(NULL, SS_CENTERIMAGE, NULL);
 		m_stDevName.MoveWindow(&CRect(INTAB_BTN_START_X + BUTTON_WIDTH, tabRect.bottom - DEVNAME_HEIGHT, tabRect.right - 5, tabRect.bottom), TRUE);
+	}
+
+	int Pos_x = (winRect.Width() / SIGNAL_COUNT);
+	int Pos_y = (int)((double)winRect.Height() * (double)TAB_WND_RATIO);
+
+	for(int sigCount = 0; sigCount < SIGNAL_COUNT; sigCount++)
+	{
+		signalWindow[sigCount].Create(_T("ERROR_1"), WS_CHILD | WS_THICKFRAME, CRect(Pos_x * sigCount, Pos_y, Pos_x * (sigCount + 1) - 1, winRect.Height()), this, IDC_SIGNAL_1 + sigCount);
+		signalWindow[sigCount].ShowWindow(SW_SHOW);
+	}
+
+	MainSignal = &signalWindow[0];
+
+	signalWindow[SIGNAL_COUNT - 1].ShowWindow(SW_HIDE);
+
+	int sigNum, sigBmpID;
+
+	for(sigNum = 1, sigBmpID = IDB_FIRST_OK; sigNum < SIGNAL_COUNT; sigNum++)
+	{
+		signalWindow[sigNum].SetOKBmp(sigBmpID++);
+		signalWindow[sigNum].SetFailBmp(sigBmpID++);
 	}
 }
 
@@ -703,10 +709,10 @@ bool CPulseDisplayDlg::CheckBeforeValue(unsigned char* data, int ringingPoint, i
 
 void CPulseDisplayDlg::SignalReset(void)
 {
-	for(int check = 0; check < 6; check++) {
+	for(int check = 0; check < SIGNAL_COUNT; check++) {
 		signalWindow[check].setColor = SET_NONE;
 	}
-	for(int check_2 = 0; check_2 < 6; check_2++) {
+	for(int check_2 = 0; check_2 < SIGNAL_COUNT; check_2++) {
 		signalWindow[check_2].Invalidate();
 		signalWindow[check_2].UpdateWindow();
 	}
