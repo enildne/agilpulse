@@ -903,18 +903,17 @@ void CPulseDisplayDlg::SetRingingLoggingData(CString name, int succCount, int fa
 void CPulseDisplayDlg::OnClose()
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-	CString LogFileName, LogData;
+	CString LogData;
 	CTime CurTime;
 
 	CurTime = CTime::GetCurrentTime(); // 현재 시스템 시각을 구한다.
-	LogFileName.Format(_T("%s_%02d%02d_%02d%02d.log"), m_UserName, CurTime.GetMonth(), CurTime.GetDay(), CurTime.GetHour(), CurTime.GetMinute());
 	
-	LogData.Format(_T("%s,%4d,%2d,%2d,%2d,%2d,%04d,%04d,%04d,%04d"), \
-		m_UserName, CurTime.GetYear(), CurTime.GetMonth(), CurTime.GetDay(), CurTime.GetHour(), CurTime.GetMinute(),
+	LogData.Format(FORMAT_RESULT, \
+		m_UserName, CurTime.GetYear(), CurTime.GetMonth(), CurTime.GetDay(), CurTime.GetHour(), CurTime.GetMinute(), \
 		m_iRingingSuccess, m_iRingingFail, m_iLevelSuccess, m_iLevelFail);
 
 	CStdioFile	logFile;
-	logFile.Open(LogFileName, CFile::modeCreate | CFile::modeWrite);
+	logFile.Open(RESULT_FILE_NAME, CFile::modeCreate | CFile::modeWrite);
 	logFile.SeekToEnd();
 	logFile.WriteString(LogData);
 	logFile.Close();

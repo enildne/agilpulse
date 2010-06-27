@@ -1,4 +1,4 @@
-// Microsoft Visual C++ generated resource script.
+//Microsoft Developer Studio generated resource script.
 //
 #include "resource.h"
 
@@ -13,7 +13,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// 한국어 resources
+// Korean resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_KOR)
 #ifdef _WIN32
@@ -27,18 +27,18 @@ LANGUAGE LANG_KOREAN, SUBLANG_DEFAULT
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE 
+1 TEXTINCLUDE MOVEABLE PURE 
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE 
+2 TEXTINCLUDE MOVEABLE PURE 
 BEGIN
     "#include ""afxres.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE 
+3 TEXTINCLUDE MOVEABLE PURE 
 BEGIN
     "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
     "#define _AFX_NO_OLE_RESOURCES\r\n"
@@ -64,7 +64,7 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_MAINFRAME           ICON                    "res\\PulseDisplay.ico"
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\PulseDisplay.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -72,8 +72,8 @@ IDR_MAINFRAME           ICON                    "res\\PulseDisplay.ico"
 //
 
 IDD_PULSEDISPLAY_DIALOG DIALOGEX 0, 0, 623, 288
-STYLE DS_SYSMODAL | DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | 
-    WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+STYLE DS_SYSMODAL | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | 
+    WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CLIENTEDGE | WS_EX_APPWINDOW
 CAPTION "PulseDisplay"
 FONT 9, "MS Shell Dlg", 0, 0, 0x1
@@ -95,10 +95,10 @@ BEGIN
 END
 
 IDD_DEVLIST DIALOGEX 0, 0, 185, 95
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
+STYLE DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
 EXSTYLE WS_EX_CLIENTEDGE
 CAPTION "Device List"
-FONT 9, "MS Shell Dlg", 0, 0, 0x0
+FONT 9, "MS Shell Dlg"
 BEGIN
     LISTBOX         IDC_DEV_LIST,7,7,171,81,LBS_SORT | LBS_NOINTEGRALHEIGHT | 
                     WS_VSCROLL | WS_TABSTOP,WS_EX_DLGMODALFRAME | 
@@ -106,8 +106,7 @@ BEGIN
 END
 
 IDD_DLG_LOGIN DIALOGEX 0, 0, 186, 116
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
-    WS_SYSMENU
+STYLE DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Dialog"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
@@ -126,7 +125,7 @@ BEGIN
 END
 
 IDD_SETLIST DIALOGEX 0, 0, 215, 103
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
+STYLE DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
 EXSTYLE WS_EX_CLIENTEDGE
 CAPTION "Setting List"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -137,6 +136,7 @@ BEGIN
 END
 
 
+#ifndef _MAC
 /////////////////////////////////////////////////////////////////////////////
 //
 // Version
@@ -159,14 +159,14 @@ BEGIN
     BEGIN
         BLOCK "041203b5"
         BEGIN
-            VALUE "CompanyName", "TODO: <회사 이름>"
-            VALUE "FileDescription", "TODO: <파일 설명>"
-            VALUE "FileVersion", "1.0.0.1"
-            VALUE "InternalName", "PulseDisplay.exe"
-            VALUE "LegalCopyright", "TODO: (c) <회사 이름>.  All rights reserved."
-            VALUE "OriginalFilename", "PulseDisplay.exe"
-            VALUE "ProductName", "TODO: <제품 이름>"
-            VALUE "ProductVersion", "1.0.0.1"
+            VALUE "CompanyName", "TODO: <회사 이름>\0"
+            VALUE "FileDescription", "TODO: <파일 설명>\0"
+            VALUE "FileVersion", "1.0.0.1\0"
+            VALUE "InternalName", "PulseDisplay.exe\0"
+            VALUE "LegalCopyright", "TODO: (c) <회사 이름>.  All rights reserved.\0"
+            VALUE "OriginalFilename", "PulseDisplay.exe\0"
+            VALUE "ProductName", "TODO: <제품 이름>\0"
+            VALUE "ProductVersion", "1.0.0.1\0"
         END
     END
     BLOCK "VarFileInfo"
@@ -175,6 +175,8 @@ BEGIN
     END
 END
 
+#endif    // !_MAC
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -182,7 +184,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO MOVEABLE PURE 
 BEGIN
     IDD_PULSEDISPLAY_DIALOG, DIALOG
     BEGIN
@@ -224,29 +226,36 @@ END
 // Bitmap
 //
 
-IDB_LOGO_BITMAP         BITMAP                  "res\\icons\\ST_LOGO.bmp"
-IDB_FIRST_ERR           BITMAP                  "res\\icons\\ER01_FA.BMP"
-IDB_FIRST_OK            BITMAP                  "res\\icons\\ER01_OK.BMP"
-IDB_SECOND_ERR          BITMAP                  "res\\icons\\ER02_FA.BMP"
-IDB_SECOND_OK           BITMAP                  "res\\icons\\ER02_OK.BMP"
-IDB_THIRD_ERR           BITMAP                  "res\\icons\\ER03_FA.BMP"
-IDB_THIRD_OK            BITMAP                  "res\\icons\\ER03_OK.BMP"
-IDB_FOURTH_ERR          BITMAP                  "res\\icons\\ER04_FA.BMP"
-IDB_FOURTH_OK           BITMAP                  "res\\icons\\ER04_OK.BMP"
-IDB_FIFTH_ERR           BITMAP                  "res\\icons\\ER05_FA.bmp"
-IDB_FIFTH_OK            BITMAP                  "res\\icons\\ER05_OK.bmp"
+IDB_LOGO_BITMAP         BITMAP  MOVEABLE PURE   "res\\icons\\ST_LOGO.bmp"
+IDB_FIRST_ERR           BITMAP  MOVEABLE PURE   "res\\icons\\ER01_FA.BMP"
+IDB_FIRST_OK            BITMAP  MOVEABLE PURE   "res\\icons\\ER01_OK.BMP"
+IDB_SECOND_ERR          BITMAP  MOVEABLE PURE   "res\\icons\\ER02_FA.BMP"
+IDB_SECOND_OK           BITMAP  MOVEABLE PURE   "res\\icons\\ER02_OK.BMP"
+IDB_THIRD_ERR           BITMAP  MOVEABLE PURE   "res\\icons\\ER03_FA.BMP"
+IDB_THIRD_OK            BITMAP  MOVEABLE PURE   "res\\icons\\ER03_OK.BMP"
+IDB_FOURTH_ERR          BITMAP  MOVEABLE PURE   "res\\icons\\ER04_FA.BMP"
+IDB_FOURTH_OK           BITMAP  MOVEABLE PURE   "res\\icons\\ER04_OK.BMP"
+IDB_FIFTH_ERR           BITMAP  MOVEABLE PURE   "res\\icons\\ER05_FA.bmp"
+IDB_FIFTH_OK            BITMAP  MOVEABLE PURE   "res\\icons\\ER05_OK.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// 24
+//
+
+1                       24      DISCARDABLE     "xptheme.xml"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE DISCARDABLE 
 BEGIN
     IDS_STRING_MAIN         "MAIN BASE SHEET"
 END
 
-#endif    // 한국어 resources
+#endif    // Korean resources
 /////////////////////////////////////////////////////////////////////////////
 
 
