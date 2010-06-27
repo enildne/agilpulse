@@ -16,7 +16,11 @@
 
 
 CPulseDisplayDlg::CPulseDisplayDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CPulseDisplayDlg::IDD, pParent)
+	: CDialog(CPulseDisplayDlg::IDD, pParent),
+	m_iRingingSuccess(0),
+	m_iRingingFail(0),
+	m_iLevelSuccess(0),
+	m_iLevelFail(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -33,6 +37,7 @@ void CPulseDisplayDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_RT_TEST, m_rdRTTest);
 	DDX_Control(pDX, IDC_LEVEL_TEST, m_rdLevelTest);
 	DDX_Control(pDX, IDC_LOGO_PIC, m_picLogo);
+	DDX_Control(pDX, IDC_ST_LOG, m_stLog);
 }
 
 BEGIN_MESSAGE_MAP(CPulseDisplayDlg, CDialog)
@@ -369,7 +374,28 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 					}
 				}
 				if(Pass)
-					MainSignal->setColor = SET_GREEN;
+				{
+					for(int pos = 1; pos < SIGNAL_COUNT; pos++)
+					{
+						signalWindow[pos].setColor = SET_GREEN;
+						MainSignal->setColor = SET_GREEN;
+					}
+					m_iRingingSuccess++;
+				}
+				else
+				{
+					m_iRingingFail++;
+				}
+
+				CString dispData;
+				double	x1, x2, diff;
+				x1 = (double)ringDown * 0.002;
+				x2 = (double)levelOne * 0.002;
+				diff = x2 - x1;
+				dispData.Format(_T("  x1 : %.3f ms\n  x2 : %.3f ms\n  diff : %.3f ms"), x1, x2, diff);
+
+				MainSignal->SetString(dispData);
+				SetRingingLoggingData(m_UserName, m_iRingingSuccess, m_iRingingFail);
 
 				m_stDraw.setPulseData(&strres[DATA_START_POSITION]);
 			}
@@ -401,7 +427,6 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 			dataFailed[ran % 5] += rand() % 2;
 		}
 
-
 		BOOL	Pass = TRUE;
 		for(int check = 1; check < SIGNAL_COUNT; check++)
 		{
@@ -419,14 +444,28 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 				signalWindow[pos].setColor = SET_GREEN;
 				MainSignal->setColor = SET_GREEN;
 			}
+			m_iRingingSuccess++;
 		}
+		else
+		{
+			m_iRingingFail++;
+		}
+		CString dispData;
+		double	x1, x2, diff;
+		x1 = (double)(rand() % 2500) * 0.002;
+		x2 = (double)(rand() % 2500) * 0.002;
+		diff = x2 - x1;
+		dispData.Format(_T("  x1 : %.3f ms\n  x2 : %.3f ms\n  diff : %.3f ms"), x1, x2, diff);
+
+		MainSignal->SetString(dispData);
+
+		SetRingingLoggingData(m_UserName, m_iRingingSuccess, m_iRingingFail);
 
 		for(int sig = 0; sig < SIGNAL_COUNT; sig++)
 		{
 			signalWindow[sig].Invalidate();
 			signalWindow[sig].UpdateWindow();
 		}
-
 #endif
 	}
 	else
@@ -530,6 +569,19 @@ void CPulseDisplayDlg::SetTAB1Disp(void)
 		m_rdLevelTest.SetCheck(FALSE);
 	}
 
+	if(m_stLog) {
+		int	fontHeight = 25;
+		m_font.DeleteObject();//Detach();
+		m_font.CreateFont(fontHeight, 0, 0, 0, 0, FALSE, FALSE, 0,
+			DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FF_SWISS, _T("Tahoma"));
+		//m_font.CreatePointFont(fontHeight, "Verdana");
+		
+		m_stLog.SetFont(&m_font);
+		m_stLog.MoveWindow(&CRect(INTAB_BTN_START_X, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 5, \
+			BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 5 + (fontHeight * 3)));
+		SetRingingLoggingData(m_UserName, m_iRingingSuccess, m_iRingingFail);
+	}
+
 	if(m_stDraw) {
 		m_stDraw.MoveWindow(&CRect(INTAB_BTN_START_X + BUTTON_WIDTH, INTAB_BTN_START_Y, tabRect.right - 5, tabRect.bottom - DEVNAME_HEIGHT + 1));
 	}
@@ -555,6 +607,10 @@ void CPulseDisplayDlg::SetTAB1Disp(void)
 	}
 
 	MainSignal = &signalWindow[0];
+	MainSignal->SetText(TRUE);							// MAIN SIGNAL ±Û¾¾ ¼ÂÆÃ
+	CString dispData;
+	dispData.Format(_T("  x1 : %.3f ms\n  x2 : %.3f ms\n  diff : %.3f ms"), 0, 0, 0);
+	MainSignal->SetString(dispData);
 
 	signalWindow[SIGNAL_COUNT - 1].ShowWindow(SW_HIDE);
 
@@ -645,6 +701,9 @@ void CPulseDisplayDlg::OnBnClickedRtTest()
 	Sleep(1000);
 	m_rdLevelTest.SetCheck(FALSE);
 	m_rdRTTest.SetCheck(TRUE);
+
+	SetRingingLoggingData(m_UserName, m_iRingingSuccess, m_iRingingFail);
+
 	EndWaitCursor();
 	return;
 error:
@@ -678,6 +737,8 @@ void CPulseDisplayDlg::OnBnClickedLevelTest()
 	Sleep(1000);
 	m_rdRTTest.SetCheck(FALSE);
 	m_rdLevelTest.SetCheck(TRUE);
+
+	SetRingingLoggingData(m_UserName, m_iLevelSuccess, m_iLevelFail);
 	
 	EndWaitCursor();
 	return;
@@ -762,4 +823,12 @@ void CPulseDisplayDlg::SignalReset(void)
 		signalWindow[check_2].UpdateWindow();
 	}
 
+}
+
+void CPulseDisplayDlg::SetRingingLoggingData(CString name, int succCount, int failCount)
+{
+	CString winText;
+
+	winText.Format("%s\n%s%4d\n%s%4d", name, STR_SUCCESS, succCount, STR_FAIL, failCount);
+	m_stLog.SetWindowText(winText);
 }

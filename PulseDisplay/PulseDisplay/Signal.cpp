@@ -11,7 +11,8 @@
 
 IMPLEMENT_DYNAMIC(CSignal, CStatic)
 CSignal::CSignal() :
-setColor(0)
+setColor(0),
+m_bSetText(FALSE)
 {
 }
 
@@ -53,7 +54,7 @@ void CSignal::OnPaint()
 	int text_x = 5;
 	int text_y = circlePosition_cy + 5;
 	int text_cx = rect.Width() - text_x;
-	int text_cy = text_y + 30;
+	int text_cy = rect.Height() - 5;
 
 	if(setColor == SET_NONE)
 	{
@@ -133,8 +134,16 @@ void CSignal::OnPaint()
 		::SelectObject(MemDC, OldBitmap);
 		m_hBitmap.DeleteObject();
 	}
-	else if(setColor == SET_TEXT)
+	
+	if(m_bSetText)
 	{
-
+		if(m_Font == NULL)
+		{
+			m_Font->DeleteObject();//Detach();
+			m_Font->CreateFont(20, 0, 0, 0, 0, FALSE, FALSE, 0,
+				DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FF_SWISS, _T("Tahoma"));
+			this->SetFont(m_Font);
+		}
+		dc.DrawText(m_String, CRect(text_x, text_y, text_cx, text_cy), DT_LEFT);
 	}
 }

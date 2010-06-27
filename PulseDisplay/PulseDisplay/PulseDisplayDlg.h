@@ -96,6 +96,8 @@ public:
 private:
 	void		SetTAB1Disp(void);
 	CString		m_UserName;
+	int			m_iRingingSuccess, m_iRingingFail;
+	int			m_iLevelSuccess, m_iLevelFail;
 	CSignal		signalWindow[SIGNAL_COUNT];
 	CSignal*	MainSignal;
 
@@ -110,5 +112,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	CStatic m_picLogo;
+	CStatic m_stLog;
+	CFont m_font;
+	void SetRingingLoggingData(CString name, int succCount, int failCount);
 };
 

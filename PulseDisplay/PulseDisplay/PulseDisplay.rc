@@ -90,7 +90,8 @@ BEGIN
                     WS_GROUP,23,218,43,12
     CONTROL         "Radio2",IDC_LEVEL_TEST,"Button",BS_AUTORADIOBUTTON | 
                     WS_GROUP,23,229,41,12
-    CONTROL         136,IDC_LOGO_PIC,"Static",SS_BITMAP,133,79,342,142
+    CONTROL         136,IDC_LOGO_PIC,"Static",SS_BITMAP,470,194,114,57
+    LTEXT           "Static",IDC_ST_LOG,99,200,53,28
 END
 
 IDD_DEVLIST DIALOGEX 0, 0, 185, 95
