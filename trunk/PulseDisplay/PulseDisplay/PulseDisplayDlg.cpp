@@ -256,6 +256,7 @@ error:
 
 void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 {
+#ifndef USE_RANDOM_DATA
 	if(m_modelName.IsEmpty() == TRUE) {
 		AfxMessageBox(NOTSELECT_DEVICE);
 		return;
@@ -265,6 +266,7 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 		AfxMessageBox(NOTSELECT_CFG);
 		return;
 	}
+#endif
 
 	ViStatus status;
 	ViChar buffer[256];
@@ -279,6 +281,7 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 	CString dispData;
 	double	volt;
 	double	x1, x2, diff;
+	int ringDown, levelOne;
 
 	m_btnTab1_3.EnableWindow(FALSE);
 
@@ -322,6 +325,9 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 			{
 				AfxMessageBox(INVALID_CURVE);
 				m_stDraw.setPulseData(&strres[DATA_START_POSITION]);			// #42500 를 제외한 시작점 
+				m_stDraw.Invalidate();
+				m_stDraw.UpdateWindow();
+				SignalReset();
 				break;
 			}
 
@@ -338,8 +344,8 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 			if(strres[m_iRTTestLowPosition + DATA_START_POSITION] <= m_iRTTestLowLimit &&
 				strres[m_iRTTestHighPosition + DATA_START_POSITION] >= m_iRTTestHighLimit)			// Data Get 조건
 			{
-				int ringDown = CheckRingdownPosition(&strres[DATA_START_POSITION]);
-				int levelOne = CheckLevelOnePosition(&strres[DATA_START_POSITION]);
+				ringDown = CheckRingdownPosition(&strres[DATA_START_POSITION]);
+				levelOne = CheckLevelOnePosition(&strres[DATA_START_POSITION]);
 				
 				if(ringDown <= m_iRingdownStartPosition || levelOne <= m_iVolOneStartPosition)
 				{
@@ -367,38 +373,6 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 					RTrace(_T("#RT 5 : 직전값 테스트\n"));
 				}
 				
-				m_bPass = TRUE;
-				for(int check = 1; check < SIGNAL_COUNT; check++)
-				{
-					if(dataFailed[check] >= 3)
-					{
-						signalWindow[check].setColor = SET_RED;
-						MainSignal->setColor = SET_RED;
-						m_bPass = FALSE;
-					}
-				}
-				if(m_bPass)
-				{
-					for(int pos = 1; pos < SIGNAL_COUNT; pos++)
-					{
-						signalWindow[pos].setColor = SET_GREEN;
-						MainSignal->setColor = SET_GREEN;
-					}
-					m_iRingingSuccess++;
-				}
-				else
-				{
-					m_iRingingFail++;
-				}
-
-				x1 = (double)ringDown * 0.002;
-				x2 = (double)levelOne * 0.002;
-				diff = x2 - x1;
-				dispData.Format(RINGING_OUTPUT, x1, x2, diff);
-
-				MainSignal->SetString(dispData);
-				SetRingingLoggingData(m_UserName, m_iRingingSuccess, m_iRingingFail);
-
 				m_stDraw.setPulseData(&strres[DATA_START_POSITION]);
 			}
 			else										// Data 가 이상한 경우.
@@ -411,15 +385,49 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 		sampleCreate.Write(strres, sizeof(strres));
 		sampleCreate.Close();
 #endif
-		m_stDraw.Invalidate();
-		m_stDraw.UpdateWindow();
-
-		for(int sig = 0; sig < SIGNAL_COUNT; sig++)
+		if(readFailFlag < 3)					// FAIL 이 3번 미만
 		{
-			signalWindow[sig].Invalidate();
-			signalWindow[sig].UpdateWindow();
-		}
+			m_bPass = TRUE;
+			for(int check = 0; check < 5; check++)
+			{
+				if(dataFailed[check] >= 3)
+				{
+					signalWindow[check + 1].setColor = SET_RED;
+					MainSignal->setColor = SET_RED;
+					m_bPass = FALSE;
+				}
+			}
+			if(m_bPass)
+			{
+				for(int pos = 1; pos < 6; pos++)
+				{
+					signalWindow[pos].setColor = SET_GREEN;
+					MainSignal->setColor = SET_GREEN;
+				}
+				m_iRingingSuccess++;
+			}
+			else
+			{
+				m_iRingingFail++;
+			}
 
+			x1 = (double)ringDown * 0.002;
+			x2 = (double)levelOne * 0.002;
+			diff = x2 - x1;
+			dispData.Format(RINGING_OUTPUT, x1, x2, diff);
+
+			MainSignal->SetString(dispData);
+			SetRingingLoggingData(m_UserName, m_iRingingSuccess, m_iRingingFail);
+
+			m_stDraw.Invalidate();
+			m_stDraw.UpdateWindow();
+
+			for(int sig = 0; sig < SIGNAL_COUNT; sig++)
+			{
+				signalWindow[sig].Invalidate();
+				signalWindow[sig].UpdateWindow();
+			}
+		}
 
 #else		// USE_RANDOM_DATA
 	if(1)
@@ -622,7 +630,7 @@ void CPulseDisplayDlg::SetTAB1Disp(void)
 		
 		m_stLog.SetFont(&m_font);
 		m_stLog.MoveWindow(&CRect(INTAB_BTN_START_X, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 5, \
-			BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 5 + (fontHeight * 3)));
+			BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 5 + (fontHeight * 4)));
 		SetRingingLoggingData(m_UserName, m_iRingingSuccess, m_iRingingFail);
 	}
 
@@ -892,7 +900,7 @@ void CPulseDisplayDlg::SetRingingLoggingData(CString name, int succCount, int fa
 {
 	CString winText;
 
-	winText.Format("%s\n%s%4d\n%s%4d", name, STR_SUCCESS, succCount, STR_FAIL, failCount);
+	winText.Format("%s\n%s%4d\n%s%4d\n%s%4d", name, STR_SUCCESS, succCount, STR_FAIL, failCount, STR_TOTAL, succCount + failCount);
 	m_stLog.SetWindowText(winText);
 }
 

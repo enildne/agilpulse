@@ -196,7 +196,7 @@ void CDrawRect::OnPaint()
             if(m_dconvData[lvlCheck] > m_dconvData[max])
 				max = lvlCheck;
 		}
-		m_CheckedLevel = max;
+		m_CheckedLevel = m_dconvData[max];
 
 		dc.MoveTo(m_levelRangeMin, m_dconvData[max] - MINUS_1_LEVEL);
 		dc.LineTo(m_levelRangeMax, m_dconvData[max] - MINUS_1_LEVEL);
