@@ -185,6 +185,7 @@ void CDrawRect::OnPaint()
 	}
 	else
 	{
+		/*----------------- Max Level Draw Start ----------------*/
 		int lvlCheck = 0, max = m_levelRangeMin;
 		CPen	lvlLinePen;
 		lvlLinePen.CreatePen(PS_DOT, 1, RGB(255, 0, 0));
@@ -195,12 +196,14 @@ void CDrawRect::OnPaint()
             if(m_dconvData[lvlCheck] > m_dconvData[max])
 				max = lvlCheck;
 		}
+		m_CheckedLevel = max;
 
 		dc.MoveTo(m_levelRangeMin, m_dconvData[max] - MINUS_1_LEVEL);
 		dc.LineTo(m_levelRangeMax, m_dconvData[max] - MINUS_1_LEVEL);
 
 		dc.SelectObject(&pOldPen);
 		lvlLinePen.DeleteObject();
+		/*----------------- Max Level Draw End ----------------*/
 	}
 }
 
