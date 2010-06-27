@@ -41,3 +41,6 @@
 #define		INVALID_CURVE				"수신파형이 확인되지 않습니다."
 
 #define		STR_READY					"Ready"
+#define		STR_USER					""
+#define		STR_SUCCESS					"성공 :    "
+#define		STR_FAIL					"실패 :    "

@@ -46,6 +46,7 @@
 #define IDC_SIGNAL_6                    1027
 #define IDC_SIGNAL_7                    1028
 #define IDC_LOGO_PIC                    1029
+#define IDC_ST_LOG                      1030
 
 // Next default values for new objects
 // 
@@ -53,7 +54,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        147
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1030
+#define _APS_NEXT_CONTROL_VALUE         1031
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif
