@@ -186,12 +186,10 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn1()
 
 void CPulseDisplayDlg::OnBnClickedTab1Btn2()
 {
-#ifndef _DEBUG					// 개발 시에는 Device 가 붙지 않아도 창이 뜰 수 있도록..
 	if(m_modelName.IsEmpty() == TRUE) {
 		AfxMessageBox(NOTSELECT_DEVICE);
 		return;
 	}
-#endif
 
 	CSetList	setList(this);
 	ViStatus	status;
@@ -258,7 +256,6 @@ error:
 
 void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 {
-#ifndef _DEBUG					// 개발 시에는 Device 가 붙지 않아도 창이 뜰 수 있도록..
 	if(m_modelName.IsEmpty() == TRUE) {
 		AfxMessageBox(NOTSELECT_DEVICE);
 		return;
@@ -268,7 +265,6 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 		AfxMessageBox(NOTSELECT_CFG);
 		return;
 	}
-#endif
 
 	ViStatus status;
 	ViChar buffer[256];
