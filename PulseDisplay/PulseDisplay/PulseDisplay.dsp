@@ -183,6 +183,46 @@ SOURCE=.\Strings.h
 # PROP Default_Filter "rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 # Begin Source File
 
+SOURCE=.\res\icons\Er01_fa.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\icons\Er01_ok.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\icons\Er02_fa.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\icons\Er02_ok.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\icons\Er03_fa.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\icons\Er03_ok.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\icons\Er04_fa.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\icons\Er04_ok.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\icons\ER05_FA.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\icons\ER05_OK.bmp
+# End Source File
+# Begin Source File
+
 SOURCE=.\res\PulseDisplay.ico
 # End Source File
 # Begin Source File
@@ -192,6 +232,10 @@ SOURCE=.\PulseDisplay.rc
 # Begin Source File
 
 SOURCE=.\res\PulseDisplay.rc2
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\icons\ST_LOGO.bmp
 # End Source File
 # End Group
 # Begin Source File
