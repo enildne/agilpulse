@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="visa32.lib"
+				AdditionalDependencies="visa32.lib msimg32.lib"
 				OutputFile="..\bin\PulseDisplay.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
@@ -87,7 +87,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="visa32.lib"
+				AdditionalDependencies="visa32.lib msimg32.lib"
 				OutputFile="..\bin\PulseDisplay.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"

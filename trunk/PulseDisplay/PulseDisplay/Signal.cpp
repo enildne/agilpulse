@@ -81,7 +81,6 @@ void CSignal::OnPaint()
 		bx=bit.bmWidth;
 		by=bit.bmHeight;
 		::TransparentBlt(dc, bmp_x, bmp_y, bmp_cx, bmp_cy, MemDC, 0, 0, bx, by, RGB(0,0,0));
-
 	}
 	else if(setColor == SET_RED)
 	{
@@ -106,7 +105,6 @@ void CSignal::OnPaint()
 		bx=bit.bmWidth;
 		by=bit.bmHeight;
 		::TransparentBlt(dc, bmp_x, bmp_y, bmp_cx, bmp_cy, MemDC, 0, 0, bx, by, RGB(0,0,0));
-
 	}
 	else
 	{
