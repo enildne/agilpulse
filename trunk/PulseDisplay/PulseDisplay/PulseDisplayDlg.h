@@ -93,6 +93,13 @@ public:
 	bool CheckBeforeValue(unsigned char* data, int ringingPoint, int LevelOnePoint);
 	void SignalReset(void);
 
+	CStatic m_picLogo;
+	CStatic m_stLog;
+	CFont	m_font;
+	void	SetRingingLoggingData(CString name, int succCount, int failCount);
+	BOOL	m_bPass;
+	afx_msg void OnClose();
+
 private:
 	void		SetTAB1Disp(void);
 	CString		m_UserName;
@@ -110,10 +117,5 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
-public:
-	CStatic m_picLogo;
-	CStatic m_stLog;
-	CFont m_font;
-	void SetRingingLoggingData(CString name, int succCount, int failCount);
 };
 

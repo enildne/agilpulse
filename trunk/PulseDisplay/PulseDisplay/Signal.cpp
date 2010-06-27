@@ -139,7 +139,7 @@ void CSignal::OnPaint()
 	{
 		if(m_Font == NULL)
 		{
-			m_Font->DeleteObject();//Detach();
+			m_Font = new CFont();
 			m_Font->CreateFont(20, 0, 0, 0, 0, FALSE, FALSE, 0,
 				DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FF_SWISS, _T("Tahoma"));
 			this->SetFont(m_Font);
