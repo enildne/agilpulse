@@ -25,7 +25,7 @@ public:
 // 대화 상자 데이터
 	enum { IDD = IDD_PULSEDISPLAY_DIALOG };
 
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 지원
 
 public:
@@ -81,12 +81,21 @@ public:
 	afx_msg void OnBnClickedTab1Btn4();
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnTimer(UINT nIDEvent);
+	CButton m_rdLevelTest;
+	CButton m_rdRTTest;
+	afx_msg void OnBnClickedRtTest();
+	afx_msg void OnBnClickedLevelTest();
+	int CheckRingdownPosition(unsigned char* data);
+	int CheckLevelOnePosition(unsigned char* data);
+	bool Check16Value(unsigned char* data, int ringingPoint, int LevelOnePoint);
+	bool CheckBeforeValue(unsigned char* data, int ringingPoint, int LevelOnePoint);
+	void SignalReset(void);
 
 private:
-	void SetTAB1Disp(void);
-	CString	m_UserName;
-
+	void		SetTAB1Disp(void);
+	CString		m_UserName;
 	CSignal		signalWindow[SIGNAL_COUNT];
+	CSignal*	MainSignal;
 
 	// 구현
 protected:
@@ -97,15 +106,5 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
-public:
-	CButton m_rdLevelTest;
-	CButton m_rdRTTest;
-	afx_msg void OnBnClickedRtTest();
-	afx_msg void OnBnClickedLevelTest();
-	int CheckRingdownPosition(unsigned char* data);
-	int CheckLevelOnePosition(unsigned char* data);
-	bool Check16Value(unsigned char* data, int ringingPoint, int LevelOnePoint);
-	bool CheckBeforeValue(unsigned char* data, int ringingPoint, int LevelOnePoint);
-	void SignalReset(void);
 };
 

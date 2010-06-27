@@ -38,10 +38,20 @@ void CSignal::OnPaint()
 	CRect	rect;
 	GetClientRect(&rect);
 
+	dc.FillRect(rect, WHITE_BRUSH);
+
 	int circlePosition_x = rect.Width() / 4;
 	int circlePosition_y = 10;
 	int circlePosition_cx = (rect.Width() / 4) * 3;
 	int circlePosition_cy = circlePosition_y + (rect.Width() / 4) * 2 ;
+
+	int bmp_x = rect.left + 2;
+	int bmp_y = circlePosition_cy + 2;
+	int bmp_cx = rect.Width() - 4;
+	int bmp_cy = rect.Height() - circlePosition_cy - 4;
+
+	//int bmp_cx = rect.right - 2;
+	//int bmp_cy = rect.bottom - 2;
 
 	int text_x = 5;
 	int text_y = circlePosition_cy + 5;
@@ -50,33 +60,75 @@ void CSignal::OnPaint()
 
 	if(setColor == SET_NONE)
 	{
+		HDC MemDC;
+		HBITMAP OldBitmap;
+		BITMAP bit;
+		CBitmap m_hBitmap;
+		int bx, by;
 		CBrush brush;
+		CBrush* oldBrush;
+
 		brush.CreateSolidBrush( RGB(255, 255,255));
-		CBrush* oldBrush = dc.SelectObject( &brush );
+		oldBrush = dc.SelectObject( &brush );
 		dc.Ellipse( circlePosition_x, circlePosition_y, circlePosition_cx, circlePosition_cy);
 		dc.SelectObject( oldBrush );
 		brush.DeleteObject();
 		
-		dc.TextOut(text_x, text_y, m_String);
+		m_hBitmap.LoadBitmap(MAKEINTRESOURCE(m_IDBmp_OK));
+		MemDC=::CreateCompatibleDC(dc);
+		OldBitmap=(HBITMAP)::SelectObject(MemDC, m_hBitmap);
+		::GetObject(m_hBitmap, sizeof(BITMAP), &bit);
+		bx=bit.bmWidth;
+		by=bit.bmHeight;
+		::TransparentBlt(dc, bmp_x, bmp_y, bmp_cx, bmp_cy, MemDC, 0, 0, bx, by, RGB(0,0,0));
+
 	}
 	else if(setColor == SET_RED)
 	{
+		HDC MemDC;
+		HBITMAP OldBitmap;
+		BITMAP bit;
+		CBitmap m_hBitmap;
+		int bx, by;
 		CBrush brush;
+		CBrush* oldBrush;
+
 		brush.CreateSolidBrush( RGB(255, 0, 0));
-		CBrush* oldBrush = dc.SelectObject( &brush );
+		oldBrush = dc.SelectObject( &brush );
 		dc.Ellipse( circlePosition_x, circlePosition_y, circlePosition_cx, circlePosition_cy);
 		dc.SelectObject( oldBrush );
 		brush.DeleteObject();
-		dc.TextOut(text_x, text_y, m_String);
+
+		m_hBitmap.LoadBitmap(MAKEINTRESOURCE(m_IDBmp_Fail));
+		MemDC=::CreateCompatibleDC(dc);
+		OldBitmap=(HBITMAP)::SelectObject(MemDC, m_hBitmap);
+		::GetObject(m_hBitmap, sizeof(BITMAP), &bit);
+		bx=bit.bmWidth;
+		by=bit.bmHeight;
+		::TransparentBlt(dc, bmp_x, bmp_y, bmp_cx, bmp_cy, MemDC, 0, 0, bx, by, RGB(0,0,0));
+
 	}
 	else
 	{
+		HDC MemDC;
+		HBITMAP OldBitmap;
+		BITMAP bit;
+		CBitmap m_hBitmap;
+		int bx, by;
 		CBrush brush;
+		CBrush* oldBrush;
+
 		brush.CreateSolidBrush( RGB(0, 255, 0));
-		CBrush* oldBrush = dc.SelectObject( &brush );
+		oldBrush = dc.SelectObject( &brush );
 		dc.Ellipse( circlePosition_x, circlePosition_y, circlePosition_cx, circlePosition_cy);
 		dc.SelectObject( oldBrush );
 		brush.DeleteObject();
-		dc.TextOut(text_x, text_y, m_String);
+
+		MemDC=::CreateCompatibleDC(dc);
+		OldBitmap=(HBITMAP)::SelectObject(MemDC, m_hBitmap);
+		::GetObject(m_hBitmap, sizeof(BITMAP), &bit);
+		bx=bit.bmWidth;
+		by=bit.bmHeight;
+		::TransparentBlt(dc, bmp_x, bmp_y, bmp_cx, bmp_cy, MemDC, 0, 0, bx, by, RGB(0,0,0));
 	}
 }

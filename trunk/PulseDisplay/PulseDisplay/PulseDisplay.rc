@@ -219,6 +219,23 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Bitmap
+//
+
+IDB_LOGO_BITMAP         BITMAP                  "res\\icons\\ST_LOGO.bmp"
+IDB_FIRST_ERR           BITMAP                  "res\\icons\\ER01_FA.BMP"
+IDB_FIRST_OK            BITMAP                  "res\\icons\\ER01_OK.BMP"
+IDB_SECOND_ERR          BITMAP                  "res\\icons\\ER02_FA.BMP"
+IDB_SECOND_OK           BITMAP                  "res\\icons\\ER02_OK.BMP"
+IDB_THIRD_ERR           BITMAP                  "res\\icons\\ER03_FA.BMP"
+IDB_THIRD_OK            BITMAP                  "res\\icons\\ER03_OK.BMP"
+IDB_FOURTH_ERR          BITMAP                  "res\\icons\\ER04_FA.BMP"
+IDB_FOURTH_OK           BITMAP                  "res\\icons\\ER04_OK.BMP"
+IDB_FIFTH_ERR           BITMAP                  "res\\icons\\ER05_FA.bmp"
+IDB_FIFTH_OK            BITMAP                  "res\\icons\\ER05_OK.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
