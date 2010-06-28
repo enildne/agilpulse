@@ -29,7 +29,7 @@
 #define		LOGIN_STRING_NAME			"이름"
 #define		LOGIN_STRING_PWD			"비밀번호"
 #define		LOGIN_BTN					"로그인"
-#define		INVALID_USER				"로그인 후 사용이 가능합니다."
+#define		INVALID_USER				"로그인 후 사용이 가능합니다.\n종료하시겠습니까?"
 #define		LOGIN_RD_USER				"사용자"
 #define		LOGIN_RD_ADMIN				"관리자"
 #define		NO_USER_ACCOUNT				"해당 유저정보가 없습니다."
@@ -48,5 +48,9 @@
 
 #define		RINGING_OUTPUT				_T("\n  x1 : %.3f ms\n  x2 : %.3f ms\n\n  diff : %.3f ms")
 #define		LEVEL_OUTPUT				_T("\n  Volt : %.2f V")
-#define		FORMAT_RESULT				_T("%s,%4d-%02d-%02d,%02d-%02d,%04d,%04d,%04d,%04d")
+#define		RESULT_FORMAT				_T("%s,%4d-%02d-%02d,%02d:%02d:%02d,%s,%0.4f,%0.4f,%0.4f,%0.4f,%s\n")
 #define		RESULT_FILE_NAME			_T("Result.log")
+#define		STR_LOG_DIR					_T("LOG")
+#define		LOG_FILE_NAME_FORMAT		_T("%s\\%4d%02d%02d_%02d%02d_%s.log")
+#define		STR_RINGING					CString(_T("Ringing"))
+#define		STR_LEVEL					CString(_T("Level"))
