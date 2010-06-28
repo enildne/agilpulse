@@ -16,6 +16,15 @@
 #define TID_TIME				1					// 시계용 TIMER
 #define	DATA_START_POSITION		6
 // CPulseDisplayDlg 대화 상자
+
+struct dataBuffer{
+	BOOL	t_pass;
+	int t_ringDown;
+	int t_levelOne;
+	int t_failCount;
+	unsigned char t_strres[VALUE_COUNT + 10];
+};
+
 class CPulseDisplayDlg : public CDialog
 {
 // 생성
@@ -75,6 +84,19 @@ public:
 		return m_devDesc;
 	}
 
+	dataBuffer m_dataBuf[MAX_REPEAT_PER_TEST];
+
+	void resetBuffer(void) { 
+		for(int i = 0; i < MAX_REPEAT_PER_TEST; i++)
+		{
+			m_dataBuf[i].t_pass = TRUE;
+			m_dataBuf[i].t_levelOne = 0;
+			m_dataBuf[i].t_ringDown = 0;
+			m_dataBuf[i].t_failCount = 0;
+			memset(m_dataBuf[i].t_strres, NULL, sizeof(m_dataBuf[i].t_strres));
+		}
+	}
+
 	void ShowFirstTabCtrl(void);
 	void HideFirstTabCtrl(void);
 	afx_msg void OnBnClickedTab1Btn1();
@@ -98,7 +120,9 @@ public:
 	CStatic m_picLogo;
 	CStatic m_stLog;
 	CFont	m_font;
-	void	SetLogData(CString name, int succCount, int failCount, CString testKind = "",double x1_data = 0, double x2_data = 0, double diff_data = 0, double volt_data = 0, BOOL bPass = FALSE);
+	void	SetLogData(CString name, int succCount, int failCount, CString testKind = "", \
+		double x1_data = 0, double x2_data = 0, double diff_data = 0, double volt_data = 0, \
+		BOOL bPass = FALSE, char failDetail[5] = "");
 	BOOL	m_bPass;
 
 private:
