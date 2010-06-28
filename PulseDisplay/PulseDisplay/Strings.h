@@ -54,3 +54,4 @@
 #define		STR_RINGING					CString(_T("Ringing"))
 #define		STR_LEVEL					CString(_T("Level"))
 #define		STR_TEMP_LOG				_T("LOG\\Temp")
+#define		RESUT_MESSAGE				_T("Ringing Pass, %d, Ringing Fail, %d, Level Pass, %d, Level Fail, %d\n")

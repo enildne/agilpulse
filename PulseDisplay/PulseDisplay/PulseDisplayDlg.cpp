@@ -445,17 +445,17 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 #else		// USE_RANDOM_DATA
 	if(1)
 	{
-		for(int ran = 0; ran < 25; ran++)
+		for(int ran = 0; ran < 15; ran++)
 		{
 			dataFailed[ran % 5] += rand() % 2;
 		}
 
 		m_bPass = TRUE;
-		for(int check = 1; check < SIGNAL_COUNT; check++)
+		for(int check = 0; check < SIGNAL_COUNT; check++)
 		{
 			if(dataFailed[check] >= 3)
 			{
-				signalWindow[check].setColor = SET_RED;
+				signalWindow[check + 1].setColor = SET_RED;
 				MainSignal->setColor = SET_RED;
 				m_bPass = FALSE;
 			}
@@ -531,6 +531,17 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 #else
 		CString dispData;
 		double	volt = rand() % 200 + 53;
+
+		m_bPass = TRUE;
+		if(volt >= 200 || volt <= 100) {
+			MainSignal->setColor = SET_RED;
+			m_iLevelFail++;
+			m_bPass = FALSE;
+		}
+		else {
+			MainSignal->setColor = SET_GREEN;
+			m_iLevelSuccess++;
+		}
 
 		SetLogData(m_UserName, m_iLevelSuccess, m_iLevelFail, STR_LEVEL, 0, 0, 0, volt, m_bPass);
 
@@ -932,13 +943,12 @@ bool CPulseDisplayDlg::CheckBeforeValue(unsigned char* data, int ringingPoint, i
 
 void CPulseDisplayDlg::SignalReset(void)
 {
-	for(int check = 0; check < SIGNAL_COUNT; check++) {
-		signalWindow[check].setColor = SET_NONE;
-	}
-
-	for(int check_2 = 0; check_2 < SIGNAL_COUNT; check_2++) {
-		signalWindow[check_2].Invalidate();
-		signalWindow[check_2].UpdateWindow();
+    int i = 0;
+    
+	for(i = 0; i < SIGNAL_COUNT; i++) {
+		signalWindow[i].setColor = SET_NONE;
+		signalWindow[i].Invalidate();
+		signalWindow[i].UpdateWindow();
 	}
 
 }
@@ -975,6 +985,12 @@ void CPulseDisplayDlg::SetLogData(CString name, int succCount, int failCount, CS
 void CPulseDisplayDlg::OnClose()
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	CString		result_message;
+	result_message.Format(RESUT_MESSAGE, \
+		m_iRingingSuccess, m_iRingingFail, m_iLevelSuccess, m_iLevelFail);
+	
+	m_logFile.SeekToEnd();
+	m_logFile.WriteString(result_message);
 	m_logFile.Close();
 
 	CDialog::OnClose();
