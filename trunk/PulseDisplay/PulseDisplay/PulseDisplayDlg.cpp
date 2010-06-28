@@ -71,11 +71,23 @@ BOOL CPulseDisplayDlg::OnInitDialog()
 	// 로그인 화면 구성 필요.
 #ifdef LOGIN_DLG
 	CLoginDlg	loginDlg;
+	BOOL		noLogin = FALSE;
 	while(loginDlg.DoModal() != IDOK)
 	{
-		AfxMessageBox(INVALID_USER);
+		if(AfxMessageBox(INVALID_USER, MB_OKCANCEL, NULL) == IDOK)
+		{
+			noLogin = TRUE;
+			break;
+		}
 	}
-	m_UserName = loginDlg.getUserName();
+	
+	if(noLogin)
+	{
+		::PostQuitMessage(WM_QUIT);
+		return FALSE;
+	}
+	else
+		m_UserName = loginDlg.getUserName();
 
 	// 로그인 화면 종료
 #endif
@@ -106,6 +118,7 @@ BOOL CPulseDisplayDlg::OnInitDialog()
 	m_modelName.Empty();				// 모델이름 초기화
 
 	SetTAB1Disp();
+	SetLogFile();
 
 	return TRUE;  // 컨트롤에 대한 포커스를 설정하지 않을 경우 TRUE를 반환합니다.
 }
@@ -417,7 +430,7 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 			dispData.Format(RINGING_OUTPUT, x1, x2, diff);
 
 			MainSignal->SetString(dispData);
-			SetRingingLoggingData(m_UserName, m_iRingingSuccess, m_iRingingFail);
+			SetLogData(m_UserName, m_iRingingSuccess, m_iRingingFail, STR_RINGING, x1, x2, diff, m_bPass);
 
 			m_stDraw.Invalidate();
 			m_stDraw.UpdateWindow();
@@ -469,7 +482,7 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 
 		MainSignal->SetString(dispData);
 
-		SetRingingLoggingData(m_UserName, m_iRingingSuccess, m_iRingingFail);
+		SetLogData(m_UserName, m_iRingingSuccess, m_iRingingFail, STR_RINGING,x1, x2, diff, 0, m_bPass);
 
 		for(int sig = 0; sig < SIGNAL_COUNT; sig++)
 		{
@@ -523,8 +536,11 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 #endif
 	}
 
+#ifndef USE_RANDOM_DATA
 	viClose(vi);
 	viClose(defaultRM);
+#endif
+
 #endif // USE_SAMPLE_FILE
 
 	m_btnTab1_3.EnableWindow(TRUE);
@@ -563,6 +579,32 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn4()
 		else
 			m_iLevelFail -= 1;
 	}
+
+	m_logFile.SeekToBegin();
+	m_flushLogFile.Open(_T("LOG\\Temp"), CStdioFile::modeCreate | CStdioFile::modeWrite |CStdioFile::modeNoTruncate);
+	CString	data, tempData;
+	while(1)
+	{
+		if(m_logFile.ReadString(data) == NULL){
+			break;
+		}
+		else
+		{
+			if(tempData.IsEmpty() == FALSE)
+				m_flushLogFile.WriteString(tempData + "\n");
+		}
+		tempData = data;
+		RTrace(_T("%s"), data);
+	}
+	
+    m_logFile.Close();
+	m_flushLogFile.Close();
+
+	CFile::Remove(m_strLogFileName);
+	CFile::Rename(_T("LOG\\Temp"), m_strLogFileName);
+
+	m_logFile.Open(m_strLogFileName, CStdioFile::modeReadWrite |CStdioFile::modeNoTruncate);
+	m_logFile.SeekToEnd();
 
 	OnBnClickedTab1Btn3();
 	// 현재의 Log 에서 -1 하고 난 다음에 다시 Btn3 수행
@@ -631,7 +673,7 @@ void CPulseDisplayDlg::SetTAB1Disp(void)
 		m_stLog.SetFont(&m_font);
 		m_stLog.MoveWindow(&CRect(INTAB_BTN_START_X, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 5, \
 			BUTTON_WIDTH, INTAB_BTN_START_Y + (BUTTON_HEIGHT + BUTTON_GAP) * 5 + (fontHeight * 4)));
-		SetRingingLoggingData(m_UserName, m_iRingingSuccess, m_iRingingFail);
+		SetLogData(m_UserName, m_iRingingSuccess, m_iRingingFail);
 	}
 
 	if(m_stDraw) {
@@ -763,7 +805,7 @@ void CPulseDisplayDlg::OnBnClickedRtTest()
 	SignalReset();
 	dispData.Format(RINGING_OUTPUT, 0, 0, 0);
 	MainSignal->SetString(dispData);
-	SetRingingLoggingData(m_UserName, m_iRingingSuccess, m_iRingingFail);
+	SetLogData(m_UserName, m_iRingingSuccess, m_iRingingFail);
 	MainSignal->Invalidate();
 	MainSignal->UpdateWindow();
 	
@@ -806,7 +848,7 @@ void CPulseDisplayDlg::OnBnClickedLevelTest()
 	SignalReset();
 	dispData.Format(LEVEL_OUTPUT, 0);
 	MainSignal->SetString(dispData);
-	SetRingingLoggingData(m_UserName, m_iLevelSuccess, m_iLevelFail);
+	SetLogData(m_UserName, m_iLevelSuccess, m_iLevelFail);
 	MainSignal->Invalidate();
 	MainSignal->UpdateWindow();
 	
@@ -896,31 +938,51 @@ void CPulseDisplayDlg::SignalReset(void)
 
 }
 
-void CPulseDisplayDlg::SetRingingLoggingData(CString name, int succCount, int failCount)
+void CPulseDisplayDlg::SetLogData(CString name, int succCount, int failCount, CString testKind, double x1_data , double x2_data , double diff_data , double volt_data , BOOL bPass)
 {
 	CString winText;
+	CString	logText;
+	CTime CurTime;
+	CurTime = CTime::GetCurrentTime(); // 현재 시스템 시각을 구한다.
 
 	winText.Format("%s\n%s%4d\n%s%4d\n%s%4d", name, STR_SUCCESS, succCount, STR_FAIL, failCount, STR_TOTAL, succCount + failCount);
 	m_stLog.SetWindowText(winText);
+
+	if(testKind.GetLength() != 0)
+	{
+		// _T("%s,%4d-%02d-%02d,%02d:%02d:%02d,%s,%0.4f,%0.4f,%0.4f,%0.4f,%s\r\n")
+		logText.Format(RESULT_FORMAT, \
+			name, 
+			CurTime.GetYear(), CurTime.GetMonth(), CurTime.GetDay(), 
+			CurTime.GetHour(), CurTime.GetMinute(), CurTime.GetSecond(),
+			testKind,
+			x1_data,
+			x2_data,
+			diff_data,
+			volt_data,
+			(bPass == TRUE) ? "Pass" : "Fail");
+
+		m_logFile.SeekToEnd();
+		m_logFile.WriteString(logText);
+	}
 }
 
 void CPulseDisplayDlg::OnClose()
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-	CString LogData;
-	CTime CurTime;
-
-	CurTime = CTime::GetCurrentTime(); // 현재 시스템 시각을 구한다.
-	
-	LogData.Format(FORMAT_RESULT, \
-		m_UserName, CurTime.GetYear(), CurTime.GetMonth(), CurTime.GetDay(), CurTime.GetHour(), CurTime.GetMinute(), \
-		m_iRingingSuccess, m_iRingingFail, m_iLevelSuccess, m_iLevelFail);
-
-	CStdioFile	logFile;
-	logFile.Open(RESULT_FILE_NAME, CFile::modeCreate | CFile::modeWrite);
-	logFile.SeekToEnd();
-	logFile.WriteString(LogData);
-	logFile.Close();
+	m_logFile.Close();
 
 	CDialog::OnClose();
+}
+
+void CPulseDisplayDlg::SetLogFile(void)
+{
+	CTime CurTime;
+	CurTime = CTime::GetCurrentTime(); // 현재 시스템 시각을 구한다.
+
+	CreateDirectory(STR_LOG_DIR, NULL);
+	m_strLogFileName.Format(LOG_FILE_NAME_FORMAT, \
+		STR_LOG_DIR, CurTime.GetYear(), CurTime.GetMonth(), CurTime.GetDay(), CurTime.GetHour(), CurTime.GetMinute(), m_UserName);
+
+	m_logFile.Open(m_strLogFileName, CStdioFile::modeCreate | CStdioFile::modeReadWrite |CStdioFile::modeNoTruncate);
 }

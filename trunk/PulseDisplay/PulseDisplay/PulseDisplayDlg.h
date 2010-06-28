@@ -83,10 +83,12 @@ public:
 	afx_msg void OnBnClickedTab1Btn4();
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnTimer(UINT nIDEvent);
-	CButton m_rdLevelTest;
-	CButton m_rdRTTest;
 	afx_msg void OnBnClickedRtTest();
 	afx_msg void OnBnClickedLevelTest();
+	afx_msg void OnClose();
+	CButton m_rdLevelTest;
+	CButton m_rdRTTest;
+
 	int CheckRingdownPosition(unsigned char* data);
 	int CheckLevelOnePosition(unsigned char* data);
 	bool Check16Value(unsigned char* data, int ringingPoint, int LevelOnePoint);
@@ -96,9 +98,8 @@ public:
 	CStatic m_picLogo;
 	CStatic m_stLog;
 	CFont	m_font;
-	void	SetRingingLoggingData(CString name, int succCount, int failCount);
+	void	SetLogData(CString name, int succCount, int failCount, CString testKind = "",double x1_data = 0, double x2_data = 0, double diff_data = 0, double volt_data = 0, BOOL bPass = FALSE);
 	BOOL	m_bPass;
-	afx_msg void OnClose();
 
 private:
 	void		SetTAB1Disp(void);
@@ -107,6 +108,9 @@ private:
 	int			m_iLevelSuccess, m_iLevelFail;
 	CSignal		signalWindow[SIGNAL_COUNT];
 	CSignal*	MainSignal;
+	CStdioFile	m_logFile;							// Log 파일
+	CStdioFile	m_flushLogFile;						// 마지막 줄 지울때 쓰는 Temp Log 파일
+	CString		m_strLogFileName;					// Log 파일 이름
 
 	// 구현
 protected:
@@ -117,5 +121,7 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+public:
+	void SetLogFile(void);
 };
 
