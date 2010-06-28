@@ -331,7 +331,7 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 	{
 #ifndef USE_RANDOM_DATA
 		SignalReset();
-
+		resetBuffer();
 		for(repeat = 0; repeat < MAX_REPEAT_PER_TEST; repeat++)
 		{
 			if(readFailFlag >= 3)					// FAIL 이 3번 이상
@@ -363,30 +363,42 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 				if(ringDown <= m_iRingdownStartPosition || levelOne <= m_iVolOneStartPosition)
 				{
 					dataFailed[0] = dataFailed[0] + 1;
+					m_dataBuf[repeat].t_failCount++;
+					m_dataBuf[repeat].t_pass = FALSE;
 					RTrace(_T("#RT 1 : Ringing 짧음\n"));			// Ringing 짧음
 				}	
 				if(ringDown >= m_iRingdownEndPosition || levelOne >= m_iVolOneEndPosition)
 				{
 					dataFailed[1] = dataFailed[1] + 1;
+					m_dataBuf[repeat].t_failCount++;
+					m_dataBuf[repeat].t_pass = FALSE;
 					RTrace(_T("#RT 2 : Ringing 김\n"));			// Ringing 김
 				}
 				if(levelOne - ringDown >= m_iRTTestDiff)
 				{
 					dataFailed[2] = dataFailed[2] + 1;
+					m_dataBuf[repeat].t_failCount++;
+					m_dataBuf[repeat].t_pass = FALSE;
 					RTrace(_T("#RT 3 : 늘어짐\n"));			// 늘어짐
 				}
 				if(Check16Value(&strres[DATA_START_POSITION], ringDown, levelOne) == FALSE)
 				{
 					dataFailed[3] = dataFailed[3] + 1;
+					m_dataBuf[repeat].t_failCount++;
+					m_dataBuf[repeat].t_pass = FALSE;
 					RTrace(_T("#RT 4 : 16개 전 테스트\n"));
 				}
 				if(CheckBeforeValue(&strres[DATA_START_POSITION], ringDown, levelOne) == FALSE)
 				{
 					dataFailed[4] = dataFailed[4] + 1;
+					m_dataBuf[repeat].t_failCount++;
+					m_dataBuf[repeat].t_pass = FALSE;
 					RTrace(_T("#RT 5 : 직전값 테스트\n"));
 				}
-				
-				m_stDraw.setPulseData(&strres[DATA_START_POSITION]);
+				m_dataBuf[repeat].t_ringDown = levelOne;
+				m_dataBuf[repeat].t_levelOne = levelOne;
+				memcpy(m_dataBuf[repeat].t_strres, strres, sizeof(strres));			// data 저장
+				//m_stDraw.setPulseData(&strres[DATA_START_POSITION]);
 			}
 			else										// Data 가 이상한 경우.
 			{
@@ -410,17 +422,52 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 					m_bPass = FALSE;
 				}
 			}
+
 			if(m_bPass)
 			{
-				for(int pos = 1; pos < 6; pos++)
+				for(int pos = 1; pos < SIGNAL_COUNT - 1; pos++)
 				{
 					signalWindow[pos].setColor = SET_GREEN;
 					MainSignal->setColor = SET_GREEN;
 				}
+
+				for(int rep = 0; rep < MAX_REPEAT_PER_TEST; rep++)
+				{
+					if(m_dataBuf[rep].t_pass = TRUE)
+					{
+						ringDown = m_dataBuf[rep].t_ringDown;
+						levelOne = m_dataBuf[rep].t_levelOne;
+						m_stDraw.setPulseData(&(m_dataBuf[rep].t_strres[DATA_START_POSITION]));
+						break;
+					}
+				}
+				if(rep == MAX_REPEAT_PER_TEST)				// 다 돌았는데 다 FALSE인 경우 가장 Fail 이 적은 것으로..
+				{
+					int minFailedBufPos = 0;
+					for(rep = 0; rep < MAX_REPEAT_PER_TEST; rep++)
+					{
+						if(m_dataBuf[minFailedBufPos].t_failCount >= m_dataBuf[rep].t_failCount)
+							minFailedBufPos = rep;
+					}
+					ringDown = m_dataBuf[minFailedBufPos].t_ringDown;
+					levelOne = m_dataBuf[minFailedBufPos].t_levelOne;
+					m_stDraw.setPulseData(&(m_dataBuf[minFailedBufPos].t_strres[DATA_START_POSITION]));
+				}
+
 				m_iRingingSuccess++;
 			}
 			else
 			{
+				int maxFailedBufPos = 0;
+				for(int repMax = 0; repMax < MAX_REPEAT_PER_TEST; repMax++)
+				{
+					if(m_dataBuf[maxFailedBufPos].t_failCount <= m_dataBuf[repMax].t_failCount)
+						maxFailedBufPos = repMax;
+				}
+				ringDown = m_dataBuf[maxFailedBufPos].t_ringDown;
+				levelOne = m_dataBuf[maxFailedBufPos].t_levelOne;
+				m_stDraw.setPulseData(&(m_dataBuf[maxFailedBufPos].t_strres[DATA_START_POSITION]));
+
 				m_iRingingFail++;
 			}
 
@@ -430,7 +477,7 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 			dispData.Format(RINGING_OUTPUT, x1, x2, diff);
 
 			MainSignal->SetString(dispData);
-			SetLogData(m_UserName, m_iRingingSuccess, m_iRingingFail, STR_RINGING, x1, x2, diff, m_bPass);
+			SetLogData(m_UserName, m_iRingingSuccess, m_iRingingFail, STR_RINGING, x1, x2, diff, 0, m_bPass, dataFailed);
 
 			m_stDraw.Invalidate();
 			m_stDraw.UpdateWindow();
@@ -443,6 +490,8 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 		}
 
 #else		// USE_RANDOM_DATA
+	SignalReset();
+	resetBuffer();
 	if(1)
 	{
 		for(int ran = 0; ran < 15; ran++)
@@ -482,7 +531,7 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 
 		MainSignal->SetString(dispData);
 
-		SetLogData(m_UserName, m_iRingingSuccess, m_iRingingFail, STR_RINGING,x1, x2, diff, 0, m_bPass);
+		SetLogData(m_UserName, m_iRingingSuccess, m_iRingingFail, STR_RINGING,x1, x2, diff, 0, m_bPass, dataFailed);
 
 		for(int sig = 0; sig < SIGNAL_COUNT; sig++)
 		{
@@ -953,7 +1002,7 @@ void CPulseDisplayDlg::SignalReset(void)
 
 }
 
-void CPulseDisplayDlg::SetLogData(CString name, int succCount, int failCount, CString testKind, double x1_data , double x2_data , double diff_data , double volt_data , BOOL bPass)
+void CPulseDisplayDlg::SetLogData(CString name, int succCount, int failCount, CString testKind, double x1_data , double x2_data , double diff_data , double volt_data , BOOL bPass, char failDetail[5])
 {
 	CString winText;
 	CString	logText;
@@ -965,7 +1014,7 @@ void CPulseDisplayDlg::SetLogData(CString name, int succCount, int failCount, CS
 
 	if(testKind.GetLength() != 0)
 	{
-		// _T("%s,%4d-%02d-%02d,%02d:%02d:%02d,%s,%0.4f,%0.4f,%0.4f,%0.4f,%s\r\n")
+		// _T("%s,%4d-%02d-%02d,%02d:%02d:%02d,%s,%0.4f,%0.4f,%0.4f,%0.2f,%s,%s,%s,%s,%s,%s\n")
 		logText.Format(RESULT_FORMAT, \
 			name, 
 			CurTime.GetYear(), CurTime.GetMonth(), CurTime.GetDay(), 
@@ -975,7 +1024,12 @@ void CPulseDisplayDlg::SetLogData(CString name, int succCount, int failCount, CS
 			x2_data,
 			diff_data,
 			volt_data,
-			(bPass == TRUE) ? "Pass" : "Fail");
+			(bPass == TRUE) ? "Pass" : "Fail",
+			(failDetail[0] >= 3) ? "#1" : "0",
+			(failDetail[1] >= 3) ? "#2" : "0",
+			(failDetail[2] >= 3) ? "#3" : "0",
+			(failDetail[3] >= 3) ? "#4" : "0",
+			(failDetail[4] >= 3) ? "#5" : "0");
 
 		m_logFile.SeekToEnd();
 		m_logFile.WriteString(logText);
