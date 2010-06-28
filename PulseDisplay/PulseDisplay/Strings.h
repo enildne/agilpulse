@@ -48,9 +48,9 @@
 
 #define		RINGING_OUTPUT				_T("\n  x1 : %.3f ms\n  x2 : %.3f ms\n\n  diff : %.3f ms")
 #define		LEVEL_OUTPUT				_T("\n  Volt : %.2f V")
-#define		RESULT_FORMAT				_T("%s,%4d-%02d-%02d,%02d:%02d:%02d,%s,%0.4f,%0.4f,%0.4f,%0.4f,%s\n")
-#define		RESULT_FILE_NAME			_T("Result.log")
+#define		RESULT_FORMAT				_T("%s,%4d-%02d-%02d,%02d:%02d:%02d,%s,%0.4f,%0.4f,%0.4f,%0.2f,%s\n")
 #define		STR_LOG_DIR					_T("LOG")
 #define		LOG_FILE_NAME_FORMAT		_T("%s\\%4d%02d%02d_%02d%02d_%s.log")
 #define		STR_RINGING					CString(_T("Ringing"))
 #define		STR_LEVEL					CString(_T("Level"))
+#define		STR_TEMP_LOG				_T("LOG\\Temp")

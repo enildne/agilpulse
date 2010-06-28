@@ -512,15 +512,18 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 		
 		volt = (double)m_stDraw.GetCheckedLevel();
 		
+		m_bPass = TRUE;
 		if(volt >= m_stDraw.m_levelMax || volt <= m_stDraw.m_levelMin) {
 			MainSignal->setColor = SET_RED;
 			m_iLevelFail++;
+			m_bPass = FALSE;
 		}
 		else {
 			MainSignal->setColor = SET_GREEN;
 			m_iLevelSuccess++;
 		}
 
+		SetLogData(m_UserName, m_iLevelSuccess, m_iLevelFail, STR_LEVEL, 0, 0, 0, volt, m_bPass);
 		dispData.Format(LEVEL_OUTPUT, (volt - 53) / 50);
 		MainSignal->SetString(dispData);
 		MainSignal->Invalidate();
@@ -528,6 +531,8 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 #else
 		CString dispData;
 		double	volt = rand() % 200 + 53;
+
+		SetLogData(m_UserName, m_iLevelSuccess, m_iLevelFail, STR_LEVEL, 0, 0, 0, volt, m_bPass);
 
 		dispData.Format(LEVEL_OUTPUT, (volt - 53) / 50);
 		MainSignal->SetString(dispData);
@@ -581,7 +586,7 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn4()
 	}
 
 	m_logFile.SeekToBegin();
-	m_flushLogFile.Open(_T("LOG\\Temp"), CStdioFile::modeCreate | CStdioFile::modeWrite |CStdioFile::modeNoTruncate);
+	m_flushLogFile.Open(STR_TEMP_LOG, CStdioFile::modeCreate | CStdioFile::modeWrite |CStdioFile::modeNoTruncate);
 	CString	data, tempData;
 	while(1)
 	{
@@ -601,7 +606,7 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn4()
 	m_flushLogFile.Close();
 
 	CFile::Remove(m_strLogFileName);
-	CFile::Rename(_T("LOG\\Temp"), m_strLogFileName);
+	CFile::Rename(STR_TEMP_LOG, m_strLogFileName);
 
 	m_logFile.Open(m_strLogFileName, CStdioFile::modeReadWrite |CStdioFile::modeNoTruncate);
 	m_logFile.SeekToEnd();
