@@ -119,9 +119,8 @@ void CLoginDlg::OnBnClickedLoginBtn()
 
 	for(int i = 0; i < len; i++)
 		dataForRead[i] = ~dataForRead[i];
-	dataForRead[i] = 0x0d;
 
-	accountFile.Open(LOGIN_FILE_NAME, CFile::modeRead);
+	accountFile.Open(LOGIN_FILE_NAME, CFile::modeRead | CFile::typeBinary);
 
 	if(accountFile.m_pStream == NULL)
 	{
@@ -178,8 +177,6 @@ BOOL CLoginDlg::PreTranslateMessage(MSG* pMsg)
 	{
 		if(pMsg->wParam == 'A' && GetKeyState(VK_CONTROL) < 0)
 		{
-			RTrace(_T("[zest] 필요할 경우 User 입력 루틴 추가!\n"));		// User Check 루틴
-
 			CString			accountLevel, inputName, inputPwd, inputData;
 			CStdioFile		accountFile;
 			unsigned char	dataForWrite[1024] = "";
@@ -205,12 +202,10 @@ BOOL CLoginDlg::PreTranslateMessage(MSG* pMsg)
 			{
 				dataForWrite[i] = ~dataForWrite[i];
 			}
-			dataForWrite[i] = 0x0d;
-			dataForWrite[i + 1] = 0x0a;
-	
-			accountFile.Open(LOGIN_FILE_NAME, CFile::modeCreate | CFile::modeWrite | CFile::modeNoTruncate);
+			dataForWrite[i] = 0x0a;
+			accountFile.Open(LOGIN_FILE_NAME, CFile::modeCreate | CFile::modeWrite | CFile::modeNoTruncate | CFile::typeBinary);
 			accountFile.SeekToEnd();
-			accountFile.Write(dataForWrite, i + 2);
+			accountFile.Write(dataForWrite, i + 1);
 			accountFile.Close();
 		}
 	}
