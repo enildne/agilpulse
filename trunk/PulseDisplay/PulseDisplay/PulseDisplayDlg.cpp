@@ -395,7 +395,7 @@ void CPulseDisplayDlg::OnBnClickedTab1Btn3()
 					m_dataBuf[repeat].t_pass = FALSE;
 					RTrace(_T("#RT 5 : 직전값 테스트\n"));
 				}
-				m_dataBuf[repeat].t_ringDown = levelOne;
+				m_dataBuf[repeat].t_ringDown = ringDown;
 				m_dataBuf[repeat].t_levelOne = levelOne;
 				memcpy(m_dataBuf[repeat].t_strres, strres, sizeof(strres));			// data 저장
 				//m_stDraw.setPulseData(&strres[DATA_START_POSITION]);
