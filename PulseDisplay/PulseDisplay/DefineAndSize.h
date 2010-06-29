@@ -7,6 +7,7 @@
 #define		LOGIN_DLG							// Login Dlg 를 보일지 말지 결정(개발중에는 안보이도록)
 #define		LIMIT_SCREEN_SIZE
 
+//#define		LOG_DEBUG							// Log Message 를 내보낼지 아닐지 결정
 //#define		USE_SAMPLE_FILE
 //#define		MAKE_SAMPLE_FILE
 //#define		USE_RANDOM_DATA

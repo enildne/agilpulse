@@ -134,6 +134,7 @@ void CLoginDlg::OnBnClickedLoginBtn()
 
 		if(accountFile.ReadString(fromFileData) != NULL)
 		{
+			RTrace("[zest] Account File Data = %s\n", fromFileData);
 			if(strcmp(dataForRead, fromFileData.GetBuffer(fromFileData.GetLength())) == 0)
 			{
 				setUserName(inputName);
@@ -198,11 +199,16 @@ BOOL CLoginDlg::PreTranslateMessage(MSG* pMsg)
 			memcpy(dataForWrite, (unsigned char*)(LPCTSTR)inputData, inputData.GetLength());
 			len = inputData.GetLength();
 
+			RTrace(_T("Input Data = %s\n"), inputData);
+
 			for(i = 0; i < len; i++)
 			{
 				dataForWrite[i] = ~dataForWrite[i];
 			}
 			dataForWrite[i] = 0x0a;
+
+			RTrace(_T("Conversioned Data = %s\n"), dataForWrite);
+
 			accountFile.Open(LOGIN_FILE_NAME, CFile::modeCreate | CFile::modeWrite | CFile::modeNoTruncate | CFile::typeBinary);
 			accountFile.SeekToEnd();
 			accountFile.Write(dataForWrite, i + 1);
