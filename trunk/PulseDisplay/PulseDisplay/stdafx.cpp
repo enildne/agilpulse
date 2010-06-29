@@ -3,9 +3,11 @@
 // stdafx.obj는 미리 컴파일된 형식 정보를 포함합니다.
 
 #include "stdafx.h"
+#include "DefineAndSize.h"
 
 void RTrace(TCHAR* szFormat, ...)
 {
+#ifdef LOG_DEBUG
 	char szTempBuf[2048] ;
 	va_list vlMarker ;
 
@@ -14,4 +16,5 @@ void RTrace(TCHAR* szFormat, ...)
 	va_end(vlMarker) ;
 
 	OutputDebugString(szTempBuf) ;
+#endif
 }
